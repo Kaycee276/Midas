@@ -6,6 +6,7 @@ import { merchantRegister } from '../../api/auth';
 import { useAuth } from '../../stores/useAuthStore';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
+import PasswordInput from '../../components/ui/PasswordInput';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import type { BusinessType, ProximityType } from '../../types';
@@ -66,7 +67,7 @@ const MerchantRegister = () => {
             <h3 className="mb-3 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Account</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <Input label="Email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} required />
-              <Input label="Password" type="password" value={form.password} onChange={(e) => update('password', e.target.value)} required placeholder="Min 8 chars, mixed case, digit, special" />
+              <PasswordInput label="Password" value={form.password} onChange={(e) => update('password', e.target.value)} required showCriteria />
             </div>
           </div>
           <div>
@@ -87,7 +88,7 @@ const MerchantRegister = () => {
             <div className="grid gap-4 md:grid-cols-2">
               <Input label="Full Name" value={form.owner_full_name} onChange={(e) => update('owner_full_name', e.target.value)} required />
               <Input label="Phone" value={form.owner_phone} onChange={(e) => update('owner_phone', e.target.value)} required />
-              <Input label="Email (optional)" type="email" value={form.owner_email} onChange={(e) => update('owner_email', e.target.value)} />
+              <Input label="Email" type="email" value={form.owner_email} onChange={(e) => update('owner_email', e.target.value)} required />
             </div>
           </div>
           <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">

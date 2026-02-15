@@ -10,11 +10,11 @@ const studentRegistrationSchema = Joi.object({
       'string.pattern.base': 'Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character'
     }),
   full_name: Joi.string().min(2).max(255).required(),
-  student_id: Joi.string().max(100).optional(),
-  phone: Joi.string().pattern(/^\+?[\d\s\-()]+$/).min(10).max(20).optional(),
-  university: Joi.string().max(255).optional(),
-  program: Joi.string().max(255).optional(),
-  year_of_study: Joi.number().integer().min(1).max(10).optional(),
+  student_id: Joi.string().max(100).required(),
+  phone: Joi.string().pattern(/^\+?[\d\s\-()]+$/).min(10).max(20).required(),
+  university: Joi.string().max(255).required(),
+  program: Joi.string().max(255).required(),
+  year_of_study: Joi.number().integer().min(1).max(10).required(),
   terms_accepted: Joi.boolean().valid(true).required().messages({
     'any.only': 'You must accept the terms and conditions'
   })

@@ -6,6 +6,7 @@ import { adminLogin } from '../../api/admin';
 import { useAuth } from '../../stores/useAuthStore';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
+import PasswordInput from '../../components/ui/PasswordInput';
 import Button from '../../components/ui/Button';
 
 const AdminLogin = () => {
@@ -41,7 +42,7 @@ const AdminLogin = () => {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <PasswordInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <Button type="submit" loading={loading} className="w-full">Sign In</Button>
         </form>
       </Card>

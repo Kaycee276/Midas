@@ -14,6 +14,13 @@ router.post(
 );
 
 router.get(
+  '/dashboard/stats',
+  verifyToken,
+  requireAdmin,
+  adminController.getDashboardStats
+);
+
+router.get(
   '/kyc/pending',
   verifyToken,
   requireAdmin,

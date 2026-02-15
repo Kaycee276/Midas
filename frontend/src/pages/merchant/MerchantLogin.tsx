@@ -6,6 +6,7 @@ import { merchantLogin } from '../../api/auth';
 import { useAuth } from '../../stores/useAuthStore';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
+import PasswordInput from '../../components/ui/PasswordInput';
 import Button from '../../components/ui/Button';
 
 const MerchantLogin = () => {
@@ -41,7 +42,7 @@ const MerchantLogin = () => {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="merchant@example.com" />
-          <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" />
+          <PasswordInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" />
           <Button type="submit" loading={loading} className="w-full">Sign In</Button>
         </form>
         <p className="mt-4 text-center text-sm text-[var(--text-secondary)]">

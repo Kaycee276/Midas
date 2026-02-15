@@ -6,6 +6,7 @@ import { studentRegister } from '../../api/auth';
 import { useAuth } from '../../stores/useAuthStore';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
+import PasswordInput from '../../components/ui/PasswordInput';
 import Button from '../../components/ui/Button';
 
 const StudentRegister = () => {
@@ -27,11 +28,7 @@ const StudentRegister = () => {
     try {
       const payload = {
         ...form,
-        year_of_study: form.year_of_study ? Number(form.year_of_study) : undefined,
-        student_id: form.student_id || undefined,
-        phone: form.phone || undefined,
-        university: form.university || undefined,
-        program: form.program || undefined,
+        year_of_study: Number(form.year_of_study),
       };
       const { data } = await studentRegister(payload);
       login(data.data.token, 'student', data.data.student);
@@ -56,13 +53,13 @@ const StudentRegister = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Full Name" value={form.full_name} onChange={(e) => update('full_name', e.target.value)} required />
           <Input label="Email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} required placeholder="student@university.edu" />
-          <Input label="Password" type="password" value={form.password} onChange={(e) => update('password', e.target.value)} required placeholder="Min 8 chars, mixed case, digit, special" />
-          <Input label="Student ID (optional)" value={form.student_id} onChange={(e) => update('student_id', e.target.value)} placeholder="STU2024001" />
-          <Input label="Phone (optional)" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="+1234567890" />
-          <Input label="University (optional)" value={form.university} onChange={(e) => update('university', e.target.value)} />
+          <PasswordInput label="Password" value={form.password} onChange={(e) => update('password', e.target.value)} required showCriteria />
+          <Input label="Student ID" value={form.student_id} onChange={(e) => update('student_id', e.target.value)} required placeholder="STU2024001" />
+          <Input label="Phone" value={form.phone} onChange={(e) => update('phone', e.target.value)} required placeholder="+1234567890" />
+          <Input label="University" value={form.university} onChange={(e) => update('university', e.target.value)} required />
           <div className="grid gap-4 md:grid-cols-2">
-            <Input label="Program (optional)" value={form.program} onChange={(e) => update('program', e.target.value)} />
-            <Input label="Year of Study (optional)" type="number" min="1" max="10" value={form.year_of_study} onChange={(e) => update('year_of_study', e.target.value)} />
+            <Input label="Program" value={form.program} onChange={(e) => update('program', e.target.value)} required />
+            <Input label="Year of Study" type="number" min="1" max="10" value={form.year_of_study} onChange={(e) => update('year_of_study', e.target.value)} required />
           </div>
           <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
             <input type="checkbox" checked={form.terms_accepted} onChange={(e) => update('terms_accepted', e.target.checked)} className="accent-[var(--accent-primary)]" />

@@ -1,8 +1,11 @@
 import client from './client';
-import type { ApiResponse, Admin, KYC, Pagination, LoginData } from '../types';
+import type { ApiResponse, Admin, KYC, Pagination, LoginData, DashboardStats } from '../types';
 
 export const adminLogin = (data: LoginData) =>
   client.post<ApiResponse<{ admin: Admin; token: string }>>('/admin/login', data);
+
+export const getDashboardStats = () =>
+  client.get<ApiResponse<DashboardStats>>('/admin/dashboard/stats');
 
 export const getPendingKYC = (params?: { page?: number; limit?: number }) =>
   client.get<ApiResponse<{ kyc_submissions: KYC[]; pagination: Pagination }>>('/admin/kyc/pending', { params });

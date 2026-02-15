@@ -35,6 +35,10 @@ class AdminService {
     };
   }
 
+  async getDashboardStats() {
+    return await adminModel.getDashboardStats();
+  }
+
   async getPendingKyc(page = 1, limit = 20) {
     const offset = (page - 1) * limit;
     const { data, count } = await kycModel.findPendingKyc(limit, offset);

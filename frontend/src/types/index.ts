@@ -123,6 +123,13 @@ export interface MerchantInvestmentSummary {
   active_investments: number;
 }
 
+export interface DashboardStats {
+  students: { total: number; active: number; suspended: number; inactive: number };
+  merchants: { total: number; active: number; pending_kyc: number; kyc_submitted: number; kyc_rejected: number; suspended: number; inactive: number };
+  investments: { total: number; active: number; withdrawn: number; total_invested: number; total_current_value: number };
+  kyc: { total: number; pending: number; approved: number; rejected: number; resubmission_required: number };
+}
+
 export interface Pagination {
   total: number;
   page: number;

@@ -13,6 +13,15 @@ class AdminController {
     }
   }
 
+  async getDashboardStats(req, res, next) {
+    try {
+      const stats = await adminService.getDashboardStats();
+      successResponse(res, stats, 'Dashboard statistics retrieved');
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getPendingKyc(req, res, next) {
     try {
       const page = parseInt(req.query.page) || 1;

@@ -131,6 +131,115 @@ export interface DashboardStats {
   kyc: { total: number; pending: number; approved: number; rejected: number; resubmission_required: number };
 }
 
+// Revenue & Distribution types
+export type RevenueReportStatus = 'pending' | 'approved' | 'rejected' | 'distributed';
+
+export interface RevenueReport {
+  id: string;
+  merchant_id: string;
+  period_start: string;
+  period_end: string;
+  gross_revenue: number;
+  expenses: number;
+  net_profit: number;
+  status: RevenueReportStatus;
+  notes?: string;
+  submitted_at: string;
+  reviewed_at?: string;
+  reviewed_by?: string;
+  rejection_reason?: string;
+  admin_notes?: string;
+  created_at: string;
+  updated_at: string;
+  merchant?: { id: string; business_name: string; business_type: string };
+}
+
+export interface DividendDistribution {
+  id: string;
+  revenue_report_id: string;
+  merchant_id: string;
+  total_profit: number;
+  merchant_share: number;
+  investor_share_pool: number;
+  platform_share: number;
+  status: 'pending' | 'completed' | 'failed';
+  distributed_at?: string;
+  created_at: string;
+  merchant?: { business_name: string; business_type: string };
+}
+
+export interface DividendPayout {
+  id: string;
+  distribution_id: string;
+  investment_id: string;
+  student_id: string;
+  merchant_id: string;
+  amount: number;
+  shares_held: number;
+  total_shares: number;
+  status: 'pending' | 'completed';
+  created_at: string;
+}
+
+export interface RevenueSummary {
+  total_revenue: number;
+  total_distributed: number;
+  pending_count: number;
+}
+
+export interface InvestmentTrend {
+  month: string;
+  count: number;
+  total_amount: number;
+}
+
+export interface RevenueTrend {
+  month: string;
+  total_revenue: number;
+  total_distributed: number;
+}
+
+export interface TopMerchant {
+  merchant_id: string;
+  business_name: string;
+  business_type: string;
+  total_raised: number;
+}
+
+export interface InvestmentByType {
+  business_type: string;
+  total_amount: number;
+}
+
+export interface AdminAnalytics {
+  investment_trend: InvestmentTrend[];
+  revenue_trend: RevenueTrend[];
+  top_merchants: TopMerchant[];
+  investments_by_type: InvestmentByType[];
+  recent_distributions: DividendDistribution[];
+  platform_balance: number;
+  pending_revenue_count: number;
+  total_revenue: number;
+  total_distributed: number;
+}
+
+export interface PlatformWalletTransaction {
+  id: string;
+  type: 'commission' | 'withdrawal';
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  reference_id?: string;
+  description?: string;
+  created_at: string;
+}
+
+export interface PlatformWalletInfo {
+  balance: number;
+  transactions: PlatformWalletTransaction[];
+  total_transactions: number;
+}
+
 export interface Pagination {
   total: number;
   page: number;

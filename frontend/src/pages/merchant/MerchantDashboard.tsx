@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileCheck, AlertCircle, Clock, CheckCircle, XCircle, Upload, Wallet, TrendingUp, Users, Activity } from 'lucide-react';
+import { FileCheck, AlertCircle, Clock, CheckCircle, XCircle, Upload, Wallet, TrendingUp, Users, Activity, BarChart3 } from 'lucide-react';
 import { useAuth } from '../../stores/useAuthStore';
 import { getKYCStatus } from '../../api/kyc';
 import { getMerchantInvestments } from '../../api/investments';
 import { getMerchantWalletInfo } from '../../api/merchant-wallet';
-import type { Merchant, KYC, Investment, MerchantInvestmentSummary, MerchantWalletInfo } from '../../types';
+import { getRevenueSummary } from '../../api/revenue';
+import type { Merchant, KYC, Investment, MerchantInvestmentSummary, MerchantWalletInfo, RevenueSummary } from '../../types';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -26,15 +27,17 @@ const MerchantDashboard = () => {
   const [walletInfo, setWalletInfo] = useState<MerchantWalletInfo | null>(null);
   const [investmentSummary, setInvestmentSummary] = useState<MerchantInvestmentSummary | null>(null);
   const [recentInvestments, setRecentInvestments] = useState<Investment[]>([]);
+  const [revenueSummary, setRevenueSummary] = useState<RevenueSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [kycRes, walletRes, investRes] = await Promise.allSettled([
+        const [kycRes, walletRes, investRes, revenueRes] = await Promise.allSettled([
           getKYCStatus(),
           getMerchantWalletInfo(),
           getMerchantInvestments(user!.id, { limit: 5 }),
+          getRevenueSummary(),
         ]);
         if (kycRes.status === 'fulfilled') setKyc(kycRes.value.data.data.kyc);
         if (walletRes.status === 'fulfilled') setWalletInfo(walletRes.value.data.data);
@@ -42,6 +45,7 @@ const MerchantDashboard = () => {
           setInvestmentSummary(investRes.value.data.data.summary);
           setRecentInvestments(investRes.value.data.data.investments);
         }
+        if (revenueRes.status === 'fulfilled') setRevenueSummary(revenueRes.value.data.data);
       } finally {
         setLoading(false);
       }
@@ -81,6 +85,20 @@ const MerchantDashboard = () => {
       value: String(investmentSummary?.total_investors || 0),
       color: 'text-[var(--warning)]',
     },
+    {
+      icon: BarChart3,
+      label: 'Total Revenue',
+      value: `\u20A6${(revenueSummary?.total_revenue || 0).toLocaleString()}`,
+      color: 'text-[var(--success)]',
+      link: '/merchant/revenue',
+    },
+    {
+      icon: Clock,
+      label: 'Pending Reports',
+      value: String(revenueSummary?.pending_count || 0),
+      color: 'text-[var(--warning)]',
+      link: '/merchant/revenue',
+    },
   ];
 
   return (
@@ -89,7 +107,7 @@ const MerchantDashboard = () => {
       <p className="mt-1 text-[var(--text-secondary)]">Your business overview</p>
 
       {/* Stats Cards */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((s) => {
           const content = (
             <Card key={s.label}>

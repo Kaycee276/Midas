@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Wallet, FileText, User, Store, Sun, Moon, LogOut, X } from 'lucide-react';
+import { LayoutDashboard, Wallet, FileText, User, Store, BarChart3, Sun, Moon, LogOut, X } from 'lucide-react';
 import { useThemeStore } from '../../stores/useThemeStore';
 import { useAuth } from '../../stores/useAuthStore';
 
@@ -16,6 +16,7 @@ const MerchantSidebar = ({ open, onClose }: MerchantSidebarProps) => {
   const navItems = [
     { to: '/merchant/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/merchant/wallet', label: 'Wallet', icon: Wallet },
+    { to: '/merchant/revenue', label: 'Revenue', icon: BarChart3 },
     { to: '/merchant/kyc', label: 'KYC', icon: FileText },
     { to: '/merchant/profile', label: 'Profile', icon: User },
     { to: `/merchants/${user?.id}`, label: 'Public Page', icon: Store },

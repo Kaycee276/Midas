@@ -1,4 +1,5 @@
 const adminService = require('../services/admin.service');
+const distributionService = require('../services/distribution.service');
 const { successResponse } = require('../utils/responseFormatter');
 const { KYC_STATUS } = require('../types/enums');
 
@@ -67,6 +68,66 @@ class AdminController {
       }
 
       successResponse(res, { kyc }, 'KYC review completed successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getPendingRevenue(req, res, next) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 20;
+      const result = await adminService.getPendingRevenue(page, limit);
+      successResponse(res, result, 'Pending revenue reports retrieved');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async approveRevenue(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { admin_notes } = req.body || {};
+      const report = await adminService.approveRevenue(id, req.user.id, admin_notes);
+      successResponse(res, { report }, 'Revenue report approved');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async rejectRevenue(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { rejection_reason, admin_notes } = req.body || {};
+      const report = await adminService.rejectRevenue(id, req.user.id, rejection_reason, admin_notes);
+      successResponse(res, { report }, 'Revenue report rejected');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async distributeRevenue(req, res, next) {
+    try {
+      const { id } = req.params;
+      const distribution = await distributionService.distributeProfit(id, req.user.id);
+      successResponse(res, { distribution }, 'Profit distributed successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getPlatformWallet(req, res, next) {
+    try {
+      const result = await adminService.getPlatformWallet();
+      successResponse(res, result, 'Platform wallet retrieved');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAnalytics(req, res, next) {
+    try {
+      const analytics = await adminService.getAnalytics();
+      successResponse(res, analytics, 'Analytics retrieved');
     } catch (error) {
       next(error);
     }

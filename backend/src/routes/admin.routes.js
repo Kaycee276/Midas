@@ -49,4 +49,49 @@ router.post(
   adminController.rejectKyc
 );
 
+// Revenue management
+router.get(
+  '/revenue/pending',
+  verifyToken,
+  requireAdmin,
+  adminController.getPendingRevenue
+);
+
+router.post(
+  '/revenue/:id/approve',
+  verifyToken,
+  requireAdmin,
+  adminController.approveRevenue
+);
+
+router.post(
+  '/revenue/:id/reject',
+  verifyToken,
+  requireAdmin,
+  adminController.rejectRevenue
+);
+
+router.post(
+  '/revenue/:id/distribute',
+  verifyToken,
+  requireAdmin,
+  adminController.distributeRevenue
+);
+
+// Platform wallet
+router.get(
+  '/platform-wallet',
+  verifyToken,
+  requireAdmin,
+  adminController.getPlatformWallet
+);
+
+// Analytics
+router.get(
+  '/analytics',
+  verifyToken,
+  requireAdmin,
+  adminController.getAnalytics
+);
+
 module.exports = router;

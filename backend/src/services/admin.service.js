@@ -3,9 +3,11 @@ const jwt = require('jsonwebtoken');
 const adminModel = require('../models/admin.model');
 const kycModel = require('../models/kyc.model');
 const merchantModel = require('../models/merchant.model');
+const revenueModel = require('../models/revenue.model');
+const platformWalletModel = require('../models/platform-wallet.model');
 const storageService = require('./storage.service');
 const { AuthenticationError, NotFoundError, ValidationError } = require('../utils/errors');
-const { KYC_STATUS, ACCOUNT_STATUS } = require('../types/enums');
+const { KYC_STATUS, ACCOUNT_STATUS, REVENUE_REPORT_STATUS } = require('../types/enums');
 
 class AdminService {
   async login(email, password) {
@@ -159,6 +161,69 @@ class AdminService {
     await kycModel.createHistoryEntry(kyc.merchant_id, updatedKyc);
 
     return updatedKyc;
+  }
+
+  async getPendingRevenue(page = 1, limit = 20) {
+    const offset = (page - 1) * limit;
+    const { data, count } = await revenueModel.findPendingReports(limit, offset);
+
+    return {
+      reports: data,
+      pagination: {
+        total: count,
+        page,
+        limit,
+        total_pages: Math.ceil(count / limit)
+      }
+    };
+  }
+
+  async approveRevenue(reportId, adminId, notes) {
+    const report = await revenueModel.findById(reportId);
+    if (!report) {
+      throw new NotFoundError('Revenue report not found');
+    }
+    if (report.status !== REVENUE_REPORT_STATUS.PENDING) {
+      throw new ValidationError('Only pending reports can be approved');
+    }
+
+    return await revenueModel.updateStatus(reportId, REVENUE_REPORT_STATUS.APPROVED, {
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: adminId,
+      admin_notes: notes || null
+    });
+  }
+
+  async rejectRevenue(reportId, adminId, reason, notes) {
+    const report = await revenueModel.findById(reportId);
+    if (!report) {
+      throw new NotFoundError('Revenue report not found');
+    }
+    if (report.status !== REVENUE_REPORT_STATUS.PENDING) {
+      throw new ValidationError('Only pending reports can be rejected');
+    }
+
+    return await revenueModel.updateStatus(reportId, REVENUE_REPORT_STATUS.REJECTED, {
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: adminId,
+      rejection_reason: reason || null,
+      admin_notes: notes || null
+    });
+  }
+
+  async getPlatformWallet() {
+    const wallet = await platformWalletModel.getBalance();
+    const { data: transactions, count } = await platformWalletModel.getTransactionHistory(20, 0);
+
+    return {
+      balance: Number(wallet.balance),
+      transactions,
+      total_transactions: count
+    };
+  }
+
+  async getAnalytics() {
+    return await adminModel.getAnalytics();
   }
 
   generateToken(userId, type) {

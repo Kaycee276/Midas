@@ -69,7 +69,7 @@ const MerchantWallet = () => {
 							</p>
 							<p className="text-3xl font-bold text-var(--text)">
 								{"\u20A6"}
-								{info?.balance.toLocaleString()}
+								{(info?.balance || 0).toLocaleString()}
 							</p>
 						</div>
 					</div>

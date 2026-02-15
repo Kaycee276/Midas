@@ -1,12 +1,16 @@
 require("dotenv").config();
 const app = require("./src/config/app");
 const logger = require("./src/utils/logger");
+const { startDividendDistributionJob } = require("./src/jobs/dividend-distribution.job");
 
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
 	logger.info(`Server running on port ${PORT}`);
 	console.log(`Server is listening at http://localhost:${PORT}`);
+
+	// Start scheduled jobs
+	startDividendDistributionJob();
 });
 
 // Graceful shutdown

@@ -63,6 +63,24 @@ const WALLET_TRANSACTION_STATUS = {
   REVERSED: 'reversed'
 };
 
+const REVENUE_REPORT_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+  DISTRIBUTED: 'distributed'
+};
+
+const DISTRIBUTION_STATUS = {
+  PENDING: 'pending',
+  COMPLETED: 'completed',
+  FAILED: 'failed'
+};
+
+const PLATFORM_TRANSACTION_TYPE = {
+  COMMISSION: 'commission',
+  WITHDRAWAL: 'withdrawal'
+};
+
 module.exports = {
   KYC_STATUS,
   ACCOUNT_STATUS,
@@ -72,5 +90,8 @@ module.exports = {
   TRANSACTION_TYPE,
   WALLET_TRANSACTION_TYPE,
   MERCHANT_WALLET_TRANSACTION_TYPE,
-  WALLET_TRANSACTION_STATUS
+  WALLET_TRANSACTION_STATUS,
+  REVENUE_REPORT_STATUS,
+  DISTRIBUTION_STATUS,
+  PLATFORM_TRANSACTION_TYPE
 };

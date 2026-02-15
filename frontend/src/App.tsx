@@ -16,6 +16,8 @@ import MerchantProfile from './pages/merchant/MerchantProfile';
 import MerchantWallet from './pages/merchant/MerchantWallet';
 import MerchantWithdraw from './pages/merchant/MerchantWithdraw';
 import KYCSubmission from './pages/merchant/KYCSubmission';
+import RevenueHistory from './pages/merchant/RevenueHistory';
+import RevenueReport from './pages/merchant/RevenueReport';
 
 import StudentLogin from './pages/student/StudentLogin';
 import StudentRegister from './pages/student/StudentRegister';
@@ -81,6 +83,8 @@ const App = () => (
         <Route path="/merchant/kyc" element={<ProtectedRoute role="merchant"><KYCSubmission /></ProtectedRoute>} />
         <Route path="/merchant/wallet" element={<ProtectedRoute role="merchant"><MerchantWallet /></ProtectedRoute>} />
         <Route path="/merchant/wallet/withdraw" element={<ProtectedRoute role="merchant"><MerchantWithdraw /></ProtectedRoute>} />
+        <Route path="/merchant/revenue" element={<ProtectedRoute role="merchant"><RevenueHistory /></ProtectedRoute>} />
+        <Route path="/merchant/revenue/submit" element={<ProtectedRoute role="merchant"><RevenueReport /></ProtectedRoute>} />
       </Route>
 
       {/* Admin protected — self-contained layout */}

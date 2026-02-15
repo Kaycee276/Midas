@@ -103,7 +103,7 @@ const KYCReview = () => {
           {kyc.business_registration_number && <div><span className="text-[var(--text-secondary)]">Business Reg:</span> <span className="text-[var(--text)]">{kyc.business_registration_number}</span></div>}
           {kyc.tax_identification_number && <div><span className="text-[var(--text-secondary)]">Tax ID:</span> <span className="text-[var(--text)]">{kyc.tax_identification_number}</span></div>}
           {kyc.years_in_operation != null && <div><span className="text-[var(--text-secondary)]">Years Operating:</span> <span className="text-[var(--text)]">{kyc.years_in_operation}</span></div>}
-          {kyc.average_monthly_revenue != null && <div><span className="text-[var(--text-secondary)]">Avg Monthly Revenue:</span> <span className="text-[var(--text)]">${kyc.average_monthly_revenue.toLocaleString()}</span></div>}
+          {kyc.average_monthly_revenue != null && <div><span className="text-[var(--text-secondary)]">Avg Monthly Revenue:</span> <span className="text-[var(--text)]">{'\u20A6'}{kyc.average_monthly_revenue.toLocaleString()}</span></div>}
         </div>
       </Card>
 

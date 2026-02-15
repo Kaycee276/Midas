@@ -1,16 +1,35 @@
-import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Shield } from 'lucide-react';
-import { submitKYC } from '../../api/kyc';
+import { Shield, CheckCircle, Clock } from 'lucide-react';
+import { getKYCStatus, submitKYC } from '../../api/kyc';
+import type { KYC } from '../../types';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import Badge from '../../components/ui/Badge';
+import Spinner from '../../components/ui/Spinner';
 import FileUpload from '../../components/ui/FileUpload';
 
 const KYCSubmission = () => {
   const navigate = useNavigate();
+  const [kyc, setKyc] = useState<KYC | null>(null);
+  const [checking, setChecking] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const { data } = await getKYCStatus();
+        setKyc(data.data.kyc);
+      } catch {
+        // No KYC yet — show the form
+      } finally {
+        setChecking(false);
+      }
+    };
+    fetch();
+  }, []);
   const [form, setForm] = useState({
     student_id_number: '',
     national_id_number: '',
@@ -48,6 +67,50 @@ const KYCSubmission = () => {
     }
   };
 
+  if (checking) return <Spinner size="lg" className="py-20" />;
+
+  // KYC approved — show verified state
+  if (kyc?.status === 'approved') {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        <Card className="text-center">
+          <CheckCircle className="mx-auto h-16 w-16 text-[var(--success)]" />
+          <h1 className="mt-4 text-2xl font-bold text-[var(--text)]">KYC Verified</h1>
+          <p className="mt-2 text-[var(--text-secondary)]">
+            Your identity and business documents have been verified. No further action is needed.
+          </p>
+          <Badge variant="success" className="mt-4">Approved</Badge>
+          <div className="mt-6">
+            <Link to="/merchant/dashboard">
+              <Button variant="outline">Back to Dashboard</Button>
+            </Link>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // KYC pending review — show waiting state
+  if (kyc?.status === 'pending') {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        <Card className="text-center">
+          <Clock className="mx-auto h-16 w-16 text-[var(--warning)]" />
+          <h1 className="mt-4 text-2xl font-bold text-[var(--text)]">KYC Under Review</h1>
+          <p className="mt-2 text-[var(--text-secondary)]">
+            Your documents have been submitted and are being reviewed. We'll notify you once the review is complete.
+          </p>
+          <Badge variant="warning" className="mt-4">Under Review</Badge>
+          <div className="mt-6">
+            <Link to="/merchant/dashboard">
+              <Button variant="outline">Back to Dashboard</Button>
+            </Link>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
@@ -57,6 +120,17 @@ const KYCSubmission = () => {
           <p className="text-sm text-[var(--text-secondary)]">Submit your documents for verification</p>
         </div>
       </div>
+
+      {kyc?.status === 'rejected' && kyc.rejection_reason && (
+        <Card className="mb-6 border-[var(--error)]/30 bg-[var(--error)]/5">
+          <p className="text-sm font-medium text-[var(--error)]">Rejection reason: {kyc.rejection_reason}</p>
+        </Card>
+      )}
+      {kyc?.status === 'resubmission_required' && kyc.rejection_reason && (
+        <Card className="mb-6 border-[var(--warning)]/30 bg-[var(--warning)]/5">
+          <p className="text-sm font-medium text-[var(--warning)]">Resubmission required: {kyc.rejection_reason}</p>
+        </Card>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
@@ -73,7 +147,7 @@ const KYCSubmission = () => {
           <h3 className="mb-4 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Business Details</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <Input label="Years in Operation" type="number" min="0" max="100" value={form.years_in_operation} onChange={(e) => updateField('years_in_operation', e.target.value)} />
-            <Input label="Avg Monthly Revenue ($)" type="number" min="0" value={form.average_monthly_revenue} onChange={(e) => updateField('average_monthly_revenue', e.target.value)} />
+            <Input label="Avg Monthly Revenue (₦)" type="number" min="0" value={form.average_monthly_revenue} onChange={(e) => updateField('average_monthly_revenue', e.target.value)} />
           </div>
         </Card>
 

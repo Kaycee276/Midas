@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileCheck, AlertCircle, Clock, CheckCircle, XCircle, Upload } from 'lucide-react';
+import { FileCheck, AlertCircle, Clock, CheckCircle, XCircle, Upload, Wallet, TrendingUp, Users, Activity } from 'lucide-react';
 import { useAuth } from '../../stores/useAuthStore';
 import { getKYCStatus } from '../../api/kyc';
-import type { Merchant, KYC } from '../../types';
+import { getMerchantInvestments } from '../../api/investments';
+import { getMerchantWalletInfo } from '../../api/merchant-wallet';
+import type { Merchant, KYC, Investment, MerchantInvestmentSummary, MerchantWalletInfo } from '../../types';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -21,21 +23,31 @@ const MerchantDashboard = () => {
   const { user } = useAuth();
   const merchant = user?.data as Merchant;
   const [kyc, setKyc] = useState<KYC | null>(null);
+  const [walletInfo, setWalletInfo] = useState<MerchantWalletInfo | null>(null);
+  const [investmentSummary, setInvestmentSummary] = useState<MerchantInvestmentSummary | null>(null);
+  const [recentInvestments, setRecentInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await getKYCStatus();
-        setKyc(data.data.kyc);
-      } catch {
-        // No KYC yet
+        const [kycRes, walletRes, investRes] = await Promise.allSettled([
+          getKYCStatus(),
+          getMerchantWalletInfo(),
+          getMerchantInvestments(user!.id, { limit: 5 }),
+        ]);
+        if (kycRes.status === 'fulfilled') setKyc(kycRes.value.data.data.kyc);
+        if (walletRes.status === 'fulfilled') setWalletInfo(walletRes.value.data.data);
+        if (investRes.status === 'fulfilled') {
+          setInvestmentSummary(investRes.value.data.data.summary);
+          setRecentInvestments(investRes.value.data.data.investments);
+        }
       } finally {
         setLoading(false);
       }
     };
-    fetch();
-  }, []);
+    fetchData();
+  }, [user]);
 
   if (loading) return <Spinner size="lg" className="py-20" />;
 
@@ -43,11 +55,62 @@ const MerchantDashboard = () => {
   const config = statusConfig[kycStatus] || statusConfig.not_started;
   const StatusIcon = config.icon;
 
-  return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-[var(--text)]">Welcome, {merchant.business_name}</h1>
-      <p className="mt-1 text-[var(--text-secondary)]">Manage your business and KYC verification</p>
+  const stats = [
+    {
+      icon: Wallet,
+      label: 'Wallet Balance',
+      value: `\u20A6${(walletInfo?.balance || 0).toLocaleString()}`,
+      color: 'text-[var(--accent-primary)]',
+      link: '/merchant/wallet',
+    },
+    {
+      icon: TrendingUp,
+      label: 'Total Capital Raised',
+      value: `\u20A6${(investmentSummary?.total_capital_raised || 0).toLocaleString()}`,
+      color: 'text-[var(--success)]',
+    },
+    {
+      icon: Activity,
+      label: 'Active Investments',
+      value: String(investmentSummary?.active_investments || 0),
+      color: 'text-[var(--info)]',
+    },
+    {
+      icon: Users,
+      label: 'Total Investors',
+      value: String(investmentSummary?.total_investors || 0),
+      color: 'text-[var(--warning)]',
+    },
+  ];
 
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-8">
+      <h1 className="text-2xl font-bold text-[var(--text)]">Welcome, {merchant.business_name}</h1>
+      <p className="mt-1 text-[var(--text-secondary)]">Your business overview</p>
+
+      {/* Stats Cards */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((s) => {
+          const content = (
+            <Card key={s.label}>
+              <div className="flex items-center gap-3">
+                <s.icon className={`h-8 w-8 ${s.color}`} />
+                <div>
+                  <p className="text-2xl font-bold text-[var(--text)]">{s.value}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
+                </div>
+              </div>
+            </Card>
+          );
+          return s.link ? (
+            <Link key={s.label} to={s.link}>{content}</Link>
+          ) : (
+            <div key={s.label}>{content}</div>
+          );
+        })}
+      </div>
+
+      {/* KYC + Account Status */}
       <div className="mt-8 grid gap-6 md:grid-cols-2">
         {/* KYC Status */}
         <Card>
@@ -94,14 +157,35 @@ const MerchantDashboard = () => {
         </Card>
       </div>
 
-      {/* Quick links */}
+      {/* Recent Investments */}
       <div className="mt-8">
-        <h2 className="mb-4 text-lg font-semibold text-[var(--text)]">Quick Actions</h2>
-        <div className="flex flex-wrap gap-3">
-          <Link to="/merchant/profile"><Button variant="outline" size="sm">Edit Profile</Button></Link>
-          <Link to="/merchant/kyc"><Button variant="outline" size="sm">KYC Documents</Button></Link>
-          <Link to={`/merchants/${merchant.id}`}><Button variant="outline" size="sm">View Public Page</Button></Link>
-        </div>
+        <h2 className="text-lg font-semibold text-[var(--text)]">Recent Investments</h2>
+        {recentInvestments.length === 0 ? (
+          <Card className="mt-4 text-center">
+            <p className="text-[var(--text-secondary)]">No investments yet. Investments will appear here when students invest in your business.</p>
+          </Card>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {recentInvestments.map((inv) => (
+              <Card key={inv.id} className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-[var(--text)]">{inv.student?.full_name || 'Student'}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">
+                    {inv.shares} shares &middot; {new Date(inv.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold text-[var(--success)]">
+                    +{'\u20A6'}{inv.amount.toLocaleString()}
+                  </p>
+                  <Badge variant={inv.status === 'active' ? 'success' : inv.status === 'withdrawn' ? 'default' : 'warning'}>
+                    {inv.status}
+                  </Badge>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

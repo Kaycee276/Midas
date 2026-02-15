@@ -42,11 +42,35 @@ const TRANSACTION_TYPE = {
   RETURN: 'return'
 };
 
+const WALLET_TRANSACTION_TYPE = {
+  DEPOSIT: 'deposit',
+  WITHDRAWAL: 'withdrawal',
+  INVESTMENT_DEBIT: 'investment_debit',
+  INVESTMENT_REFUND: 'investment_refund',
+  DIVIDEND_CREDIT: 'dividend_credit'
+};
+
+const MERCHANT_WALLET_TRANSACTION_TYPE = {
+  INVESTMENT_CREDIT: 'investment_credit',
+  WITHDRAWAL: 'withdrawal',
+  DIVIDEND_DEBIT: 'dividend_debit'
+};
+
+const WALLET_TRANSACTION_STATUS = {
+  PENDING: 'pending',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+  REVERSED: 'reversed'
+};
+
 module.exports = {
   KYC_STATUS,
   ACCOUNT_STATUS,
   ADMIN_ROLE,
   DOCUMENT_TYPE,
   INVESTMENT_STATUS,
-  TRANSACTION_TYPE
+  TRANSACTION_TYPE,
+  WALLET_TRANSACTION_TYPE,
+  MERCHANT_WALLET_TRANSACTION_TYPE,
+  WALLET_TRANSACTION_STATUS
 };

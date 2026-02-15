@@ -13,7 +13,7 @@ class EmailService {
 		const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
 		await transporter.sendMail({
-			from: `"Midas" <${process.env.SMTP_USER}>`,
+			from: `"Kelechi from Midas" <${process.env.SMTP_USER}>`,
 			to,
 			subject: "Verify your Midas account",
 			html: `

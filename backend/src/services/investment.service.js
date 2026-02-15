@@ -1,8 +1,10 @@
 const investmentModel = require('../models/investment.model');
 const merchantModel = require('../models/merchant.model');
 const studentModel = require('../models/student.model');
+const walletModel = require('../models/wallet.model');
+const merchantWalletModel = require('../models/merchant-wallet.model');
 const { NotFoundError, ValidationError } = require('../utils/errors');
-const { INVESTMENT_STATUS, ACCOUNT_STATUS } = require('../types/enums');
+const { INVESTMENT_STATUS, ACCOUNT_STATUS, WALLET_TRANSACTION_TYPE, MERCHANT_WALLET_TRANSACTION_TYPE, WALLET_TRANSACTION_STATUS } = require('../types/enums');
 
 class InvestmentService {
   // Default price per share (can be dynamic in future)
@@ -29,6 +31,15 @@ class InvestmentService {
       throw new ValidationError('Merchant is not accepting investments at this time');
     }
 
+    // Check wallet balance
+    const walletBalance = parseFloat(student.wallet_balance) || 0;
+    if (walletBalance < investmentData.amount) {
+      throw new ValidationError('Insufficient wallet balance. Please fund your wallet first.');
+    }
+
+    // Deduct from wallet atomically
+    const newBalance = await walletModel.deductBalance(studentId, investmentData.amount);
+
     // Calculate shares based on amount and price per share
     const pricePerShare = this.DEFAULT_PRICE_PER_SHARE;
     const shares = investmentData.amount / pricePerShare;
@@ -45,6 +56,33 @@ class InvestmentService {
       return_amount: 0,
       return_percentage: 0,
       notes: investmentData.notes
+    });
+
+    // Record student wallet transaction
+    await walletModel.createTransaction({
+      student_id: studentId,
+      type: WALLET_TRANSACTION_TYPE.INVESTMENT_DEBIT,
+      amount: investmentData.amount,
+      balance_before: walletBalance,
+      balance_after: newBalance,
+      status: WALLET_TRANSACTION_STATUS.COMPLETED,
+      investment_id: investment.id,
+      description: `Investment in ${merchant.business_name}`,
+    });
+
+    // Credit merchant wallet
+    const merchantBalanceBefore = parseFloat(merchant.wallet_balance) || 0;
+    const merchantNewBalance = await merchantWalletModel.creditBalance(merchant.id, investmentData.amount);
+
+    await merchantWalletModel.createTransaction({
+      merchant_id: merchant.id,
+      type: MERCHANT_WALLET_TRANSACTION_TYPE.INVESTMENT_CREDIT,
+      amount: investmentData.amount,
+      balance_before: merchantBalanceBefore,
+      balance_after: merchantNewBalance,
+      status: WALLET_TRANSACTION_STATUS.COMPLETED,
+      investment_id: investment.id,
+      description: `Investment from ${student.full_name}`,
     });
 
     // Fetch full investment details
@@ -154,9 +192,27 @@ class InvestmentService {
       throw new ValidationError('Investment is not active');
     }
 
+    // Credit current value back to wallet
+    const currentValue = parseFloat(investment.current_value) || parseFloat(investment.amount);
+    const student = await studentModel.findById(studentId);
+    const balanceBefore = parseFloat(student.wallet_balance) || 0;
+    const newBalance = await walletModel.creditBalance(studentId, currentValue);
+
     // Update status to withdrawn
     const updatedInvestment = await investmentModel.update(investmentId, {
       status: INVESTMENT_STATUS.WITHDRAWN
+    });
+
+    // Record wallet transaction
+    await walletModel.createTransaction({
+      student_id: studentId,
+      type: WALLET_TRANSACTION_TYPE.INVESTMENT_REFUND,
+      amount: currentValue,
+      balance_before: balanceBefore,
+      balance_after: newBalance,
+      status: WALLET_TRANSACTION_STATUS.COMPLETED,
+      investment_id: investmentId,
+      description: `Investment withdrawal from ${investment.merchant?.business_name || 'merchant'}`,
     });
 
     return updatedInvestment;

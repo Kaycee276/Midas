@@ -63,11 +63,11 @@ const Portfolio = () => {
                     <div>
                       <p className="font-medium text-[var(--text)]">{inv.merchant?.business_name || 'Merchant'}</p>
                       <p className="text-sm text-[var(--text-secondary)]">
-                        {inv.shares} shares &middot; Invested ${inv.amount.toLocaleString()}
+                        {inv.shares} shares &middot; Invested {'\u20A6'}{inv.amount.toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-[var(--text)]">${inv.current_value.toLocaleString()}</p>
+                      <p className="font-semibold text-[var(--text)]">{'\u20A6'}{inv.current_value.toLocaleString()}</p>
                       <Badge variant={inv.status === 'active' ? 'success' : inv.status === 'withdrawn' ? 'default' : 'warning'}>
                         {inv.status}
                       </Badge>
@@ -91,7 +91,7 @@ const Portfolio = () => {
                 </div>
                 <div className="text-right">
                   <p className={`font-semibold ${tx.transaction_type === 'withdrawal' ? 'text-[var(--error)]' : 'text-[var(--success)]'}`}>
-                    {tx.transaction_type === 'withdrawal' ? '-' : '+'}${tx.amount.toLocaleString()}
+                    {tx.transaction_type === 'withdrawal' ? '-' : '+'}{'\u20A6'}{tx.amount.toLocaleString()}
                   </p>
                   <Badge variant={tx.transaction_type === 'investment' ? 'info' : tx.transaction_type === 'withdrawal' ? 'error' : 'success'}>
                     {tx.transaction_type}

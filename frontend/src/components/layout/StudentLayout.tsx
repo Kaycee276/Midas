@@ -1,0 +1,41 @@
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Menu } from "lucide-react";
+import StudentSidebar from "./StudentSidebar";
+import { useAuth } from "../../stores/useAuthStore";
+
+const StudentLayout = () => {
+	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const { user } = useAuth();
+
+	return (
+		<div className="h-screen overflow-hidden">
+			<StudentSidebar
+				open={sidebarOpen}
+				onClose={() => setSidebarOpen(false)}
+			/>
+
+			<div className="flex h-full flex-col lg:pl-60">
+				{/* Topbar */}
+				<header className="flex h-14 shrink-0 items-center justify-between border-b border-[var(--border)] bg-[var(--bg)] px-4">
+					<button
+						onClick={() => setSidebarOpen(true)}
+						className="rounded-lg p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] lg:hidden"
+					>
+						<Menu className="h-5 w-5" />
+					</button>
+					<span className="text-sm font-medium text-[var(--text-secondary)] capitalize">
+						{user?.role || "Student"} Dashboard
+					</span>
+				</header>
+
+				{/* Scrollable main content */}
+				<main className="flex-1 overflow-y-auto">
+					<Outlet />
+				</main>
+			</div>
+		</div>
+	);
+};
+
+export default StudentLayout;

@@ -28,6 +28,7 @@ export interface Student {
   university?: string;
   program?: string;
   year_of_study?: number;
+  wallet_balance: number;
   account_status: 'active' | 'suspended' | 'inactive';
   is_verified: boolean;
   created_at: string;
@@ -201,3 +202,51 @@ export interface LoginData {
   email: string;
   password: string;
 }
+
+// Wallet types
+export type WalletTransactionType = 'deposit' | 'withdrawal' | 'investment_debit' | 'investment_refund' | 'dividend_credit';
+export type WalletTransactionStatus = 'pending' | 'completed' | 'failed' | 'reversed';
+
+export interface WalletTransaction {
+  id: string;
+  student_id: string;
+  type: WalletTransactionType;
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  payment_reference?: string;
+  status: WalletTransactionStatus;
+  investment_id?: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WalletInfo {
+  balance: number;
+  recent_transactions: WalletTransaction[];
+}
+
+// Merchant Wallet types
+export type MerchantWalletTransactionType = 'investment_credit' | 'withdrawal' | 'dividend_debit';
+
+export interface MerchantWalletTransaction {
+  id: string;
+  merchant_id: string;
+  type: MerchantWalletTransactionType;
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  payment_reference?: string;
+  status: WalletTransactionStatus;
+  investment_id?: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MerchantWalletInfo {
+  balance: number;
+  recent_transactions: MerchantWalletTransaction[];
+}
+

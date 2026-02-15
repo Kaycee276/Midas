@@ -75,14 +75,14 @@ const InvestmentDetail = () => {
             <DollarSign className="h-5 w-5 text-[var(--text-tertiary)]" />
             <div>
               <p className="text-sm text-[var(--text-secondary)]">Amount Invested</p>
-              <p className="text-lg font-semibold text-[var(--text)]">${investment.amount.toLocaleString()}</p>
+              <p className="text-lg font-semibold text-[var(--text)]">{'\u20A6'}{investment.amount.toLocaleString()}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <TrendingUp className="h-5 w-5 text-[var(--text-tertiary)]" />
             <div>
               <p className="text-sm text-[var(--text-secondary)]">Current Value</p>
-              <p className="text-lg font-semibold text-[var(--text)]">${investment.current_value.toLocaleString()}</p>
+              <p className="text-lg font-semibold text-[var(--text)]">{'\u20A6'}{investment.current_value.toLocaleString()}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -94,7 +94,7 @@ const InvestmentDetail = () => {
           </div>
           <div>
             <p className="text-sm text-[var(--text-secondary)]">Shares</p>
-            <p className="text-lg font-semibold text-[var(--text)]">{investment.shares} @ ${investment.price_per_share}/share</p>
+            <p className="text-lg font-semibold text-[var(--text)]">{investment.shares} @ {'\u20A6'}{investment.price_per_share}/share</p>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ const InvestmentDetail = () => {
           <div className="mt-4 rounded-lg bg-[var(--bg-tertiary)] p-4">
             <p className="text-sm text-[var(--text-secondary)]">Returns</p>
             <p className={`text-lg font-bold ${investment.return_amount >= 0 ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
-              ${investment.return_amount.toLocaleString()} ({investment.return_percentage}%)
+              {'\u20A6'}{investment.return_amount.toLocaleString()} ({investment.return_percentage}%)
             </p>
           </div>
         )}
@@ -117,7 +117,7 @@ const InvestmentDetail = () => {
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Withdraw Investment">
         <p className="text-[var(--text-secondary)]">
-          Are you sure you want to withdraw your investment of ${investment.amount.toLocaleString()} from {investment.merchant?.business_name}?
+          Are you sure you want to withdraw your investment of {'\u20A6'}{investment.amount.toLocaleString()} from {investment.merchant?.business_name}?
         </p>
         <div className="mt-6 flex justify-end gap-3">
           <Button variant="ghost" onClick={() => setShowModal(false)}>Cancel</Button>

@@ -1,0 +1,10 @@
+node_modules/
+database/
+.env
+logs/
+uploads/
+*.log
+.DS_Store
+
+QUICKSTART.md
+STUDENT_API.md

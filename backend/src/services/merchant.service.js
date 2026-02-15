@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const merchantModel = require('../models/merchant.model');
+const emailService = require('./email.service');
 const { ConflictError, AuthenticationError, NotFoundError } = require('../utils/errors');
 const { ACCOUNT_STATUS, KYC_STATUS } = require('../types/enums');
 
@@ -27,17 +28,27 @@ class MerchantService {
       proximity_to_campus: merchantData.proximity_to_campus,
       account_status: ACCOUNT_STATUS.PENDING_KYC,
       kyc_status: KYC_STATUS.NOT_STARTED,
+      is_verified: false,
       terms_accepted: merchantData.terms_accepted,
       terms_accepted_at: new Date().toISOString()
     });
 
-    const token = this.generateToken(merchant.id, 'merchant');
+    try {
+      const verificationToken = this.generateVerificationToken(merchant.id);
+      await emailService.sendVerificationEmail(
+        merchant.email,
+        merchantData.owner_full_name || merchantData.business_name,
+        verificationToken
+      );
+    } catch (err) {
+      console.error('Verification email failed (merchant created):', err.message);
+    }
 
     const { password_hash, ...merchantWithoutPassword } = merchant;
 
     return {
       merchant: merchantWithoutPassword,
-      token
+      message: 'Registration successful. Please check your email to verify your account.'
     };
   }
 
@@ -50,6 +61,10 @@ class MerchantService {
     const isPasswordValid = await bcrypt.compare(password, merchant.password_hash);
     if (!isPasswordValid) {
       throw new AuthenticationError('Invalid email or password');
+    }
+
+    if (merchant.is_verified === false) {
+      throw new AuthenticationError('Please verify your email before logging in');
     }
 
     await merchantModel.updateLastLogin(merchant.id);
@@ -91,6 +106,14 @@ class MerchantService {
       { id: userId, type },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
+  }
+
+  generateVerificationToken(userId) {
+    return jwt.sign(
+      { id: userId, type: 'email_verify', userType: 'merchant' },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
     );
   }
 }

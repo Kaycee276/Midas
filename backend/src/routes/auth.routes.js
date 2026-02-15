@@ -39,4 +39,8 @@ router.patch(
   authController.updateProfile
 );
 
+router.get('/verify-email', authController.verifyEmail);
+
+router.post('/resend-verification', authController.resendVerification);
+
 module.exports = router;

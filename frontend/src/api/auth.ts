@@ -26,3 +26,10 @@ export const getStudentProfile = () =>
 
 export const updateStudentProfile = (data: Partial<StudentRegisterData>) =>
   client.patch<ApiResponse<{ student: Student }>>('/students/profile', data);
+
+// Email verification
+export const verifyEmail = (token: string) =>
+  client.get<ApiResponse<null>>('/auth/verify-email', { params: { token } });
+
+export const resendVerification = (email: string, type: 'merchant' | 'student') =>
+  client.post<ApiResponse<null>>('/auth/resend-verification', { email, type });

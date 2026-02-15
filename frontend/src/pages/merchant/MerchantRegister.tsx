@@ -1,9 +1,8 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Store } from 'lucide-react';
+import { Store, Mail } from 'lucide-react';
 import { merchantRegister } from '../../api/auth';
-import { useAuth } from '../../stores/useAuthStore';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
 import PasswordInput from '../../components/ui/PasswordInput';
@@ -32,8 +31,7 @@ const MerchantRegister = () => {
     proximity_to_campus: '' as ProximityType, terms_accepted: false,
   });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const [registered, setRegistered] = useState(false);
 
   const update = (field: string, value: string | boolean) => setForm((p) => ({ ...p, [field]: value }));
 
@@ -42,10 +40,8 @@ const MerchantRegister = () => {
     if (!form.terms_accepted) return toast.error('You must accept the terms');
     setLoading(true);
     try {
-      const { data } = await merchantRegister(form);
-      login(data.data.token, 'merchant', data.data.merchant);
-      toast.success('Registration successful!');
-      navigate('/merchant/dashboard');
+      await merchantRegister(form);
+      setRegistered(true);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Registration failed';
       toast.error(msg);
@@ -53,6 +49,24 @@ const MerchantRegister = () => {
       setLoading(false);
     }
   };
+
+  if (registered) {
+    return (
+      <div className="flex min-h-screen items-start justify-center px-4 py-12">
+        <Card className="w-full max-w-md text-center">
+          <Mail className="mx-auto h-12 w-12 text-[var(--accent-primary)]" />
+          <h2 className="mt-4 text-xl font-bold text-[var(--text)]">Check Your Email</h2>
+          <p className="mt-2 text-[var(--text-secondary)]">
+            We've sent a verification link to <strong>{form.email}</strong>. Please check your inbox and click the link to verify your account.
+          </p>
+          <p className="mt-4 text-sm text-[var(--text-tertiary)]">
+            Didn't receive the email? Check your spam folder or{' '}
+            <Link to="/merchant/login" className="text-[var(--accent-primary)] hover:underline">try logging in</Link> to resend.
+          </p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-start justify-center px-4 py-12">

@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const studentModel = require('../models/student.model');
+const emailService = require('./email.service');
 const { ConflictError, AuthenticationError, NotFoundError } = require('../utils/errors');
 
 class StudentService {
@@ -36,13 +37,22 @@ class StudentService {
       terms_accepted_at: new Date().toISOString()
     });
 
-    const token = this.generateToken(student.id, 'student');
+    try {
+      const verificationToken = this.generateVerificationToken(student.id);
+      await emailService.sendVerificationEmail(
+        student.email,
+        studentData.full_name,
+        verificationToken
+      );
+    } catch (err) {
+      console.error('Verification email failed (student created):', err.message);
+    }
 
     const { password_hash, ...studentWithoutPassword } = student;
 
     return {
       student: studentWithoutPassword,
-      token
+      message: 'Registration successful. Please check your email to verify your account.'
     };
   }
 
@@ -59,6 +69,10 @@ class StudentService {
     const isPasswordValid = await bcrypt.compare(password, student.password_hash);
     if (!isPasswordValid) {
       throw new AuthenticationError('Invalid email or password');
+    }
+
+    if (student.is_verified === false) {
+      throw new AuthenticationError('Please verify your email before logging in');
     }
 
     await studentModel.updateLastLogin(student.id);
@@ -100,6 +114,14 @@ class StudentService {
       { id: userId, type },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    );
+  }
+
+  generateVerificationToken(userId) {
+    return jwt.sign(
+      { id: userId, type: 'email_verify', userType: 'student' },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
     );
   }
 }

@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
+import AdminLayout from './components/layout/AdminLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
+import VerifyEmail from './pages/VerifyEmail';
 
 import MerchantLogin from './pages/merchant/MerchantLogin';
 import MerchantRegister from './pages/merchant/MerchantRegister';
@@ -34,6 +36,9 @@ const App = () => (
         <Route path="/merchants" element={<MerchantList />} />
         <Route path="/merchants/:id" element={<MerchantDetail />} />
 
+        {/* Email verification */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
+
         {/* Merchant auth */}
         <Route path="/merchant/login" element={<MerchantLogin />} />
         <Route path="/merchant/register" element={<MerchantRegister />} />
@@ -56,12 +61,14 @@ const App = () => (
         {/* Admin auth */}
         <Route path="/admin/login" element={<AdminLogin />} />
 
-        {/* Admin protected */}
-        <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/kyc/:id" element={<ProtectedRoute role="admin"><KYCReview /></ProtectedRoute>} />
-
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
+      </Route>
+
+      {/* Admin protected — self-contained layout */}
+      <Route element={<AdminLayout />}>
+        <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/kyc/:id" element={<ProtectedRoute role="admin"><KYCReview /></ProtectedRoute>} />
       </Route>
     </Routes>
   </BrowserRouter>

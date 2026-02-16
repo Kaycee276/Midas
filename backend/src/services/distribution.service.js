@@ -4,6 +4,8 @@ const platformWalletModel = require('../models/platform-wallet.model');
 const walletModel = require('../models/wallet.model');
 const merchantWalletModel = require('../models/merchant-wallet.model');
 const investmentModel = require('../models/investment.model');
+const studentModel = require('../models/student.model');
+const merchantModel = require('../models/merchant.model');
 const { NotFoundError, ValidationError } = require('../utils/errors');
 const {
 	REVENUE_REPORT_STATUS,
@@ -47,6 +49,16 @@ class DistributionService {
 		// Calculate total shares
 		const totalShares = activeInvestments.reduce((sum, inv) => sum + Number(inv.shares), 0);
 
+		// Verify merchant has sufficient balance for distribution
+		const merchantRecord = await merchantModel.findById(report.merchant_id);
+		const merchantBalance = parseFloat(merchantRecord.wallet_balance) || 0;
+		const requiredDebit = investorPool + platformShare;
+		if (merchantBalance < requiredDebit) {
+			throw new ValidationError(
+				`Insufficient merchant balance for distribution. Required: ₦${requiredDebit}, Available: ₦${merchantBalance}`
+			);
+		}
+
 		// 4. Create distribution record
 		const distribution = await distributionModel.create({
 			revenue_report_id: revenueReportId,
@@ -66,14 +78,20 @@ class DistributionService {
 
 				if (payoutAmount <= 0) continue;
 
+				// Get balance before credit
+				const student = await studentModel.findById(investment.student_id);
+				const studentBalanceBefore = parseFloat(student.wallet_balance) || 0;
+
 				// Credit student wallet
-				await walletModel.creditBalance(investment.student_id, payoutAmount);
+				const studentNewBalance = await walletModel.creditBalance(investment.student_id, payoutAmount);
 
 				// Record student wallet transaction
 				await walletModel.createTransaction({
 					student_id: investment.student_id,
 					type: WALLET_TRANSACTION_TYPE.DIVIDEND_CREDIT,
 					amount: payoutAmount,
+					balance_before: studentBalanceBefore,
+					balance_after: studentNewBalance,
 					status: WALLET_TRANSACTION_STATUS.COMPLETED,
 					investment_id: investment.id,
 					description: `Dividend from ${report.merchant?.business_name || 'merchant'}`
@@ -104,13 +122,17 @@ class DistributionService {
 
 			// 6. Debit merchant wallet for investor + platform portion
 			const merchantDebit = investorPool + platformShare;
-			await merchantWalletModel.deductBalance(report.merchant_id, merchantDebit);
+			const merchant = await merchantModel.findById(report.merchant_id);
+			const merchantBalanceBefore = parseFloat(merchant.wallet_balance) || 0;
+			const merchantNewBalance = await merchantWalletModel.deductBalance(report.merchant_id, merchantDebit);
 
 			// Record merchant wallet transaction
 			await merchantWalletModel.createTransaction({
 				merchant_id: report.merchant_id,
 				type: MERCHANT_WALLET_TRANSACTION_TYPE.DIVIDEND_DEBIT,
 				amount: merchantDebit,
+				balance_before: merchantBalanceBefore,
+				balance_after: merchantNewBalance,
 				status: WALLET_TRANSACTION_STATUS.COMPLETED,
 				description: `Profit distribution - investor shares + platform commission`
 			});

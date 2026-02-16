@@ -54,32 +54,32 @@ const StudentDashboard = () => {
 			icon: Wallet,
 			label: "Wallet Balance",
 			value: `\u20A6${walletBalance.toLocaleString()}`,
-			color: "text-[var(--accent-primary)]",
+			color: "text-(--accent-primary)",
 			link: "/student/wallet",
 		},
 		{
 			icon: DollarSign,
 			label: "Total Invested",
 			value: `\u20A6${(summary?.total_invested || 0).toLocaleString()}`,
-			color: "text-[var(--accent-primary)]",
+			color: "text-(--accent-primary)",
 		},
 		{
 			icon: PieChart,
 			label: "Portfolio Value",
 			value: `\u20A6${(summary?.current_portfolio_value || 0).toLocaleString()}`,
-			color: "text-[var(--success)]",
+			color: "text-(--success)",
 		},
 		{
 			icon: TrendingUp,
 			label: "Total Returns",
 			value: `\u20A6${(summary?.total_returns || 0).toLocaleString()}`,
-			color: "text-[var(--info)]",
+			color: "text-(--info)",
 		},
 		{
 			icon: Activity,
 			label: "Active Investments",
 			value: String(summary?.active_investments || 0),
-			color: "text-[var(--warning)]",
+			color: "text-(--warning)",
 		},
 	];
 
@@ -87,10 +87,10 @@ const StudentDashboard = () => {
 		<div className="mx-auto max-w-6xl px-4 py-8">
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="text-2xl font-bold text-[var(--text)]">
+					<h1 className="text-2xl font-bold text-(--text)">
 						Welcome, {student.full_name}
 					</h1>
-					<p className="mt-1 text-[var(--text-secondary)]">
+					<p className="mt-1 text-(--text-secondary)">
 						Your investment overview
 					</p>
 				</div>
@@ -108,10 +108,10 @@ const StudentDashboard = () => {
 							<div className="flex items-center gap-3">
 								<s.icon className={`h-8 w-8 ${s.color}`} />
 								<div>
-									<p className="text-2xl font-bold text-[var(--text)]">
+									<p className="text-2xl font-bold text-(--text)">
 										{s.value}
 									</p>
-									<p className="text-xs text-[var(--text-secondary)]">
+									<p className="text-xs text-(--text-secondary)">
 										{s.label}
 									</p>
 								</div>
@@ -130,19 +130,19 @@ const StudentDashboard = () => {
 
 			<div className="mt-8">
 				<div className="flex items-center justify-between">
-					<h2 className="text-lg font-semibold text-[var(--text)]">
+					<h2 className="text-lg font-semibold text-(--text)">
 						Recent Investments
 					</h2>
 					<Link
 						to="/student/portfolio"
-						className="text-sm text-[var(--accent-primary)] hover:underline"
+						className="text-sm text-(--accent-primary) hover:underline"
 					>
 						View All
 					</Link>
 				</div>
 				{investments.length === 0 ? (
 					<Card className="mt-4 text-center">
-						<p className="text-[var(--text-secondary)]">No investments yet.</p>
+						<p className="text-(--text-secondary)">No investments yet.</p>
 						<Link to="/merchants" className="mt-2 inline-block">
 							<Button variant="outline" size="sm">
 								Browse Merchants
@@ -153,17 +153,17 @@ const StudentDashboard = () => {
 					<div className="mt-4 space-y-3">
 						{investments.slice(0, 5).map((inv) => (
 							<Link key={inv.id} to={`/student/investments/${inv.id}`}>
-								<Card className="flex items-center justify-between transition-colors hover:border-[var(--accent-primary)]">
+								<Card className="flex items-center justify-between transition-colors hover:border-(--accent-primary)">
 									<div>
-										<p className="font-medium text-[var(--text)]">
+										<p className="font-medium text-(--text)">
 											{inv.merchant?.business_name || "Merchant"}
 										</p>
-										<p className="text-sm text-[var(--text-secondary)]">
+										<p className="text-sm text-(--text-secondary)">
 											{inv.shares} shares at {'\u20A6'}{inv.price_per_share}/share
 										</p>
 									</div>
 									<div className="text-right">
-										<p className="font-semibold text-[var(--text)]">
+										<p className="font-semibold text-(--text)">
 											{'\u20A6'}{inv.current_value.toLocaleString()}
 										</p>
 										<Badge

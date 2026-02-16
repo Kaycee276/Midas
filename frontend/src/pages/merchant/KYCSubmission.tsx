@@ -74,9 +74,9 @@ const KYCSubmission = () => {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8">
         <Card className="text-center">
-          <CheckCircle className="mx-auto h-16 w-16 text-[var(--success)]" />
-          <h1 className="mt-4 text-2xl font-bold text-[var(--text)]">KYC Verified</h1>
-          <p className="mt-2 text-[var(--text-secondary)]">
+          <CheckCircle className="mx-auto h-16 w-16 text-(--success)" />
+          <h1 className="mt-4 text-2xl font-bold text-(--text)">KYC Verified</h1>
+          <p className="mt-2 text-(--text-secondary)">
             Your identity and business documents have been verified. No further action is needed.
           </p>
           <Badge variant="success" className="mt-4">Approved</Badge>
@@ -95,9 +95,9 @@ const KYCSubmission = () => {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8">
         <Card className="text-center">
-          <Clock className="mx-auto h-16 w-16 text-[var(--warning)]" />
-          <h1 className="mt-4 text-2xl font-bold text-[var(--text)]">KYC Under Review</h1>
-          <p className="mt-2 text-[var(--text-secondary)]">
+          <Clock className="mx-auto h-16 w-16 text-(--warning)" />
+          <h1 className="mt-4 text-2xl font-bold text-(--text)">KYC Under Review</h1>
+          <p className="mt-2 text-(--text-secondary)">
             Your documents have been submitted and are being reviewed. We'll notify you once the review is complete.
           </p>
           <Badge variant="warning" className="mt-4">Under Review</Badge>
@@ -114,27 +114,27 @@ const KYCSubmission = () => {
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-6 flex items-center gap-3">
-        <Shield className="h-8 w-8 text-[var(--accent-primary)]" />
+        <Shield className="h-8 w-8 text-(--accent-primary)" />
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text)]">KYC Verification</h1>
-          <p className="text-sm text-[var(--text-secondary)]">Submit your documents for verification</p>
+          <h1 className="text-2xl font-bold text-(--text)">KYC Verification</h1>
+          <p className="text-sm text-(--text-secondary)">Submit your documents for verification</p>
         </div>
       </div>
 
       {kyc?.status === 'rejected' && kyc.rejection_reason && (
-        <Card className="mb-6 border-[var(--error)]/30 bg-[var(--error)]/5">
-          <p className="text-sm font-medium text-[var(--error)]">Rejection reason: {kyc.rejection_reason}</p>
+        <Card className="mb-6 border-(--error)/30 bg-(--error)/5">
+          <p className="text-sm font-medium text-(--error)">Rejection reason: {kyc.rejection_reason}</p>
         </Card>
       )}
       {kyc?.status === 'resubmission_required' && kyc.rejection_reason && (
-        <Card className="mb-6 border-[var(--warning)]/30 bg-[var(--warning)]/5">
-          <p className="text-sm font-medium text-[var(--warning)]">Resubmission required: {kyc.rejection_reason}</p>
+        <Card className="mb-6 border-(--warning)/30 bg-(--warning)/5">
+          <p className="text-sm font-medium text-(--warning)">Resubmission required: {kyc.rejection_reason}</p>
         </Card>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <h3 className="mb-4 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Identification Numbers</h3>
+          <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Identification Numbers</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <Input label="Student ID Number" value={form.student_id_number} onChange={(e) => updateField('student_id_number', e.target.value)} placeholder="Optional" />
             <Input label="National ID Number" value={form.national_id_number} onChange={(e) => updateField('national_id_number', e.target.value)} placeholder="Required if no Student ID" />
@@ -144,7 +144,7 @@ const KYCSubmission = () => {
         </Card>
 
         <Card>
-          <h3 className="mb-4 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Business Details</h3>
+          <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Business Details</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <Input label="Years in Operation" type="number" min="0" max="100" value={form.years_in_operation} onChange={(e) => updateField('years_in_operation', e.target.value)} />
             <Input label="Avg Monthly Revenue (₦)" type="number" min="0" value={form.average_monthly_revenue} onChange={(e) => updateField('average_monthly_revenue', e.target.value)} />
@@ -152,7 +152,7 @@ const KYCSubmission = () => {
         </Card>
 
         <Card>
-          <h3 className="mb-4 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Documents</h3>
+          <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Documents</h3>
           <div className="space-y-4">
             <FileUpload label="Student ID Document" value={files.student_id_document} onChange={(f) => updateFile('student_id_document', f)} />
             <FileUpload label="National ID Document" value={files.national_id_document} onChange={(f) => updateFile('national_id_document', f)} />

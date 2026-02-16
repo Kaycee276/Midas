@@ -8,6 +8,9 @@ const logger = require("../utils/logger");
 
 const app = express();
 
+// Trust proxy (required behind reverse proxies like Render)
+app.set("trust proxy", 1);
+
 // Security middleware
 app.use(helmet());
 

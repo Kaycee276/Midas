@@ -32,51 +32,51 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-40 border-b border-(--border) bg-(--bg)/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <Link to="/" className="text-xl font-bold text-[var(--accent-primary)]">Midas</Link>
+        <Link to="/" className="text-xl font-bold text-(--accent-primary)">Midas</Link>
 
         {/* Desktop */}
         <div className="hidden items-center gap-6 md:flex">
-          <Link to="/merchants" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">
+          <Link to="/merchants" className="text-sm text-(--text-secondary) hover:text-(--text) transition-colors">
             Browse Merchants
           </Link>
           {isAuthenticated ? (
             <>
-              <Link to={getDashboardLink()} className="text-sm text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors">
+              <Link to={getDashboardLink()} className="text-sm text-(--text-secondary) hover:text-(--text) transition-colors">
                 Dashboard
               </Link>
               <div className="flex items-center gap-3">
-                <Link to={`/${user?.role}/profile`} className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+                <Link to={`/${user?.role}/profile`} className="flex items-center gap-2 text-sm text-(--text-secondary) hover:text-(--text)">
                   <User className="h-4 w-4" />
                   {getUserName()}
                 </Link>
-                <button onClick={handleLogout} className="rounded-lg p-2 hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]">
+                <button onClick={handleLogout} className="rounded-lg p-2 hover:bg-(--bg-tertiary) text-(--text-secondary)">
                   <LogOut className="h-4 w-4" />
                 </button>
               </div>
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Link to="/merchant/login" className="rounded-lg px-3 py-1.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]">
+              <Link to="/merchant/login" className="rounded-lg px-3 py-1.5 text-sm text-(--text-secondary) hover:bg-(--bg-tertiary)">
                 Merchant Login
               </Link>
-              <Link to="/student/login" className="rounded-lg bg-[var(--accent-primary)] px-3 py-1.5 text-sm text-white hover:bg-[var(--accent-dark)]">
+              <Link to="/student/login" className="rounded-lg bg-(--accent-primary) px-3 py-1.5 text-sm text-white hover:bg-(--accent-dark)">
                 Student Login
               </Link>
             </div>
           )}
-          <button onClick={toggleTheme} className="rounded-lg p-2 hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]">
+          <button onClick={toggleTheme} className="rounded-lg p-2 hover:bg-(--bg-tertiary) text-(--text-secondary)">
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
         </div>
 
         {/* Mobile toggle */}
         <div className="flex items-center gap-2 md:hidden">
-          <button onClick={toggleTheme} className="rounded-lg p-2 hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]">
+          <button onClick={toggleTheme} className="rounded-lg p-2 hover:bg-(--bg-tertiary) text-(--text-secondary)">
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="rounded-lg p-2 hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]">
+          <button onClick={() => setMobileOpen(!mobileOpen)} className="rounded-lg p-2 hover:bg-(--bg-tertiary) text-(--text-secondary)">
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -84,19 +84,19 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-[var(--border)] bg-[var(--bg)] px-4 py-4 md:hidden">
+        <div className="border-t border-(--border) bg-(--bg) px-4 py-4 md:hidden">
           <div className="flex flex-col gap-3">
-            <Link to="/merchants" onClick={() => setMobileOpen(false)} className="text-sm text-[var(--text-secondary)]">Browse Merchants</Link>
+            <Link to="/merchants" onClick={() => setMobileOpen(false)} className="text-sm text-(--text-secondary)">Browse Merchants</Link>
             {isAuthenticated ? (
               <>
-                <Link to={getDashboardLink()} onClick={() => setMobileOpen(false)} className="text-sm text-[var(--text-secondary)]">Dashboard</Link>
-                <Link to={`/${user?.role}/profile`} onClick={() => setMobileOpen(false)} className="text-sm text-[var(--text-secondary)]">{getUserName()}</Link>
-                <button onClick={handleLogout} className="text-left text-sm text-[var(--error)]">Log Out</button>
+                <Link to={getDashboardLink()} onClick={() => setMobileOpen(false)} className="text-sm text-(--text-secondary)">Dashboard</Link>
+                <Link to={`/${user?.role}/profile`} onClick={() => setMobileOpen(false)} className="text-sm text-(--text-secondary)">{getUserName()}</Link>
+                <button onClick={handleLogout} className="text-left text-sm text-(--error)">Log Out</button>
               </>
             ) : (
               <>
-                <Link to="/merchant/login" onClick={() => setMobileOpen(false)} className="text-sm text-[var(--text-secondary)]">Merchant Login</Link>
-                <Link to="/student/login" onClick={() => setMobileOpen(false)} className="text-sm text-[var(--text-secondary)]">Student Login</Link>
+                <Link to="/merchant/login" onClick={() => setMobileOpen(false)} className="text-sm text-(--text-secondary)">Merchant Login</Link>
+                <Link to="/student/login" onClick={() => setMobileOpen(false)} className="text-sm text-(--text-secondary)">Student Login</Link>
               </>
             )}
           </div>

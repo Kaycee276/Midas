@@ -34,16 +34,16 @@ const AdminSidebar = ({ open, onClose }: AdminSidebarProps) => {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-60 flex-col border-r border-[var(--border)] bg-[var(--bg)] transition-transform duration-200 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-60 flex-col border-r border-(--border) bg-(--bg) transition-transform duration-200 lg:translate-x-0 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand */}
-        <div className="flex h-14 items-center justify-between border-b border-[var(--border)] px-5">
-          <span className="text-lg font-bold text-[var(--accent-primary)]">Midas</span>
+        <div className="flex h-14 items-center justify-between border-b border-(--border) px-5">
+          <span className="text-lg font-bold text-(--accent-primary)">Midas</span>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] lg:hidden"
+            className="rounded-lg p-1.5 text-(--text-secondary) hover:bg-(--bg-tertiary) lg:hidden"
           >
             <X className="h-4 w-4" />
           </button>
@@ -59,8 +59,8 @@ const AdminSidebar = ({ open, onClose }: AdminSidebarProps) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]'
-                    : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text)]'
+                    ? 'bg-(--accent-primary)/10 text-(--accent-primary)'
+                    : 'text-(--text-secondary) hover:bg-(--bg-tertiary) hover:text-(--text)'
                 }`
               }
             >
@@ -71,10 +71,10 @@ const AdminSidebar = ({ open, onClose }: AdminSidebarProps) => {
         </nav>
 
         {/* Bottom */}
-        <div className="border-t border-[var(--border)] p-3 space-y-1">
+        <div className="border-t border-(--border) p-3 space-y-1">
           <button
             onClick={toggleTheme}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text)] transition-colors"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-(--text-secondary) hover:bg-(--bg-tertiary) hover:text-(--text) transition-colors"
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}

@@ -4,7 +4,7 @@ import {
 	BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell,
 	XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
-import { getPendingKYC, getDashboardStats, getAnalytics, getPendingRevenue, approveRevenue, rejectRevenue, distributeRevenue } from "../../api/admin";
+import { getPendingKYC, getDashboardStats, getAnalytics, getPendingRevenue, approveRevenue, rejectRevenue } from "../../api/admin";
 import type { KYC, Pagination, DashboardStats, AdminAnalytics, RevenueReport } from "../../types";
 import Card from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
@@ -100,19 +100,6 @@ const AdminDashboard = () => {
 		}
 	};
 
-	const handleDistribute = async (id: string) => {
-		setActionLoading(id);
-		try {
-			await distributeRevenue(id);
-			setPendingReports(prev => prev.filter(r => r.id !== id));
-			toast.success("Profit distributed successfully");
-		} catch {
-			toast.error("Failed to distribute profit");
-		} finally {
-			setActionLoading(null);
-		}
-	};
-
 	const pnl = stats
 		? stats.investments.total_current_value - stats.investments.total_invested
 		: 0;
@@ -141,8 +128,8 @@ const AdminDashboard = () => {
 		<div className="p-4 sm:p-6">
 			{/* Header */}
 			<div className="mb-6">
-				<h1 className="text-xl font-bold text-[var(--text)]">Dashboard</h1>
-				<p className="text-sm text-[var(--text-tertiary)]">{today}</p>
+				<h1 className="text-xl font-bold text-(--text)">Dashboard</h1>
+				<p className="text-sm text-(--text-tertiary)">{today}</p>
 			</div>
 
 			{statsLoading ? (
@@ -167,7 +154,7 @@ const AdminDashboard = () => {
 					{analytics && (
 						<div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
 							<Card padding={false} className="p-4">
-								<h2 className="mb-4 text-sm font-semibold text-[var(--text)]">
+								<h2 className="mb-4 text-sm font-semibold text-(--text)">
 									Monthly Investment Volume
 								</h2>
 								<ResponsiveContainer width="100%" height={250}>
@@ -177,7 +164,7 @@ const AdminDashboard = () => {
 										<YAxis tick={{ fontSize: 12, fill: "var(--text-secondary)" }} />
 										<Tooltip
 											contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-											formatter={(value: number) => [`\u20A6${value.toLocaleString()}`, "Amount"]}
+											formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`, "Amount"]}
 										/>
 										<Bar dataKey="total_amount" fill="#6366f1" radius={[4, 4, 0, 0]} />
 									</BarChart>
@@ -185,7 +172,7 @@ const AdminDashboard = () => {
 							</Card>
 
 							<Card padding={false} className="p-4">
-								<h2 className="mb-4 text-sm font-semibold text-[var(--text)]">
+								<h2 className="mb-4 text-sm font-semibold text-(--text)">
 									Revenue & Distribution Trend
 								</h2>
 								<ResponsiveContainer width="100%" height={250}>
@@ -195,7 +182,7 @@ const AdminDashboard = () => {
 										<YAxis tick={{ fontSize: 12, fill: "var(--text-secondary)" }} />
 										<Tooltip
 											contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-											formatter={(value: number) => [`\u20A6${value.toLocaleString()}`]}
+											formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`]}
 										/>
 										<Area type="monotone" dataKey="total_revenue" stackId="1" stroke="#22c55e" fill="#22c55e" fillOpacity={0.3} name="Revenue" />
 										<Area type="monotone" dataKey="total_distributed" stackId="2" stroke="#6366f1" fill="#6366f1" fillOpacity={0.3} name="Distributed" />
@@ -210,7 +197,7 @@ const AdminDashboard = () => {
 					{analytics && (
 						<div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
 							<Card padding={false} className="p-4">
-								<h2 className="mb-4 text-sm font-semibold text-[var(--text)]">
+								<h2 className="mb-4 text-sm font-semibold text-(--text)">
 									Investments by Business Type
 								</h2>
 								{pieData.length > 0 ? (
@@ -223,7 +210,7 @@ const AdminDashboard = () => {
 												cx="50%"
 												cy="50%"
 												outerRadius={90}
-												label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+												label={({ name, percent }) => `${name} (${((percent ?? 0) * 100).toFixed(0)}%)`}
 											>
 												{pieData.map((_, idx) => (
 													<Cell key={idx} fill={CHART_COLORS[idx % CHART_COLORS.length]} />
@@ -231,17 +218,17 @@ const AdminDashboard = () => {
 											</Pie>
 											<Tooltip
 												contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-												formatter={(value: number) => [`\u20A6${value.toLocaleString()}`]}
+												formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`]}
 											/>
 										</PieChart>
 									</ResponsiveContainer>
 								) : (
-									<p className="py-12 text-center text-sm text-[var(--text-secondary)]">No investment data yet</p>
+									<p className="py-12 text-center text-sm text-(--text-secondary)">No investment data yet</p>
 								)}
 							</Card>
 
 							<Card padding={false} className="p-4">
-								<h2 className="mb-4 text-sm font-semibold text-[var(--text)]">
+								<h2 className="mb-4 text-sm font-semibold text-(--text)">
 									Top 5 Merchants by Capital Raised
 								</h2>
 								{topMerchantsData.length > 0 ? (
@@ -252,13 +239,13 @@ const AdminDashboard = () => {
 											<YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "var(--text-secondary)" }} width={100} />
 											<Tooltip
 												contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-												formatter={(value: number) => [`\u20A6${value.toLocaleString()}`, "Raised"]}
+												formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`, "Raised"]}
 											/>
 											<Bar dataKey="total_raised" fill="#22c55e" radius={[0, 4, 4, 0]} />
 										</BarChart>
 									</ResponsiveContainer>
 								) : (
-									<p className="py-12 text-center text-sm text-[var(--text-secondary)]">No merchant data yet</p>
+									<p className="py-12 text-center text-sm text-(--text-secondary)">No merchant data yet</p>
 								)}
 							</Card>
 						</div>
@@ -268,7 +255,7 @@ const AdminDashboard = () => {
 					<div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
 						{/* Merchant Status */}
 						<Card padding={false} className="p-4">
-							<h2 className="mb-3 text-sm font-semibold text-[var(--text)]">
+							<h2 className="mb-3 text-sm font-semibold text-(--text)">
 								Merchant Status
 							</h2>
 							<div className="space-y-2">
@@ -283,14 +270,14 @@ const AdminDashboard = () => {
 									] as const
 								).map(({ label, count, color }) => (
 									<div key={label} className="flex items-center gap-2 text-xs">
-										<span className="w-24 shrink-0 text-[var(--text-secondary)]">{label}</span>
-										<div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--bg-tertiary)]">
+										<span className="w-24 shrink-0 text-(--text-secondary)">{label}</span>
+										<div className="h-2 flex-1 overflow-hidden rounded-full bg-(--bg-tertiary)">
 											<div
 												className={`h-full rounded-full ${color}`}
 												style={{ width: stats.merchants.total ? `${(count / stats.merchants.total) * 100}%` : "0%" }}
 											/>
 										</div>
-										<span className="w-6 text-right font-medium text-[var(--text)]">{count}</span>
+										<span className="w-6 text-right font-medium text-(--text)">{count}</span>
 									</div>
 								))}
 							</div>
@@ -298,7 +285,7 @@ const AdminDashboard = () => {
 
 						{/* Students + KYC Pipeline */}
 						<Card padding={false} className="p-4">
-							<h2 className="mb-3 text-sm font-semibold text-[var(--text)]">Students</h2>
+							<h2 className="mb-3 text-sm font-semibold text-(--text)">Students</h2>
 							<div className="space-y-1.5 text-xs">
 								{([
 									{ label: "Active", count: stats.students.active },
@@ -306,12 +293,12 @@ const AdminDashboard = () => {
 									{ label: "Inactive", count: stats.students.inactive },
 								] as const).map(({ label, count }) => (
 									<div key={label} className="flex justify-between">
-										<span className="text-[var(--text-secondary)]">{label}</span>
-										<span className="font-medium text-[var(--text)]">{count}</span>
+										<span className="text-(--text-secondary)">{label}</span>
+										<span className="font-medium text-(--text)">{count}</span>
 									</div>
 								))}
 							</div>
-							<h2 className="mb-2 mt-4 text-sm font-semibold text-[var(--text)]">KYC Pipeline</h2>
+							<h2 className="mb-2 mt-4 text-sm font-semibold text-(--text)">KYC Pipeline</h2>
 							{stats.kyc.total > 0 && (
 								<div className="mb-2 flex h-3 overflow-hidden rounded-full">
 									<div className="bg-green-500" style={{ width: `${(stats.kyc.approved / stats.kyc.total) * 100}%` }} />
@@ -330,7 +317,7 @@ const AdminDashboard = () => {
 
 						{/* Investments */}
 						<Card padding={false} className="p-4">
-							<h2 className="mb-3 text-sm font-semibold text-[var(--text)]">Investments</h2>
+							<h2 className="mb-3 text-sm font-semibold text-(--text)">Investments</h2>
 							<div className="space-y-2 text-xs">
 								{([
 									{ label: "Total Invested", value: `\u20A6${stats.investments.total_invested.toLocaleString()}` },
@@ -341,8 +328,8 @@ const AdminDashboard = () => {
 									{ label: "Total", value: String(stats.investments.total) },
 								] as { label: string; value: string; color?: string }[]).map(({ label, value, color }) => (
 									<div key={label} className="flex justify-between">
-										<span className="text-[var(--text-secondary)]">{label}</span>
-										<span className={`font-medium ${color || "text-[var(--text)]"}`}>{value}</span>
+										<span className="text-(--text-secondary)">{label}</span>
+										<span className={`font-medium ${color || "text-(--text)"}`}>{value}</span>
 									</div>
 								))}
 							</div>
@@ -353,17 +340,17 @@ const AdminDashboard = () => {
 					<div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
 						{/* Recent Distributions */}
 						<div>
-							<h2 className="mb-3 text-sm font-semibold text-[var(--text)]">Recent Distributions</h2>
+							<h2 className="mb-3 text-sm font-semibold text-(--text)">Recent Distributions</h2>
 							{(analytics?.recent_distributions || []).length === 0 ? (
 								<Card className="py-8 text-center">
-									<p className="text-sm text-[var(--text-secondary)]">No distributions yet</p>
+									<p className="text-sm text-(--text-secondary)">No distributions yet</p>
 								</Card>
 							) : (
 								<Card padding={false}>
 									<div className="overflow-x-auto">
 										<table className="w-full text-sm">
 											<thead>
-												<tr className="border-b border-[var(--border)] text-left text-xs text-[var(--text-tertiary)]">
+												<tr className="border-b border-(--border) text-left text-xs text-(--text-tertiary)">
 													<th className="px-4 py-3 font-medium">Merchant</th>
 													<th className="px-4 py-3 font-medium">Profit</th>
 													<th className="px-4 py-3 font-medium">Status</th>
@@ -372,15 +359,15 @@ const AdminDashboard = () => {
 											</thead>
 											<tbody>
 												{(analytics?.recent_distributions || []).map((dist) => (
-													<tr key={dist.id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--bg-tertiary)] transition-colors">
-														<td className="px-4 py-3 text-[var(--text)]">{dist.merchant?.business_name || "N/A"}</td>
-														<td className="px-4 py-3 text-[var(--text)]">{"\u20A6"}{Number(dist.total_profit).toLocaleString()}</td>
+													<tr key={dist.id} className="border-b border-(--border) last:border-0 hover:bg-(--bg-tertiary) transition-colors">
+														<td className="px-4 py-3 text-(--text)">{dist.merchant?.business_name || "N/A"}</td>
+														<td className="px-4 py-3 text-(--text)">{"\u20A6"}{Number(dist.total_profit).toLocaleString()}</td>
 														<td className="px-4 py-3">
 															<Badge variant={dist.status === "completed" ? "success" : dist.status === "failed" ? "error" : "warning"}>
 																{dist.status}
 															</Badge>
 														</td>
-														<td className="px-4 py-3 text-[var(--text-secondary)]">
+														<td className="px-4 py-3 text-(--text-secondary)">
 															{dist.distributed_at ? new Date(dist.distributed_at).toLocaleDateString() : "Pending"}
 														</td>
 													</tr>
@@ -394,19 +381,19 @@ const AdminDashboard = () => {
 
 						{/* Pending Revenue Reports */}
 						<div>
-							<h2 className="mb-3 text-sm font-semibold text-[var(--text)]">
+							<h2 className="mb-3 text-sm font-semibold text-(--text)">
 								Pending Revenue Reports {pendingReports.length > 0 && <Badge variant="warning" className="ml-2">{pendingReports.length}</Badge>}
 							</h2>
 							{pendingReports.length === 0 ? (
 								<Card className="py-8 text-center">
-									<p className="text-sm text-[var(--text-secondary)]">No pending revenue reports</p>
+									<p className="text-sm text-(--text-secondary)">No pending revenue reports</p>
 								</Card>
 							) : (
 								<Card padding={false}>
 									<div className="overflow-x-auto">
 										<table className="w-full text-sm">
 											<thead>
-												<tr className="border-b border-[var(--border)] text-left text-xs text-[var(--text-tertiary)]">
+												<tr className="border-b border-(--border) text-left text-xs text-(--text-tertiary)">
 													<th className="px-4 py-3 font-medium">Merchant</th>
 													<th className="px-4 py-3 font-medium">Net Profit</th>
 													<th className="px-4 py-3 font-medium text-right">Actions</th>
@@ -414,14 +401,14 @@ const AdminDashboard = () => {
 											</thead>
 											<tbody>
 												{pendingReports.map((report) => (
-													<tr key={report.id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--bg-tertiary)] transition-colors">
+													<tr key={report.id} className="border-b border-(--border) last:border-0 hover:bg-(--bg-tertiary) transition-colors">
 														<td className="px-4 py-3">
-															<p className="font-medium text-[var(--text)]">{report.merchant?.business_name || "Merchant"}</p>
-															<p className="text-xs text-[var(--text-secondary)]">
+															<p className="font-medium text-(--text)">{report.merchant?.business_name || "Merchant"}</p>
+															<p className="text-xs text-(--text-secondary)">
 																{new Date(report.period_start).toLocaleDateString()} - {new Date(report.period_end).toLocaleDateString()}
 															</p>
 														</td>
-														<td className="px-4 py-3 font-medium text-[var(--success)]">
+														<td className="px-4 py-3 font-medium text-(--success)">
 															{"\u20A6"}{Number(report.net_profit).toLocaleString()}
 														</td>
 														<td className="px-4 py-3 text-right">
@@ -458,7 +445,7 @@ const AdminDashboard = () => {
 
 			{/* Row 6: Pending KYC Table */}
 			<div id="pending-kyc" className="mt-6">
-				<h2 className="mb-3 text-sm font-semibold text-[var(--text)]">
+				<h2 className="mb-3 text-sm font-semibold text-(--text)">
 					Pending KYC Submissions
 				</h2>
 
@@ -466,7 +453,7 @@ const AdminDashboard = () => {
 					<Spinner size="lg" className="py-12" />
 				) : submissions.length === 0 ? (
 					<Card className="py-12 text-center">
-						<p className="text-sm text-[var(--text-secondary)]">
+						<p className="text-sm text-(--text-secondary)">
 							No pending KYC submissions
 						</p>
 					</Card>
@@ -475,7 +462,7 @@ const AdminDashboard = () => {
 						<div className="overflow-x-auto">
 							<table className="w-full text-sm">
 								<thead>
-									<tr className="border-b border-[var(--border)] text-left text-xs text-[var(--text-tertiary)]">
+									<tr className="border-b border-(--border) text-left text-xs text-(--text-tertiary)">
 										<th className="px-4 py-3 font-medium">Business Name</th>
 										<th className="px-4 py-3 font-medium">Submitted</th>
 										<th className="px-4 py-3 font-medium">Status</th>
@@ -486,12 +473,12 @@ const AdminDashboard = () => {
 									{submissions.map((kyc) => (
 										<tr
 											key={kyc.id}
-											className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--bg-tertiary)] transition-colors"
+											className="border-b border-(--border) last:border-0 hover:bg-(--bg-tertiary) transition-colors"
 										>
-											<td className="px-4 py-3 font-medium text-[var(--text)]">
+											<td className="px-4 py-3 font-medium text-(--text)">
 												{kyc.merchant?.business_name || "Merchant"}
 											</td>
-											<td className="px-4 py-3 text-[var(--text-secondary)]">
+											<td className="px-4 py-3 text-(--text-secondary)">
 												{kyc.submitted_at ? new Date(kyc.submitted_at).toLocaleDateString() : "N/A"}
 											</td>
 											<td className="px-4 py-3">
@@ -500,7 +487,7 @@ const AdminDashboard = () => {
 											<td className="px-4 py-3 text-right">
 												<Link
 													to={`/admin/kyc/${kyc.id}`}
-													className="text-sm font-medium text-[var(--accent-primary)] hover:underline"
+													className="text-sm font-medium text-(--accent-primary) hover:underline"
 												>
 													Review
 												</Link>
@@ -512,8 +499,8 @@ const AdminDashboard = () => {
 						</div>
 
 						{pagination && pagination.total_pages > 1 && (
-							<div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
-								<span className="text-xs text-[var(--text-secondary)]">
+							<div className="flex items-center justify-between border-t border-(--border) px-4 py-3">
+								<span className="text-xs text-(--text-secondary)">
 									Page {page} of {pagination.total_pages}
 								</span>
 								<div className="flex gap-2">
@@ -543,9 +530,9 @@ const StatTile = ({
 	sub?: string;
 }) => (
 	<Card padding={false} className="p-4">
-		<p className="text-xs text-[var(--text-tertiary)]">{label}</p>
-		<p className="mt-1 text-lg font-bold text-[var(--text)]">{value}</p>
-		{sub && <p className="text-[10px] text-[var(--text-tertiary)]">{sub}</p>}
+		<p className="text-xs text-(--text-tertiary)">{label}</p>
+		<p className="mt-1 text-lg font-bold text-(--text)">{value}</p>
+		{sub && <p className="text-[10px] text-(--text-tertiary)">{sub}</p>}
 	</Card>
 );
 

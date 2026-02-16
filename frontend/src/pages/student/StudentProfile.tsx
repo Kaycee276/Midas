@@ -54,18 +54,18 @@ const StudentProfile = () => {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-[var(--text)]">Profile</h1>
-      <p className="mt-1 text-[var(--text-secondary)]">Manage your personal information</p>
+      <h1 className="text-2xl font-bold text-(--text)">Profile</h1>
+      <p className="mt-1 text-(--text-secondary)">Manage your personal information</p>
 
       {/* Profile Header */}
       <Card className="mt-6">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[var(--accent-primary)]/15 text-2xl font-bold text-[var(--accent-primary)]">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-(--accent-primary)/15 text-2xl font-bold text-(--accent-primary)">
             {initials}
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl font-bold text-[var(--text)]">{student.full_name}</h2>
-            <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-[var(--text-secondary)] sm:justify-start">
+            <h2 className="text-xl font-bold text-(--text)">{student.full_name}</h2>
+            <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-(--text-secondary) sm:justify-start">
               <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> {student.email}</span>
               {student.phone && <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {student.phone}</span>}
             </div>
@@ -80,22 +80,22 @@ const StudentProfile = () => {
         </div>
 
         {/* Quick Info */}
-        <div className="mt-6 grid grid-cols-2 gap-4 border-t border-[var(--border)] pt-4 sm:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-4 border-t border-(--border) pt-4 sm:grid-cols-4">
           <div className="text-center">
-            <p className="text-xs text-[var(--text-tertiary)]">Student ID</p>
-            <p className="mt-0.5 text-sm font-medium text-[var(--text)]">{student.student_id || '—'}</p>
+            <p className="text-xs text-(--text-tertiary)">Student ID</p>
+            <p className="mt-0.5 text-sm font-medium text-(--text)">{student.student_id || '—'}</p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-[var(--text-tertiary)]">Program</p>
-            <p className="mt-0.5 text-sm font-medium text-[var(--text)]">{student.program || '—'}</p>
+            <p className="text-xs text-(--text-tertiary)">Program</p>
+            <p className="mt-0.5 text-sm font-medium text-(--text)">{student.program || '—'}</p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-[var(--text-tertiary)]">Year</p>
-            <p className="mt-0.5 text-sm font-medium text-[var(--text)]">{student.year_of_study || '—'}</p>
+            <p className="text-xs text-(--text-tertiary)">Year</p>
+            <p className="mt-0.5 text-sm font-medium text-(--text)">{student.year_of_study || '—'}</p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-[var(--text-tertiary)]">Joined</p>
-            <p className="mt-0.5 text-sm font-medium text-[var(--text)]">{new Date(student.created_at).toLocaleDateString()}</p>
+            <p className="text-xs text-(--text-tertiary)">Joined</p>
+            <p className="mt-0.5 text-sm font-medium text-(--text)">{new Date(student.created_at).toLocaleDateString()}</p>
           </div>
         </div>
       </Card>
@@ -103,7 +103,7 @@ const StudentProfile = () => {
       {/* Edit Form */}
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         <Card>
-          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase text-[var(--text-tertiary)]">
+          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase text-(--text-tertiary)">
             <User className="h-4 w-4" /> Personal Information
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -113,7 +113,7 @@ const StudentProfile = () => {
         </Card>
 
         <Card>
-          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase text-[var(--text-tertiary)]">
+          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase text-(--text-tertiary)">
             <GraduationCap className="h-4 w-4" /> Academic Information
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">

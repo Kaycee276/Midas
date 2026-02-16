@@ -19,14 +19,14 @@ const MerchantLayout = () => {
 
 			<div className="flex h-full flex-col lg:pl-60">
 				{/* Topbar */}
-				<header className="flex h-14 shrink-0 items-center justify-between border-b border-[var(--border)] bg-[var(--bg)] px-4">
+				<header className="flex h-14 shrink-0 items-center justify-between border-b border-(--border) bg-(--bg) px-4">
 					<button
 						onClick={() => setSidebarOpen(true)}
-						className="rounded-lg p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] lg:hidden"
+						className="rounded-lg p-2 text-(--text-secondary) hover:bg-(--bg-tertiary) lg:hidden"
 					>
 						<Menu className="h-5 w-5" />
 					</button>
-					<span className="text-sm font-medium text-[var(--text-secondary)]">
+					<span className="text-sm font-medium text-(--text-secondary)">
 						{merchant?.business_name || "Merchant"} Dashboard
 					</span>
 				</header>

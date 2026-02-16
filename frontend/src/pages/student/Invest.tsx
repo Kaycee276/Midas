@@ -70,19 +70,19 @@ const Invest = () => {
   };
 
   if (loading) return <Spinner size="lg" className="py-20" />;
-  if (!merchant) return <div className="py-20 text-center text-[var(--text-secondary)]">Merchant not found</div>;
+  if (!merchant) return <div className="py-20 text-center text-(--text-secondary)">Merchant not found</div>;
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8">
-      <Link to={`/merchants/${merchantId}`} className="mb-6 inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+      <Link to={`/merchants/${merchantId}`} className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
         <ArrowLeft className="h-4 w-4" /> Back to {merchant.business_name}
       </Link>
 
-      <h1 className="text-2xl font-bold text-[var(--text)]">Invest in {merchant.business_name}</h1>
+      <h1 className="text-2xl font-bold text-(--text)">Invest in {merchant.business_name}</h1>
 
       <Card className="mt-4 flex items-center justify-between">
-        <span className="text-sm text-[var(--text-secondary)]">Wallet Balance</span>
-        <span className="font-semibold text-[var(--text)]">{'\u20A6'}{balance.toLocaleString()}</span>
+        <span className="text-sm text-(--text-secondary)">Wallet Balance</span>
+        <span className="font-semibold text-(--text)">{'\u20A6'}{balance.toLocaleString()}</span>
       </Card>
 
       <Card className="mt-4">
@@ -99,12 +99,12 @@ const Invest = () => {
           />
 
           <div className="space-y-1">
-            <label htmlFor="notes" className="block text-sm font-medium text-[var(--text-secondary)]">
+            <label htmlFor="notes" className="block text-sm font-medium text-(--text-secondary)">
               Notes (optional)
             </label>
             <textarea
               id="notes"
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-[var(--text)] placeholder-[var(--text-tertiary)] transition-colors focus:border-[var(--accent-primary)] focus:outline-none"
+              className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-(--text) placeholder-(--text-tertiary) transition-colors focus:border-(--accent-primary) focus:outline-none"
               rows={3}
               placeholder="Any notes about your investment"
               value={notes}
@@ -113,7 +113,7 @@ const Invest = () => {
           </div>
 
           {parseFloat(amount) > balance && (
-            <p className="text-sm text-[var(--error)]">
+            <p className="text-sm text-(--error)">
               Insufficient balance.{' '}
               <Link to="/student/wallet/fund" className="underline">Fund your wallet</Link>
             </p>

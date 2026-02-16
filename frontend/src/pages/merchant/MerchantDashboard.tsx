@@ -64,47 +64,47 @@ const MerchantDashboard = () => {
       icon: Wallet,
       label: 'Wallet Balance',
       value: `\u20A6${(walletInfo?.balance || 0).toLocaleString()}`,
-      color: 'text-[var(--accent-primary)]',
+      color: 'text-(--accent-primary)',
       link: '/merchant/wallet',
     },
     {
       icon: TrendingUp,
       label: 'Total Capital Raised',
       value: `\u20A6${(investmentSummary?.total_capital_raised || 0).toLocaleString()}`,
-      color: 'text-[var(--success)]',
+      color: 'text-(--success)',
     },
     {
       icon: Activity,
       label: 'Active Investments',
       value: String(investmentSummary?.active_investments || 0),
-      color: 'text-[var(--info)]',
+      color: 'text-(--info)',
     },
     {
       icon: Users,
       label: 'Total Investors',
       value: String(investmentSummary?.total_investors || 0),
-      color: 'text-[var(--warning)]',
+      color: 'text-(--warning)',
     },
     {
       icon: BarChart3,
       label: 'Total Revenue',
       value: `\u20A6${(revenueSummary?.total_revenue || 0).toLocaleString()}`,
-      color: 'text-[var(--success)]',
+      color: 'text-(--success)',
       link: '/merchant/revenue',
     },
     {
       icon: Clock,
       label: 'Pending Reports',
       value: String(revenueSummary?.pending_count || 0),
-      color: 'text-[var(--warning)]',
+      color: 'text-(--warning)',
       link: '/merchant/revenue',
     },
   ];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-[var(--text)]">Welcome, {merchant.business_name}</h1>
-      <p className="mt-1 text-[var(--text-secondary)]">Your business overview</p>
+      <h1 className="text-2xl font-bold text-(--text)">Welcome, {merchant.business_name}</h1>
+      <p className="mt-1 text-(--text-secondary)">Your business overview</p>
 
       {/* Stats Cards */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -114,8 +114,8 @@ const MerchantDashboard = () => {
               <div className="flex items-center gap-3">
                 <s.icon className={`h-8 w-8 ${s.color}`} />
                 <div>
-                  <p className="text-2xl font-bold text-[var(--text)]">{s.value}</p>
-                  <p className="text-xs text-[var(--text-secondary)]">{s.label}</p>
+                  <p className="text-2xl font-bold text-(--text)">{s.value}</p>
+                  <p className="text-xs text-(--text-secondary)">{s.label}</p>
                 </div>
               </div>
             </Card>
@@ -133,17 +133,17 @@ const MerchantDashboard = () => {
         {/* KYC Status */}
         <Card>
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-[var(--bg-tertiary)] p-3">
-              <StatusIcon className="h-6 w-6 text-[var(--accent-primary)]" />
+            <div className="rounded-lg bg-(--bg-tertiary) p-3">
+              <StatusIcon className="h-6 w-6 text-(--accent-primary)" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-[var(--text)]">KYC Verification</h3>
+              <h3 className="font-semibold text-(--text)">KYC Verification</h3>
               <Badge variant={config.variant} className="mt-1">{config.label}</Badge>
               {kycStatus === 'rejected' && kyc?.rejection_reason && (
-                <p className="mt-2 text-sm text-[var(--error)]">{kyc.rejection_reason}</p>
+                <p className="mt-2 text-sm text-(--error)">{kyc.rejection_reason}</p>
               )}
               {kycStatus === 'resubmission_required' && kyc?.rejection_reason && (
-                <p className="mt-2 text-sm text-[var(--warning)]">{kyc.rejection_reason}</p>
+                <p className="mt-2 text-sm text-(--warning)">{kyc.rejection_reason}</p>
               )}
               {(kycStatus === 'not_started' || kycStatus === 'rejected' || kycStatus === 'resubmission_required') && (
                 <Link to="/merchant/kyc" className="mt-3 block">
@@ -157,15 +157,15 @@ const MerchantDashboard = () => {
         {/* Account Status */}
         <Card>
           <div className="flex items-start gap-4">
-            <div className="rounded-lg bg-[var(--bg-tertiary)] p-3">
-              <FileCheck className="h-6 w-6 text-[var(--accent-primary)]" />
+            <div className="rounded-lg bg-(--bg-tertiary) p-3">
+              <FileCheck className="h-6 w-6 text-(--accent-primary)" />
             </div>
             <div>
-              <h3 className="font-semibold text-[var(--text)]">Account Status</h3>
+              <h3 className="font-semibold text-(--text)">Account Status</h3>
               <Badge variant={merchant.account_status === 'active' ? 'success' : 'warning'} className="mt-1">
                 {merchant.account_status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
               </Badge>
-              <p className="mt-2 text-sm text-[var(--text-secondary)]">
+              <p className="mt-2 text-sm text-(--text-secondary)">
                 {merchant.account_status === 'active'
                   ? 'Your business is live and accepting investments.'
                   : 'Complete KYC verification to activate your account.'}
@@ -177,23 +177,23 @@ const MerchantDashboard = () => {
 
       {/* Recent Investments */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-[var(--text)]">Recent Investments</h2>
+        <h2 className="text-lg font-semibold text-(--text)">Recent Investments</h2>
         {recentInvestments.length === 0 ? (
           <Card className="mt-4 text-center">
-            <p className="text-[var(--text-secondary)]">No investments yet. Investments will appear here when students invest in your business.</p>
+            <p className="text-(--text-secondary)">No investments yet. Investments will appear here when students invest in your business.</p>
           </Card>
         ) : (
           <div className="mt-4 space-y-3">
             {recentInvestments.map((inv) => (
               <Card key={inv.id} className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-[var(--text)]">{inv.student?.full_name || 'Student'}</p>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="font-medium text-(--text)">{inv.student?.full_name || 'Student'}</p>
+                  <p className="text-sm text-(--text-secondary)">
                     {inv.shares} shares &middot; {new Date(inv.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-[var(--success)]">
+                  <p className="font-semibold text-(--success)">
                     +{'\u20A6'}{inv.amount.toLocaleString()}
                   </p>
                   <Badge variant={inv.status === 'active' ? 'success' : inv.status === 'withdrawn' ? 'default' : 'warning'}>

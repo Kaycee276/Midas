@@ -78,50 +78,50 @@ const KYCReview = () => {
   };
 
   if (loading) return <Spinner size="lg" className="py-20" />;
-  if (!kyc) return <div className="py-20 text-center text-[var(--text-secondary)]">KYC not found</div>;
+  if (!kyc) return <div className="py-20 text-center text-(--text-secondary)">KYC not found</div>;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <Link to="/admin/dashboard" className="mb-6 inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+      <Link to="/admin/dashboard" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
         <ArrowLeft className="h-4 w-4" /> Back to Dashboard
       </Link>
 
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text)]">KYC Review</h1>
-          <p className="mt-1 text-[var(--text-secondary)]">{kyc.merchant?.business_name}</p>
+          <h1 className="text-2xl font-bold text-(--text)">KYC Review</h1>
+          <p className="mt-1 text-(--text-secondary)">{kyc.merchant?.business_name}</p>
         </div>
         <Badge variant="warning">{kyc.status}</Badge>
       </div>
 
       {/* Details */}
       <Card className="mt-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Identification</h3>
+        <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Identification</h3>
         <div className="grid gap-3 sm:grid-cols-2 text-sm">
-          {kyc.student_id_number && <div><span className="text-[var(--text-secondary)]">Student ID:</span> <span className="text-[var(--text)]">{kyc.student_id_number}</span></div>}
-          {kyc.national_id_number && <div><span className="text-[var(--text-secondary)]">National ID:</span> <span className="text-[var(--text)]">{kyc.national_id_number}</span></div>}
-          {kyc.business_registration_number && <div><span className="text-[var(--text-secondary)]">Business Reg:</span> <span className="text-[var(--text)]">{kyc.business_registration_number}</span></div>}
-          {kyc.tax_identification_number && <div><span className="text-[var(--text-secondary)]">Tax ID:</span> <span className="text-[var(--text)]">{kyc.tax_identification_number}</span></div>}
-          {kyc.years_in_operation != null && <div><span className="text-[var(--text-secondary)]">Years Operating:</span> <span className="text-[var(--text)]">{kyc.years_in_operation}</span></div>}
-          {kyc.average_monthly_revenue != null && <div><span className="text-[var(--text-secondary)]">Avg Monthly Revenue:</span> <span className="text-[var(--text)]">{'\u20A6'}{kyc.average_monthly_revenue.toLocaleString()}</span></div>}
+          {kyc.student_id_number && <div><span className="text-(--text-secondary)">Student ID:</span> <span className="text-(--text)">{kyc.student_id_number}</span></div>}
+          {kyc.national_id_number && <div><span className="text-(--text-secondary)">National ID:</span> <span className="text-(--text)">{kyc.national_id_number}</span></div>}
+          {kyc.business_registration_number && <div><span className="text-(--text-secondary)">Business Reg:</span> <span className="text-(--text)">{kyc.business_registration_number}</span></div>}
+          {kyc.tax_identification_number && <div><span className="text-(--text-secondary)">Tax ID:</span> <span className="text-(--text)">{kyc.tax_identification_number}</span></div>}
+          {kyc.years_in_operation != null && <div><span className="text-(--text-secondary)">Years Operating:</span> <span className="text-(--text)">{kyc.years_in_operation}</span></div>}
+          {kyc.average_monthly_revenue != null && <div><span className="text-(--text-secondary)">Avg Monthly Revenue:</span> <span className="text-(--text)">{'\u20A6'}{kyc.average_monthly_revenue.toLocaleString()}</span></div>}
         </div>
       </Card>
 
       {/* Documents */}
       <Card className="mt-4">
-        <h3 className="mb-4 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Documents</h3>
+        <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Documents</h3>
         <div className="space-y-3">
           {documentFields.map(({ key, label }) => {
             const url = kyc[key as keyof KYC] as string | undefined;
             return (
-              <div key={key} className="flex items-center justify-between rounded-lg bg-[var(--bg-tertiary)] px-4 py-3">
-                <span className="text-sm text-[var(--text)]">{label}</span>
+              <div key={key} className="flex items-center justify-between rounded-lg bg-(--bg-tertiary) px-4 py-3">
+                <span className="text-sm text-(--text)">{label}</span>
                 {url ? (
-                  <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm text-[var(--accent-primary)] hover:underline">
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm text-(--accent-primary) hover:underline">
                     View <ExternalLink className="h-3 w-3" />
                   </a>
                 ) : (
-                  <span className="text-sm text-[var(--text-tertiary)]">Not uploaded</span>
+                  <span className="text-sm text-(--text-tertiary)">Not uploaded</span>
                 )}
               </div>
             );

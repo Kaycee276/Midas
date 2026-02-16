@@ -43,21 +43,21 @@ const MerchantDetail = () => {
   }, [id]);
 
   if (loading) return <Spinner size="lg" className="py-20" />;
-  if (!merchant) return <div className="py-20 text-center text-[var(--text-secondary)]">Merchant not found</div>;
+  if (!merchant) return <div className="py-20 text-center text-(--text-secondary)">Merchant not found</div>;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <Link to="/merchants" className="mb-6 inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+      <Link to="/merchants" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
         <ArrowLeft className="h-4 w-4" /> Back to Merchants
       </Link>
 
       <Card className="mb-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text)]">{merchant.business_name}</h1>
+            <h1 className="text-2xl font-bold text-(--text)">{merchant.business_name}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-3">
               <Badge>{merchant.business_type.replace(/_/g, ' ')}</Badge>
-              <span className="flex items-center gap-1 text-sm text-[var(--text-tertiary)]">
+              <span className="flex items-center gap-1 text-sm text-(--text-tertiary)">
                 <MapPin className="h-3 w-3" /> {proximityLabels[merchant.proximity_to_campus] || merchant.proximity_to_campus}
               </span>
             </div>
@@ -68,8 +68,8 @@ const MerchantDetail = () => {
             </Link>
           )}
         </div>
-        <p className="mt-4 text-[var(--text-secondary)]">{merchant.business_description}</p>
-        <div className="mt-4 space-y-1 text-sm text-[var(--text-secondary)]">
+        <p className="mt-4 text-(--text-secondary)">{merchant.business_description}</p>
+        <div className="mt-4 space-y-1 text-sm text-(--text-secondary)">
           <p className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {merchant.business_address}</p>
           <p className="flex items-center gap-2"><Phone className="h-4 w-4" /> {merchant.business_phone}</p>
         </div>
@@ -79,28 +79,28 @@ const MerchantDetail = () => {
         <div className="grid gap-4 sm:grid-cols-3">
           <Card>
             <div className="flex items-center gap-3">
-              <Users className="h-8 w-8 text-[var(--accent-primary)]" />
+              <Users className="h-8 w-8 text-(--accent-primary)" />
               <div>
-                <p className="text-2xl font-bold text-[var(--text)]">{summary.total_investors}</p>
-                <p className="text-sm text-[var(--text-secondary)]">Investors</p>
+                <p className="text-2xl font-bold text-(--text)">{summary.total_investors}</p>
+                <p className="text-sm text-(--text-secondary)">Investors</p>
               </div>
             </div>
           </Card>
           <Card>
             <div className="flex items-center gap-3">
-              <DollarSign className="h-8 w-8 text-[var(--success)]" />
+              <DollarSign className="h-8 w-8 text-(--success)" />
               <div>
-                <p className="text-2xl font-bold text-[var(--text)]">{'\u20A6'}{summary.total_capital_raised.toLocaleString()}</p>
-                <p className="text-sm text-[var(--text-secondary)]">Capital Raised</p>
+                <p className="text-2xl font-bold text-(--text)">{'\u20A6'}{summary.total_capital_raised.toLocaleString()}</p>
+                <p className="text-sm text-(--text-secondary)">Capital Raised</p>
               </div>
             </div>
           </Card>
           <Card>
             <div className="flex items-center gap-3">
-              <TrendingUp className="h-8 w-8 text-[var(--info)]" />
+              <TrendingUp className="h-8 w-8 text-(--info)" />
               <div>
-                <p className="text-2xl font-bold text-[var(--text)]">{summary.active_investments}</p>
-                <p className="text-sm text-[var(--text-secondary)]">Active Investments</p>
+                <p className="text-2xl font-bold text-(--text)">{summary.active_investments}</p>
+                <p className="text-sm text-(--text-secondary)">Active Investments</p>
               </div>
             </div>
           </Card>

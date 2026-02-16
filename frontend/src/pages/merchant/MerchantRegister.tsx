@@ -54,14 +54,14 @@ const MerchantRegister = () => {
     return (
       <div className="flex min-h-screen items-start justify-center px-4 py-12">
         <Card className="w-full max-w-md text-center">
-          <Mail className="mx-auto h-12 w-12 text-[var(--accent-primary)]" />
-          <h2 className="mt-4 text-xl font-bold text-[var(--text)]">Check Your Email</h2>
-          <p className="mt-2 text-[var(--text-secondary)]">
+          <Mail className="mx-auto h-12 w-12 text-(--accent-primary)" />
+          <h2 className="mt-4 text-xl font-bold text-(--text)">Check Your Email</h2>
+          <p className="mt-2 text-(--text-secondary)">
             We've sent a verification link to <strong>{form.email}</strong>. Please check your inbox and click the link to verify your account.
           </p>
-          <p className="mt-4 text-sm text-[var(--text-tertiary)]">
+          <p className="mt-4 text-sm text-(--text-tertiary)">
             Didn't receive the email? Check your spam folder or{' '}
-            <Link to="/merchant/login" className="text-[var(--accent-primary)] hover:underline">try logging in</Link> to resend.
+            <Link to="/merchant/login" className="text-(--accent-primary) hover:underline">try logging in</Link> to resend.
           </p>
         </Card>
       </div>
@@ -72,20 +72,20 @@ const MerchantRegister = () => {
     <div className="flex min-h-screen items-start justify-center px-4 py-12">
       <Card className="w-full max-w-2xl">
         <div className="mb-6 text-center">
-          <Store className="mx-auto h-10 w-10 text-[var(--accent-primary)]" />
-          <h1 className="mt-3 text-2xl font-bold text-[var(--text)]">Register Your Business</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">Join Midas and attract student investors</p>
+          <Store className="mx-auto h-10 w-10 text-(--accent-primary)" />
+          <h1 className="mt-3 text-2xl font-bold text-(--text)">Register Your Business</h1>
+          <p className="mt-1 text-sm text-(--text-secondary)">Join Midas and attract student investors</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Account</h3>
+            <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">Account</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <Input label="Email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} required />
               <PasswordInput label="Password" value={form.password} onChange={(e) => update('password', e.target.value)} required showCriteria />
             </div>
           </div>
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Business Info</h3>
+            <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">Business Info</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <Input label="Business Name" value={form.business_name} onChange={(e) => update('business_name', e.target.value)} required />
               <Select label="Business Type" options={businessTypeOptions} value={form.business_type} onChange={(e) => update('business_type', e.target.value)} required placeholder="Select type" />
@@ -98,21 +98,21 @@ const MerchantRegister = () => {
             </div>
           </div>
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase text-[var(--text-tertiary)]">Owner Info</h3>
+            <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">Owner Info</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <Input label="Full Name" value={form.owner_full_name} onChange={(e) => update('owner_full_name', e.target.value)} required />
               <Input label="Phone" value={form.owner_phone} onChange={(e) => update('owner_phone', e.target.value)} required />
               <Input label="Email" type="email" value={form.owner_email} onChange={(e) => update('owner_email', e.target.value)} required />
             </div>
           </div>
-          <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-            <input type="checkbox" checked={form.terms_accepted} onChange={(e) => update('terms_accepted', e.target.checked)} className="accent-[var(--accent-primary)]" />
+          <label className="flex items-center gap-2 text-sm text-(--text-secondary)">
+            <input type="checkbox" checked={form.terms_accepted} onChange={(e) => update('terms_accepted', e.target.checked)} className="accent-(--accent-primary)" />
             I accept the terms and conditions
           </label>
           <Button type="submit" loading={loading} className="w-full">Create Account</Button>
         </form>
-        <p className="mt-4 text-center text-sm text-[var(--text-secondary)]">
-          Already have an account? <Link to="/merchant/login" className="text-[var(--accent-primary)] hover:underline">Sign In</Link>
+        <p className="mt-4 text-center text-sm text-(--text-secondary)">
+          Already have an account? <Link to="/merchant/login" className="text-(--accent-primary) hover:underline">Sign In</Link>
         </p>
       </Card>
     </div>

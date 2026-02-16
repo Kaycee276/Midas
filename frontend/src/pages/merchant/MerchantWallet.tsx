@@ -55,16 +55,16 @@ const MerchantWallet = () => {
 
 	return (
 		<div className="mx-auto max-w-4xl px-4 py-8">
-			<h1 className="text-2xl font-bold text-[var(--text)]">Wallet</h1>
-			<p className="mt-1 text-[var(--text-secondary)]">Manage your funds</p>
+			<h1 className="text-2xl font-bold text-(--text)">Wallet</h1>
+			<p className="mt-1 text-(--text-secondary)">Manage your funds</p>
 
 			{/* Balance Card */}
 			<Card className="mt-6">
 				<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 					<div className="flex items-center gap-3">
-						<WalletIcon className="h-10 w-10 text-[var(--accent-primary)]" />
+						<WalletIcon className="h-10 w-10 text-(--accent-primary)" />
 						<div>
-							<p className="text-sm text-[var(--text-secondary)]">
+							<p className="text-sm text-(--text-secondary)">
 								Available Balance
 							</p>
 							<p className="text-3xl font-bold text-var(--text)">
@@ -86,15 +86,15 @@ const MerchantWallet = () => {
 			{/* Recent Transactions */}
 			<div className="mt-8">
 				<div className="flex items-center justify-between">
-					<h2 className="text-lg font-semibold text-[var(--text)]">
+					<h2 className="text-lg font-semibold text-(--text)">
 						Recent Transactions
 					</h2>
-					<span className="text-sm text-[var(--text-tertiary)]">Last 10</span>
+					<span className="text-sm text-(--text-tertiary)">Last 10</span>
 				</div>
 
 				{!info?.recent_transactions?.length ? (
 					<Card className="mt-4 text-center">
-						<p className="text-[var(--text-secondary)]">
+						<p className="text-(--text-secondary)">
 							No transactions yet. Transactions will appear here when students
 							invest in your business.
 						</p>
@@ -105,22 +105,22 @@ const MerchantWallet = () => {
 							<Card key={txn.id} className="flex items-center justify-between">
 								<div className="flex items-center gap-3">
 									{isCredit(txn.type) ? (
-										<ArrowDownLeft className="h-5 w-5 text-[var(--success)]" />
+										<ArrowDownLeft className="h-5 w-5 text-(--success)" />
 									) : (
-										<ArrowUpRight className="h-5 w-5 text-[var(--error)]" />
+										<ArrowUpRight className="h-5 w-5 text-(--error)" />
 									)}
 									<div>
-										<p className="font-medium text-[var(--text)]">
+										<p className="font-medium text-(--text)">
 											{txnTypeLabel[txn.type] || txn.type}
 										</p>
-										<p className="text-sm text-[var(--text-tertiary)]">
+										<p className="text-sm text-(--text-tertiary)">
 											{new Date(txn.created_at).toLocaleDateString()}
 										</p>
 									</div>
 								</div>
 								<div className="text-right">
 									<p
-										className={`font-semibold ${isCredit(txn.type) ? "text-[var(--success)]" : "text-[var(--text)]"}`}
+										className={`font-semibold ${isCredit(txn.type) ? "text-(--success)" : "text-(--text)"}`}
 									>
 										{isCredit(txn.type) ? "+" : "-"}
 										{"\u20A6"}

@@ -21,10 +21,10 @@ const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-lg rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-6 shadow-xl">
+      <div className="relative z-10 w-full max-w-lg rounded-xl border border-(--border) bg-(--bg-secondary) p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          {title && <h2 className="text-lg font-semibold text-[var(--text)]">{title}</h2>}
-          <button onClick={onClose} className="ml-auto rounded-lg p-1 hover:bg-[var(--bg-tertiary)] text-[var(--text-secondary)]">
+          {title && <h2 className="text-lg font-semibold text-(--text)">{title}</h2>}
+          <button onClick={onClose} className="ml-auto rounded-lg p-1 hover:bg-(--bg-tertiary) text-(--text-secondary)">
             <X className="h-5 w-5" />
           </button>
         </div>

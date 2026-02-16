@@ -36,9 +36,9 @@ const AdminLogin = () => {
     <div className="flex min-h-[80vh] items-center justify-center px-4">
       <Card className="w-full max-w-md">
         <div className="mb-6 text-center">
-          <ShieldCheck className="mx-auto h-10 w-10 text-[var(--accent-primary)]" />
-          <h1 className="mt-3 text-2xl font-bold text-[var(--text)]">Admin Login</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">Access the admin dashboard</p>
+          <ShieldCheck className="mx-auto h-10 w-10 text-(--accent-primary)" />
+          <h1 className="mt-3 text-2xl font-bold text-(--text)">Admin Login</h1>
+          <p className="mt-1 text-sm text-(--text-secondary)">Access the admin dashboard</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />

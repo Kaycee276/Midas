@@ -50,8 +50,8 @@ const RevenueHistory = () => {
 		<div className="mx-auto max-w-6xl px-4 py-8">
 			<div className="flex items-center justify-between">
 				<div>
-					<h1 className="text-2xl font-bold text-[var(--text)]">Revenue Reports</h1>
-					<p className="mt-1 text-sm text-[var(--text-secondary)]">Track your business revenue and distributions</p>
+					<h1 className="text-2xl font-bold text-(--text)">Revenue Reports</h1>
+					<p className="mt-1 text-sm text-(--text-secondary)">Track your business revenue and distributions</p>
 				</div>
 				<Link to="/merchant/revenue/submit">
 					<Button>
@@ -65,20 +65,20 @@ const RevenueHistory = () => {
 			{summary && (
 				<div className="mt-6 grid gap-4 sm:grid-cols-3">
 					<Card>
-						<p className="text-xs text-[var(--text-tertiary)]">Total Revenue</p>
-						<p className="mt-1 text-lg font-bold text-[var(--text)]">
+						<p className="text-xs text-(--text-tertiary)">Total Revenue</p>
+						<p className="mt-1 text-lg font-bold text-(--text)">
 							{'\u20A6'}{summary.total_revenue.toLocaleString()}
 						</p>
 					</Card>
 					<Card>
-						<p className="text-xs text-[var(--text-tertiary)]">Total Distributed</p>
-						<p className="mt-1 text-lg font-bold text-[var(--success)]">
+						<p className="text-xs text-(--text-tertiary)">Total Distributed</p>
+						<p className="mt-1 text-lg font-bold text-(--success)">
 							{'\u20A6'}{summary.total_distributed.toLocaleString()}
 						</p>
 					</Card>
 					<Card>
-						<p className="text-xs text-[var(--text-tertiary)]">Pending Reports</p>
-						<p className="mt-1 text-lg font-bold text-[var(--warning)]">
+						<p className="text-xs text-(--text-tertiary)">Pending Reports</p>
+						<p className="mt-1 text-lg font-bold text-(--warning)">
 							{summary.pending_count}
 						</p>
 					</Card>
@@ -89,7 +89,7 @@ const RevenueHistory = () => {
 			<div className="mt-6">
 				{reports.length === 0 ? (
 					<Card className="py-12 text-center">
-						<p className="text-sm text-[var(--text-secondary)]">
+						<p className="text-sm text-(--text-secondary)">
 							No revenue reports yet. Submit your first report to get started.
 						</p>
 						<Link to="/merchant/revenue/submit" className="mt-3 inline-block">
@@ -101,7 +101,7 @@ const RevenueHistory = () => {
 						<div className="overflow-x-auto">
 							<table className="w-full text-sm">
 								<thead>
-									<tr className="border-b border-[var(--border)] text-left text-xs text-[var(--text-tertiary)]">
+									<tr className="border-b border-(--border) text-left text-xs text-(--text-tertiary)">
 										<th className="px-4 py-3 font-medium">Period</th>
 										<th className="px-4 py-3 font-medium">Gross Revenue</th>
 										<th className="px-4 py-3 font-medium">Net Profit</th>
@@ -113,15 +113,15 @@ const RevenueHistory = () => {
 									{reports.map((report) => (
 										<tr
 											key={report.id}
-											className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--bg-tertiary)] transition-colors"
+											className="border-b border-(--border) last:border-0 hover:bg-(--bg-tertiary) transition-colors"
 										>
-											<td className="px-4 py-3 text-[var(--text)]">
+											<td className="px-4 py-3 text-(--text)">
 												{new Date(report.period_start).toLocaleDateString()} - {new Date(report.period_end).toLocaleDateString()}
 											</td>
-											<td className="px-4 py-3 text-[var(--text)]">
+											<td className="px-4 py-3 text-(--text)">
 												{'\u20A6'}{Number(report.gross_revenue).toLocaleString()}
 											</td>
-											<td className="px-4 py-3 font-medium text-[var(--success)]">
+											<td className="px-4 py-3 font-medium text-(--success)">
 												{'\u20A6'}{Number(report.net_profit).toLocaleString()}
 											</td>
 											<td className="px-4 py-3">
@@ -129,7 +129,7 @@ const RevenueHistory = () => {
 													{report.status}
 												</Badge>
 											</td>
-											<td className="px-4 py-3 text-[var(--text-secondary)]">
+											<td className="px-4 py-3 text-(--text-secondary)">
 												{new Date(report.submitted_at).toLocaleDateString()}
 											</td>
 										</tr>
@@ -139,8 +139,8 @@ const RevenueHistory = () => {
 						</div>
 
 						{pagination && pagination.total_pages > 1 && (
-							<div className="flex items-center justify-between border-t border-[var(--border)] px-4 py-3">
-								<span className="text-xs text-[var(--text-secondary)]">
+							<div className="flex items-center justify-between border-t border-(--border) px-4 py-3">
+								<span className="text-xs text-(--text-secondary)">
 									Page {page} of {pagination.total_pages}
 								</span>
 								<div className="flex gap-2">

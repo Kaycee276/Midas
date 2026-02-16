@@ -61,9 +61,9 @@ const Withdraw = () => {
     return (
       <div className="mx-auto max-w-lg px-4 py-12">
         <Card className="text-center">
-          <CheckCircle className="mx-auto h-16 w-16 text-[var(--success)]" />
-          <h2 className="mt-4 text-xl font-bold text-[var(--text)]">Withdrawal Successful!</h2>
-          <p className="mt-2 text-[var(--text-secondary)]">
+          <CheckCircle className="mx-auto h-16 w-16 text-(--success)" />
+          <h2 className="mt-4 text-xl font-bold text-(--text)">Withdrawal Successful!</h2>
+          <p className="mt-2 text-(--text-secondary)">
             {'\u20A6'}{parseFloat(amount).toLocaleString()} has been withdrawn from your wallet.
           </p>
           <div className="mt-6">
@@ -76,15 +76,15 @@ const Withdraw = () => {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8">
-      <Link to="/student/wallet" className="mb-6 inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+      <Link to="/student/wallet" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
         <ArrowLeft className="h-4 w-4" /> Back to Wallet
       </Link>
 
-      <h1 className="text-2xl font-bold text-[var(--text)]">Withdraw Funds</h1>
+      <h1 className="text-2xl font-bold text-(--text)">Withdraw Funds</h1>
 
       <Card className="mt-4 flex items-center justify-between">
-        <span className="text-sm text-[var(--text-secondary)]">Available Balance</span>
-        <span className="font-semibold text-[var(--text)]">{'\u20A6'}{balance.toLocaleString()}</span>
+        <span className="text-sm text-(--text-secondary)">Available Balance</span>
+        <span className="font-semibold text-(--text)">{'\u20A6'}{balance.toLocaleString()}</span>
       </Card>
 
       <Card className="mt-4">
@@ -101,7 +101,7 @@ const Withdraw = () => {
           />
 
           {parseFloat(amount) > balance && (
-            <p className="text-sm text-[var(--error)]">Insufficient balance</p>
+            <p className="text-sm text-(--error)">Insufficient balance</p>
           )}
 
           <Button

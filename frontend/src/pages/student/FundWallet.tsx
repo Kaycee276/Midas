@@ -40,9 +40,9 @@ const FundWallet = () => {
     return (
       <div className="mx-auto max-w-lg px-4 py-12">
         <Card className="text-center">
-          <CheckCircle className="mx-auto h-16 w-16 text-[var(--success)]" />
-          <h2 className="mt-4 text-xl font-bold text-[var(--text)]">Wallet Funded!</h2>
-          <p className="mt-2 text-[var(--text-secondary)]">
+          <CheckCircle className="mx-auto h-16 w-16 text-(--success)" />
+          <h2 className="mt-4 text-xl font-bold text-(--text)">Wallet Funded!</h2>
+          <p className="mt-2 text-(--text-secondary)">
             {'\u20A6'}{parseFloat(amount).toLocaleString()} has been added to your wallet.
           </p>
           <div className="mt-6 flex justify-center gap-3">
@@ -56,12 +56,12 @@ const FundWallet = () => {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8">
-      <Link to="/student/wallet" className="mb-6 inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]">
+      <Link to="/student/wallet" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
         <ArrowLeft className="h-4 w-4" /> Back to Wallet
       </Link>
 
-      <h1 className="text-2xl font-bold text-[var(--text)]">Fund Wallet</h1>
-      <p className="mt-1 text-[var(--text-secondary)]">Add money to your wallet</p>
+      <h1 className="text-2xl font-bold text-(--text)">Fund Wallet</h1>
+      <p className="mt-1 text-(--text-secondary)">Add money to your wallet</p>
 
       <Card className="mt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,7 +77,7 @@ const FundWallet = () => {
           />
 
           <div>
-            <p className="mb-2 text-sm text-[var(--text-secondary)]">Quick amounts</p>
+            <p className="mb-2 text-sm text-(--text-secondary)">Quick amounts</p>
             <div className="flex flex-wrap gap-2">
               {presetAmounts.map((a) => (
                 <button
@@ -86,8 +86,8 @@ const FundWallet = () => {
                   onClick={() => setAmount(String(a))}
                   className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
                     amount === String(a)
-                      ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]'
-                      : 'border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent-primary)]'
+                      ? 'border-(--accent-primary) bg-(--accent-primary)/10 text-(--accent-primary)'
+                      : 'border-(--border) text-(--text-secondary) hover:border-(--accent-primary)'
                   }`}
                 >
                   {'\u20A6'}{a.toLocaleString()}

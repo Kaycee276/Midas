@@ -51,8 +51,8 @@ const RevenueReport = () => {
 
 	return (
 		<div className="mx-auto max-w-2xl px-4 py-8">
-			<h1 className="text-2xl font-bold text-[var(--text)]">Submit Revenue Report</h1>
-			<p className="mt-1 text-sm text-[var(--text-secondary)]">
+			<h1 className="text-2xl font-bold text-(--text)">Submit Revenue Report</h1>
+			<p className="mt-1 text-sm text-(--text-secondary)">
 				Report your business revenue for a specific period
 			</p>
 
@@ -60,7 +60,7 @@ const RevenueReport = () => {
 				<form onSubmit={handleSubmit} className="space-y-5">
 					<div className="grid gap-4 sm:grid-cols-2">
 						<div>
-							<label className="mb-1 block text-sm font-medium text-[var(--text)]">
+							<label className="mb-1 block text-sm font-medium text-(--text)">
 								Period Start
 							</label>
 							<input
@@ -69,11 +69,11 @@ const RevenueReport = () => {
 								value={form.period_start}
 								onChange={handleChange}
 								required
-								className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent-primary)] focus:outline-none"
+								className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
 							/>
 						</div>
 						<div>
-							<label className="mb-1 block text-sm font-medium text-[var(--text)]">
+							<label className="mb-1 block text-sm font-medium text-(--text)">
 								Period End
 							</label>
 							<input
@@ -83,13 +83,13 @@ const RevenueReport = () => {
 								onChange={handleChange}
 								required
 								min={form.period_start}
-								className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent-primary)] focus:outline-none"
+								className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
 							/>
 						</div>
 					</div>
 
 					<div>
-						<label className="mb-1 block text-sm font-medium text-[var(--text)]">
+						<label className="mb-1 block text-sm font-medium text-(--text)">
 							Gross Revenue ({'\u20A6'})
 						</label>
 						<input
@@ -101,12 +101,12 @@ const RevenueReport = () => {
 							min="0"
 							step="0.01"
 							placeholder="0.00"
-							className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent-primary)] focus:outline-none"
+							className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
 						/>
 					</div>
 
 					<div>
-						<label className="mb-1 block text-sm font-medium text-[var(--text)]">
+						<label className="mb-1 block text-sm font-medium text-(--text)">
 							Expenses ({'\u20A6'})
 						</label>
 						<input
@@ -118,20 +118,20 @@ const RevenueReport = () => {
 							min="0"
 							step="0.01"
 							placeholder="0.00"
-							className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent-primary)] focus:outline-none"
+							className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
 						/>
 					</div>
 
 					{/* Net Profit Display */}
-					<div className="rounded-lg border border-[var(--border)] bg-[var(--bg-tertiary)] p-4">
-						<p className="text-sm text-[var(--text-secondary)]">Net Profit</p>
-						<p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
+					<div className="rounded-lg border border-(--border) bg-(--bg-tertiary) p-4">
+						<p className="text-sm text-(--text-secondary)">Net Profit</p>
+						<p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-(--success)' : 'text-(--error)'}`}>
 							{'\u20A6'}{netProfit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 						</p>
 					</div>
 
 					<div>
-						<label className="mb-1 block text-sm font-medium text-[var(--text)]">
+						<label className="mb-1 block text-sm font-medium text-(--text)">
 							Notes (optional)
 						</label>
 						<textarea
@@ -140,7 +140,7 @@ const RevenueReport = () => {
 							onChange={handleChange}
 							rows={3}
 							placeholder="Any additional notes about this reporting period..."
-							className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent-primary)] focus:outline-none"
+							className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
 						/>
 					</div>
 

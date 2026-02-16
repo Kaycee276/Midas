@@ -11,13 +11,13 @@ const links = [
 
 const NotFound = () => (
   <div className="flex min-h-[60vh] flex-col items-center justify-center px-4">
-    <h1 className="text-6xl font-bold text-[var(--accent-primary)]">404</h1>
-    <p className="mt-4 text-lg text-[var(--text-secondary)]">
+    <h1 className="text-6xl font-bold text-(--accent-primary)">404</h1>
+    <p className="mt-4 text-lg text-(--text-secondary)">
       Page not found. The page you're looking for doesn't exist or has been moved.
     </p>
 
     <div className="mt-8 w-full max-w-sm">
-      <p className="mb-3 text-center text-sm font-medium text-[var(--text-tertiary)]">
+      <p className="mb-3 text-center text-sm font-medium text-(--text-tertiary)">
         Quick Links
       </p>
       <div className="grid grid-cols-2 gap-3">
@@ -25,7 +25,7 @@ const NotFound = () => (
           <Link
             key={to}
             to={to}
-            className="flex items-center gap-2 rounded-lg border border-[var(--border)] px-4 py-3 text-sm text-[var(--text-secondary)] transition-colors hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)]"
+            className="flex items-center gap-2 rounded-lg border border-(--border) px-4 py-3 text-sm text-(--text-secondary) transition-colors hover:border-(--accent-primary) hover:text-(--accent-primary)"
           >
             <Icon className="h-4 w-4" />
             {label}

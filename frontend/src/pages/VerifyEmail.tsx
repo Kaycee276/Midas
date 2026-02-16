@@ -37,8 +37,8 @@ const VerifyEmail = () => {
 			<Card className="w-full max-w-md text-center">
 				{status === "loading" && (
 					<>
-						<Loader2 className="mx-auto h-12 w-12 animate-spin text-[var(--accent-primary)]" />
-						<p className="mt-4 text-[var(--text-secondary)]">
+						<Loader2 className="mx-auto h-12 w-12 animate-spin text-(--accent-primary)" />
+						<p className="mt-4 text-(--text-secondary)">
 							Verifying your email...
 						</p>
 					</>
@@ -47,10 +47,10 @@ const VerifyEmail = () => {
 				{status === "success" && (
 					<>
 						<CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-						<h2 className="mt-4 text-xl font-bold text-[var(--text)]">
+						<h2 className="mt-4 text-xl font-bold text-(--text)">
 							Email Verified
 						</h2>
-						<p className="mt-2 text-[var(--text-secondary)]">{message}</p>
+						<p className="mt-2 text-(--text-secondary)">{message}</p>
 						<div className="mt-6 flex justify-center gap-3">
 							<Link to="/student/login">
 								<Button variant="outline">Student Login</Button>
@@ -65,10 +65,10 @@ const VerifyEmail = () => {
 				{status === "error" && (
 					<>
 						<XCircle className="mx-auto h-12 w-12 text-red-500" />
-						<h2 className="mt-4 text-xl font-bold text-[var(--text)]">
+						<h2 className="mt-4 text-xl font-bold text-(--text)">
 							Verification Failed
 						</h2>
-						<p className="mt-2 text-[var(--text-secondary)]">{message}</p>
+						<p className="mt-2 text-(--text-secondary)">{message}</p>
 						<Link to="/" className="mt-6 inline-block">
 							<Button variant="outline">Back to Home</Button>
 						</Link>

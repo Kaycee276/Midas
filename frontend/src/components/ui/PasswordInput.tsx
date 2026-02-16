@@ -28,7 +28,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-[var(--text-secondary)]">
+          <label htmlFor={inputId} className="block text-sm font-medium text-(--text-secondary)">
             {label}
           </label>
         )}
@@ -46,15 +46,15 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
               setFocused(false);
               props.onBlur?.(e);
             }}
-            className={`w-full rounded-lg border bg-[var(--bg-secondary)] px-3 py-2 pr-10 text-[var(--text)] placeholder-[var(--text-tertiary)] transition-colors focus:border-[var(--accent-primary)] focus:outline-none ${
-              error ? 'border-[var(--error)]' : 'border-[var(--border)]'
+            className={`w-full rounded-lg border bg-(--bg-secondary) px-3 py-2 pr-10 text-(--text) placeholder-(--text-tertiary) transition-colors focus:border-(--accent-primary) focus:outline-none ${
+              error ? 'border-(--error)' : 'border-(--border)'
             } ${className}`}
             {...props}
           />
           <button
             type="button"
             onClick={() => setVisible((v) => !v)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-(--text-tertiary) hover:text-(--text-secondary) transition-colors"
             tabIndex={-1}
             aria-label={visible ? 'Hide password' : 'Show password'}
           >
@@ -62,11 +62,11 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           </button>
         </div>
         {showList && (
-          <ul className="mt-1.5 space-y-1 rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] p-3">
+          <ul className="mt-1.5 space-y-1 rounded-lg border border-(--border) bg-(--bg-secondary) p-3">
             {criteria.map((c) => {
               const met = c.test(pwd);
               return (
-                <li key={c.label} className={`flex items-center gap-2 text-xs ${met ? 'text-[var(--success)]' : 'text-[var(--text-tertiary)]'}`}>
+                <li key={c.label} className={`flex items-center gap-2 text-xs ${met ? 'text-(--success)' : 'text-(--text-tertiary)'}`}>
                   {met ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
                   {c.label}
                 </li>
@@ -74,7 +74,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             })}
           </ul>
         )}
-        {error && <p className="text-sm text-[var(--error)]">{error}</p>}
+        {error && <p className="text-sm text-(--error)">{error}</p>}
       </div>
     );
   }

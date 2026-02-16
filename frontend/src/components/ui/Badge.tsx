@@ -11,7 +11,7 @@ const variants = {
   error: 'bg-red-500/15 text-red-500',
   warning: 'bg-yellow-500/15 text-yellow-500',
   info: 'bg-blue-500/15 text-blue-500',
-  default: 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)]',
+  default: 'bg-(--bg-tertiary) text-(--text-secondary)',
 };
 
 const Badge = ({ variant = 'default', children, className = '' }: BadgeProps) => (

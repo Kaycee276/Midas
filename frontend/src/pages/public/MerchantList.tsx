@@ -59,8 +59,8 @@ const MerchantList = () => {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[var(--text)]">Browse Merchants</h1>
-        <p className="mt-2 text-[var(--text-secondary)]">Discover verified campus businesses to invest in</p>
+        <h1 className="text-3xl font-bold text-(--text)">Browse Merchants</h1>
+        <p className="mt-2 text-(--text-secondary)">Discover verified campus businesses to invest in</p>
       </div>
 
       {/* Filters */}
@@ -82,8 +82,8 @@ const MerchantList = () => {
       {loading ? (
         <Spinner size="lg" className="py-20" />
       ) : merchants.length === 0 ? (
-        <div className="py-20 text-center text-[var(--text-secondary)]">
-          <Store className="mx-auto h-12 w-12 text-[var(--text-tertiary)]" />
+        <div className="py-20 text-center text-(--text-secondary)">
+          <Store className="mx-auto h-12 w-12 text-(--text-tertiary)" />
           <p className="mt-4">No merchants found</p>
         </div>
       ) : (
@@ -91,13 +91,13 @@ const MerchantList = () => {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {merchants.map((m) => (
               <Link key={m.id} to={`/merchants/${m.id}`}>
-                <Card className="h-full transition-colors hover:border-[var(--accent-primary)]">
+                <Card className="h-full transition-colors hover:border-(--accent-primary)">
                   <div className="flex items-start justify-between">
-                    <h3 className="text-lg font-semibold text-[var(--text)]">{m.business_name}</h3>
+                    <h3 className="text-lg font-semibold text-(--text)">{m.business_name}</h3>
                     <Badge>{m.business_type.replace(/_/g, ' ')}</Badge>
                   </div>
-                  <p className="mt-2 line-clamp-2 text-sm text-[var(--text-secondary)]">{m.business_description}</p>
-                  <div className="mt-4 flex items-center gap-1 text-xs text-[var(--text-tertiary)]">
+                  <p className="mt-2 line-clamp-2 text-sm text-(--text-secondary)">{m.business_description}</p>
+                  <div className="mt-4 flex items-center gap-1 text-xs text-(--text-tertiary)">
                     <MapPin className="h-3 w-3" />
                     {formatProximity(m.proximity_to_campus)}
                   </div>
@@ -109,7 +109,7 @@ const MerchantList = () => {
           {pagination && pagination.total_pages > 1 && (
             <div className="mt-8 flex items-center justify-center gap-2">
               <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Previous</Button>
-              <span className="text-sm text-[var(--text-secondary)]">Page {page} of {pagination.total_pages}</span>
+              <span className="text-sm text-(--text-secondary)">Page {page} of {pagination.total_pages}</span>
               <Button variant="outline" size="sm" disabled={page >= pagination.total_pages} onClick={() => setPage(page + 1)}>Next</Button>
             </div>
           )}

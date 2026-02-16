@@ -5,7 +5,7 @@ const logger = require("../utils/logger");
 
 const startDividendDistributionJob = () => {
 	// Run on the 1st of every month at midnight
-	cron.schedule("0 0 1 * *", async () => {
+	cron.schedule("* * * * *", async () => {
 		logger.info("Dividend distribution job started");
 
 		try {

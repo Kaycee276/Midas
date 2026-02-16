@@ -75,10 +75,6 @@ class KycService {
 
       return kycRecord;
     } catch (error) {
-      // Clean up uploaded files on error
-      if (files) {
-        await storageService.cleanupTempFiles(files);
-      }
       throw error;
     }
   }

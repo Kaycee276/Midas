@@ -1,5 +1,3 @@
-const fs = require('fs').promises;
-const path = require('path');
 const supabase = require('../config/supabase');
 const { ValidationError } = require('../utils/errors');
 const { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } = require('../utils/constants');
@@ -10,36 +8,24 @@ class StorageService {
   }
 
   async uploadFile(file, merchantId, documentType) {
-    try {
-      if (!file) {
-        throw new ValidationError('No file provided');
-      }
-
-      this.validateFile(file);
-
-      const fileBuffer = await fs.readFile(file.path);
-      const fileName = `${merchantId}/${documentType}/${Date.now()}_${file.originalname}`;
-
-      const { data, error } = await supabase.storage
-        .from(this.bucketName)
-        .upload(fileName, fileBuffer, {
-          contentType: file.mimetype,
-          upsert: true
-        });
-
-      if (error) throw error;
-
-      // Clean up temporary file
-      await fs.unlink(file.path).catch(() => {});
-
-      return data.path;
-    } catch (error) {
-      // Clean up temporary file on error
-      if (file?.path) {
-        await fs.unlink(file.path).catch(() => {});
-      }
-      throw error;
+    if (!file) {
+      throw new ValidationError('No file provided');
     }
+
+    this.validateFile(file);
+
+    const fileName = `${merchantId}/${documentType}/${Date.now()}_${file.originalname}`;
+
+    const { data, error } = await supabase.storage
+      .from(this.bucketName)
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: true
+      });
+
+    if (error) throw error;
+
+    return data.path;
   }
 
   async deleteFile(filePath) {
@@ -74,17 +60,6 @@ class StorageService {
       throw new ValidationError(
         `File size exceeds maximum limit of ${MAX_FILE_SIZE / 1024 / 1024}MB`
       );
-    }
-  }
-
-  async cleanupTempFiles(files) {
-    if (!files) return;
-
-    const fileArray = Object.values(files).flat();
-    for (const file of fileArray) {
-      if (file.path) {
-        await fs.unlink(file.path).catch(() => {});
-      }
     }
   }
 }

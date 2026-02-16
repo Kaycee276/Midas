@@ -22,6 +22,21 @@ class KycService {
         throw new ConflictError('KYC already approved');
       }
 
+      // Validate required documents
+      const requiredDocuments = [
+        'national_id_document',
+        'business_registration_document',
+        'proof_of_address_document',
+        'business_photo',
+      ];
+      const missingDocs = requiredDocuments.filter(
+        (doc) => !files?.[doc] || files[doc].length === 0
+      );
+      if (missingDocs.length > 0) {
+        const labels = missingDocs.map((d) => d.replace(/_/g, ' '));
+        throw new ValidationError(`Missing required documents: ${labels.join(', ')}`);
+      }
+
       const documentUrls = {};
 
       // Upload files to Supabase Storage

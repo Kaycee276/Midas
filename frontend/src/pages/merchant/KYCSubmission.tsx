@@ -49,8 +49,22 @@ const KYCSubmission = () => {
   const updateField = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
   const updateFile = (field: string, file: File | null) => setFiles((p) => ({ ...p, [field]: file }));
 
+  const requiredFiles = ['national_id_document', 'business_registration_document', 'proof_of_address_document', 'business_photo'] as const;
+  const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    const errors: Record<string, string> = {};
+    for (const key of requiredFiles) {
+      if (!files[key]) errors[key] = 'This document is required';
+    }
+    if (Object.keys(errors).length > 0) {
+      setFileErrors(errors);
+      return;
+    }
+    setFileErrors({});
+
     setLoading(true);
     try {
       const formData = new FormData();
@@ -155,10 +169,10 @@ const KYCSubmission = () => {
           <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Documents</h3>
           <div className="space-y-4">
             <FileUpload label="Student ID Document" value={files.student_id_document} onChange={(f) => updateFile('student_id_document', f)} />
-            <FileUpload label="National ID Document" value={files.national_id_document} onChange={(f) => updateFile('national_id_document', f)} />
-            <FileUpload label="Business Registration Document" value={files.business_registration_document} onChange={(f) => updateFile('business_registration_document', f)} />
-            <FileUpload label="Proof of Address" value={files.proof_of_address_document} onChange={(f) => updateFile('proof_of_address_document', f)} />
-            <FileUpload label="Business Photo" value={files.business_photo} onChange={(f) => updateFile('business_photo', f)} />
+            <FileUpload label="National ID Document *" value={files.national_id_document} onChange={(f) => updateFile('national_id_document', f)} error={fileErrors.national_id_document} />
+            <FileUpload label="Business Registration Document *" value={files.business_registration_document} onChange={(f) => updateFile('business_registration_document', f)} error={fileErrors.business_registration_document} />
+            <FileUpload label="Proof of Address *" value={files.proof_of_address_document} onChange={(f) => updateFile('proof_of_address_document', f)} error={fileErrors.proof_of_address_document} />
+            <FileUpload label="Business Photo *" value={files.business_photo} onChange={(f) => updateFile('business_photo', f)} error={fileErrors.business_photo} />
           </div>
         </Card>
 

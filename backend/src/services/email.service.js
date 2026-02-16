@@ -3,24 +3,19 @@ const dns = require("dns");
 
 dns.setDefaultResultOrder("ipv4first");
 
+const transporter = nodemailer.createTransport({
+	host: "smtp.gmail.com",
+	port: 587,
+	secure: false,
+	auth: {
+		user: process.env.SMTP_USER,
+		pass: process.env.SMTP_PASS,
+	},
+});
+
 class EmailService {
 	async sendVerificationEmail(to, name, verificationToken) {
 		const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
-
-		// Resolve Gmail SMTP to IPv4 to avoid IPv6 issues on Vercel
-		const addresses = await dns.promises.resolve4("smtp.gmail.com");
-		const transporter = nodemailer.createTransport({
-			host: addresses[0],
-			port: 465,
-			secure: true,
-			auth: {
-				user: process.env.SMTP_USER,
-				pass: process.env.SMTP_PASS,
-			},
-			tls: {
-				servername: "smtp.gmail.com",
-			},
-		});
 
 		await transporter.sendMail({
 			from: `"Kelechi from Midas" <${process.env.SMTP_USER}>`,

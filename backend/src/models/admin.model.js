@@ -203,6 +203,21 @@ class AdminModel {
       .limit(1)
       .single();
 
+    // Total platform commission
+    const { data: commissionData } = await supabase
+      .from('platform_wallet_transactions')
+      .select('amount')
+      .eq('type', 'commission');
+
+    const totalCommission = (commissionData || []).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
+    // Recent platform transactions
+    const { data: platformTransactions } = await supabase
+      .from('platform_wallet_transactions')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(5);
+
     // Pending revenue count
     const { count: pendingRevenueCount } = await supabase
       .from('revenue_reports')
@@ -230,6 +245,8 @@ class AdminModel {
       investments_by_type: investmentsByTypeArr,
       recent_distributions: recentDistributions || [],
       platform_balance: Number(platformWallet?.balance) || 0,
+      total_commission: totalCommission,
+      platform_transactions: platformTransactions || [],
       pending_revenue_count: pendingRevenueCount || 0,
       total_revenue: totalRevenue,
       total_distributed: totalDistributed

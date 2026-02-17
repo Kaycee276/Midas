@@ -1,11 +1,16 @@
 require("dotenv").config();
+const http = require("http");
 const app = require("./src/config/app");
+const { initSocket } = require("./src/config/socket");
 const logger = require("./src/utils/logger");
 const { startDividendDistributionJob } = require("./src/jobs/dividend-distribution.job");
 
 const PORT = process.env.PORT || 3000;
 
-const server = app.listen(PORT, () => {
+const server = http.createServer(app);
+initSocket(server);
+
+server.listen(PORT, () => {
 	logger.info(`Server running on port ${PORT}`);
 	console.log(`Server is listening at http://localhost:${PORT}`);
 

@@ -18,6 +18,15 @@ class RevenueService {
 			throw new ValidationError('Net profit cannot be negative (expenses exceed revenue)');
 		}
 
+		// Ensure merchant can cover investor + platform share (35% of net profit)
+		const requiredBalance = Math.round(netProfit * 0.35 * 100) / 100;
+		const walletBalance = parseFloat(merchant.wallet_balance) || 0;
+		if (walletBalance < requiredBalance) {
+			throw new ValidationError(
+				`Insufficient wallet balance. You need at least ₦${requiredBalance.toLocaleString()} to cover investor and platform shares, but your balance is ₦${walletBalance.toLocaleString()}`
+			);
+		}
+
 		const report = await revenueModel.create({
 			merchant_id: merchantId,
 			period_start: data.period_start,

@@ -218,6 +218,8 @@ export interface AdminAnalytics {
   investments_by_type: InvestmentByType[];
   recent_distributions: DividendDistribution[];
   platform_balance: number;
+  total_commission: number;
+  platform_transactions: PlatformWalletTransaction[];
   pending_revenue_count: number;
   total_revenue: number;
   total_distributed: number;

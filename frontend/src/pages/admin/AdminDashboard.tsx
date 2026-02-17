@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
 	BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell,
@@ -11,6 +11,7 @@ import Badge from "../../components/ui/Badge";
 import Spinner from "../../components/ui/Spinner";
 import Button from "../../components/ui/Button";
 import toast from "react-hot-toast";
+import { socket } from "../../lib/socket";
 
 const today = new Date().toLocaleDateString("en-US", {
 	weekday: "long",
@@ -38,23 +39,38 @@ const AdminDashboard = () => {
 	const [page, setPage] = useState(1);
 	const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-	useEffect(() => {
-		const fetchStats = async () => {
-			try {
-				const [statsRes, analyticsRes, revenueRes] = await Promise.allSettled([
-					getDashboardStats(),
-					getAnalytics(),
-					getPendingRevenue({ limit: 5 }),
-				]);
-				if (statsRes.status === "fulfilled") setStats(statsRes.value.data.data);
-				if (analyticsRes.status === "fulfilled") setAnalytics(analyticsRes.value.data.data);
-				if (revenueRes.status === "fulfilled") setPendingReports(revenueRes.value.data.data.reports);
-			} finally {
-				setStatsLoading(false);
-			}
-		};
-		fetchStats();
+	const fetchDashboardData = useCallback(async (showLoading = false) => {
+		if (showLoading) setStatsLoading(true);
+		try {
+			const [statsRes, analyticsRes, revenueRes] = await Promise.allSettled([
+				getDashboardStats(),
+				getAnalytics(),
+				getPendingRevenue({ limit: 5 }),
+			]);
+			if (statsRes.status === "fulfilled") setStats(statsRes.value.data.data);
+			if (analyticsRes.status === "fulfilled") setAnalytics(analyticsRes.value.data.data);
+			if (revenueRes.status === "fulfilled") setPendingReports(revenueRes.value.data.data.reports);
+		} finally {
+			setStatsLoading(false);
+		}
 	}, []);
+
+	useEffect(() => {
+		fetchDashboardData(true);
+	}, [fetchDashboardData]);
+
+	useEffect(() => {
+		socket.connect();
+
+		socket.on("dashboard:updated", () => {
+			fetchDashboardData();
+		});
+
+		return () => {
+			socket.off("dashboard:updated");
+			socket.disconnect();
+		};
+	}, [fetchDashboardData]);
 
 	useEffect(() => {
 		const fetchKyc = async () => {
@@ -147,6 +163,7 @@ const AdminDashboard = () => {
 						<StatTile label="KYC Approved" value={stats.kyc.approved} sub={`of ${stats.kyc.total}`} />
 						<StatTile label="KYC Rejected" value={stats.kyc.rejected} />
 						<StatTile label="Platform Balance" value={`\u20A6${(analytics?.platform_balance || 0).toLocaleString()}`} />
+						<StatTile label="Total Commission" value={`\u20A6${(analytics?.total_commission || 0).toLocaleString()}`} sub="5% from distributions" />
 						<StatTile label="Total Revenue" value={`\u20A6${(analytics?.total_revenue || 0).toLocaleString()}`} sub={`\u20A6${(analytics?.total_distributed || 0).toLocaleString()} distributed`} />
 					</div>
 
@@ -335,6 +352,43 @@ const AdminDashboard = () => {
 							</div>
 						</Card>
 					</div>
+
+					{/* Platform Transactions */}
+					{analytics && (analytics.platform_transactions || []).length > 0 && (
+						<div className="mt-6">
+							<h2 className="mb-3 text-sm font-semibold text-(--text)">Recent Platform Transactions</h2>
+							<Card padding={false}>
+								<div className="overflow-x-auto">
+									<table className="w-full text-sm">
+										<thead>
+											<tr className="border-b border-(--border) text-left text-xs text-(--text-tertiary)">
+												<th className="px-4 py-3 font-medium">Type</th>
+												<th className="px-4 py-3 font-medium">Amount</th>
+												<th className="px-4 py-3 font-medium">Balance After</th>
+												<th className="px-4 py-3 font-medium">Description</th>
+												<th className="px-4 py-3 font-medium">Date</th>
+											</tr>
+										</thead>
+										<tbody>
+											{analytics.platform_transactions.map((txn) => (
+												<tr key={txn.id} className="border-b border-(--border) last:border-0 hover:bg-(--bg-tertiary) transition-colors">
+													<td className="px-4 py-3">
+														<Badge variant={txn.type === "commission" ? "success" : "warning"}>
+															{txn.type}
+														</Badge>
+													</td>
+													<td className="px-4 py-3 font-medium text-(--success)">{"\u20A6"}{Number(txn.amount).toLocaleString()}</td>
+													<td className="px-4 py-3 text-(--text)">{"\u20A6"}{Number(txn.balance_after).toLocaleString()}</td>
+													<td className="px-4 py-3 text-(--text-secondary)">{txn.description || "—"}</td>
+													<td className="px-4 py-3 text-(--text-secondary)">{new Date(txn.created_at).toLocaleDateString()}</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</Card>
+						</div>
+					)}
 
 					{/* Row 5: Recent Distributions + Pending Revenue (side by side) */}
 					<div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">

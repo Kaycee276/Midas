@@ -83,6 +83,19 @@ class RevenueModel {
 		return data;
 	}
 
+	async getPendingDistributionTotal(merchantId) {
+		const { data, error } = await supabase
+			.from('revenue_reports')
+			.select('net_profit')
+			.eq('merchant_id', merchantId)
+			.eq('status', 'approved');
+
+		if (error) throw error;
+
+		const total = (data || []).reduce((sum, r) => sum + Number(r.net_profit) * 0.35, 0);
+		return Math.round(total * 100) / 100;
+	}
+
 	async getRevenueSummary(merchantId) {
 		const { data: reports, error } = await supabase
 			.from('revenue_reports')

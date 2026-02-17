@@ -4,6 +4,7 @@ const storageService = require('./storage.service');
 const { NotFoundError, ValidationError, ConflictError } = require('../utils/errors');
 const { KYC_STATUS, ACCOUNT_STATUS } = require('../types/enums');
 const { DOCUMENT_TYPE } = require('../types/enums');
+const { emitDashboardUpdate } = require('../config/socket');
 
 class KycService {
   async submitKyc(merchantId, kycData, files) {
@@ -87,6 +88,8 @@ class KycService {
 
       // Create history entry
       await kycModel.createHistoryEntry(merchantId, kycRecord);
+
+      emitDashboardUpdate();
 
       return kycRecord;
     } catch (error) {

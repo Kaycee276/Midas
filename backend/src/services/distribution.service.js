@@ -16,6 +16,7 @@ const {
 	PLATFORM_TRANSACTION_TYPE
 } = require('../types/enums');
 const logger = require('../utils/logger');
+const { emitDashboardUpdate } = require('../config/socket');
 
 class DistributionService {
 	async distributeProfit(revenueReportId, adminId) {
@@ -160,6 +161,8 @@ class DistributionService {
 			await revenueModel.updateStatus(revenueReportId, REVENUE_REPORT_STATUS.DISTRIBUTED);
 
 			logger.info(`Distribution completed for report ${revenueReportId}: merchant=${merchantShare}, investors=${investorPool}, platform=${platformShare}`);
+
+			emitDashboardUpdate();
 
 			return distribution;
 		} catch (error) {

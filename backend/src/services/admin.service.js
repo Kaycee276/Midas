@@ -8,6 +8,7 @@ const platformWalletModel = require('../models/platform-wallet.model');
 const storageService = require('./storage.service');
 const { AuthenticationError, NotFoundError, ValidationError } = require('../utils/errors');
 const { KYC_STATUS, ACCOUNT_STATUS, REVENUE_REPORT_STATUS } = require('../types/enums');
+const { emitDashboardUpdate } = require('../config/socket');
 
 class AdminService {
   async login(email, password) {
@@ -108,6 +109,8 @@ class AdminService {
     // Create history entry
     await kycModel.createHistoryEntry(kyc.merchant_id, updatedKyc);
 
+    emitDashboardUpdate();
+
     return updatedKyc;
   }
 
@@ -135,6 +138,8 @@ class AdminService {
 
     // Create history entry
     await kycModel.createHistoryEntry(kyc.merchant_id, updatedKyc);
+
+    emitDashboardUpdate();
 
     return updatedKyc;
   }
@@ -187,11 +192,15 @@ class AdminService {
       throw new ValidationError('Only pending reports can be approved');
     }
 
-    return await revenueModel.updateStatus(reportId, REVENUE_REPORT_STATUS.APPROVED, {
+    const result = await revenueModel.updateStatus(reportId, REVENUE_REPORT_STATUS.APPROVED, {
       reviewed_at: new Date().toISOString(),
       reviewed_by: adminId,
       admin_notes: notes || null
     });
+
+    emitDashboardUpdate();
+
+    return result;
   }
 
   async rejectRevenue(reportId, adminId, reason, notes) {
@@ -203,12 +212,16 @@ class AdminService {
       throw new ValidationError('Only pending reports can be rejected');
     }
 
-    return await revenueModel.updateStatus(reportId, REVENUE_REPORT_STATUS.REJECTED, {
+    const result = await revenueModel.updateStatus(reportId, REVENUE_REPORT_STATUS.REJECTED, {
       reviewed_at: new Date().toISOString(),
       reviewed_by: adminId,
       rejection_reason: reason || null,
       admin_notes: notes || null
     });
+
+    emitDashboardUpdate();
+
+    return result;
   }
 
   async getPlatformWallet() {

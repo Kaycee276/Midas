@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const merchantWalletModel = require('../models/merchant-wallet.model');
 const merchantModel = require('../models/merchant.model');
+const revenueModel = require('../models/revenue.model');
 const { NotFoundError, ValidationError } = require('../utils/errors');
 const { MERCHANT_WALLET_TRANSACTION_TYPE, WALLET_TRANSACTION_STATUS } = require('../types/enums');
 
@@ -24,6 +25,15 @@ class MerchantWalletService {
 		const balance = parseFloat(merchant.wallet_balance) || 0;
 		if (balance < amount) {
 			throw new ValidationError('Insufficient wallet balance');
+		}
+
+		// Check if withdrawal would drop below amount reserved for pending distributions
+		const reservedAmount = await revenueModel.getPendingDistributionTotal(merchantId);
+		const availableBalance = balance - reservedAmount;
+		if (amount > availableBalance) {
+			throw new ValidationError(
+				`₦${reservedAmount.toLocaleString()} is reserved for pending profit distributions. Available for withdrawal: ₦${availableBalance.toLocaleString()}`
+			);
 		}
 
 		const reference = `mwdr_${crypto.randomUUID()}`;

@@ -1,70 +1,78 @@
-# Midas Merchant Registration & KYC Backend
+# Midas Backend API
 
-A comprehensive merchant registration and KYC (Know Your Customer) verification system for the Midas student investment platform.
+Production Express.js REST API and WebSocket service powering the Midas student micro-investment platform and merchant KYC onboarding system.
 
 ## Features
 
-- ✅ Merchant registration with business details
-- ✅ JWT-based authentication
-- ✅ KYC document submission (single-step upload)
-- ✅ Admin KYC review and approval system
-- ✅ File upload to Supabase Storage
-- ✅ Rate limiting and security features
-- ✅ Comprehensive error handling and logging
-- ✅ Input validation with Joi
+- **Merchant Registration & Authentication**: Secure onboarding with bcrypt password hashing and JWT token issuance.
+- **Student Investor Portal**: Registration, university credentials, profile management, and wallet services.
+- **Merchant KYC Verification**: Document uploads with MIME/size validation and multi-document compliance auditing.
+- **Admin Review System**: KYC application queue, document inspection, approval/rejection workflows, and audit history.
+- **Investment Management**: Student investment creation, portfolio aggregation, and return tracking.
+- **Wallet & Transactions**: Student and merchant wallet management with transaction ledger.
+- **Automated Dividend Distributions**: Scheduled node-cron background job for dividend distribution.
+- **Testing Suite**: 39 Jest unit tests covering Joi validators, middleware, Prisma models, and Supertest route endpoints.
+- **Security & Reliability**: Helmet headers, configurable CORS, Winston logging, and express-rate-limit protection.
+
+---
 
 ## Tech Stack
 
-- **Runtime**: Node.js
+- **Runtime**: Node.js (`>= 22.13`)
 - **Framework**: Express.js 5.x
-- **Database & ORM**: PostgreSQL (via Neon) with Prisma ORM
-- **Storage**: Local filesystem storage (served via `/api/documents`)
-- **Authentication**: JWT
-- **Validation**: Joi
-- **File Upload**: Multer
-- **Logging**: Winston
+- **Database**: PostgreSQL (hosted on [Neon](https://neon.tech))
+- **ORM**: [Prisma ORM](https://www.prisma.io/) v6.19.3
+- **Unit Testing**: Jest + Supertest
+- **Authentication**: JSON Web Tokens (`jsonwebtoken`) & `bcrypt`
+- **Validation**: Joi schema validators
+- **File Storage**: Local filesystem document repository served via `/api/documents`
+- **Background Jobs**: `node-cron`
+- **Logging**: Winston logger with daily rotation and JSON formatting
+- **Code Quality**: ESLint & Prettier
+
+---
 
 ## Project Structure
 
 ```
 backend/
+├── prisma/
+│   └── schema.prisma        # Prisma data models and Neon PostgreSQL config
 ├── src/
-│   ├── config/          # App and Supabase configuration
-│   ├── middleware/      # Auth, validation, error handling, upload
-│   ├── controllers/     # Request handlers
-│   ├── services/        # Business logic
-│   ├── models/          # Database access layer
-│   ├── routes/          # API routes
-│   ├── validators/      # Joi schemas
-│   ├── utils/           # Helpers and utilities
-│   └── types/           # TypeScript-like enums
-├── database/            # SQL schema and migrations
-├── uploads/             # Temporary file storage
-├── logs/                # Application logs
-└── server.js            # Entry point
+│   ├── config/              # Express app setup and Prisma singleton
+│   ├── controllers/         # Request handling & HTTP response coordination
+│   ├── middleware/          # JWT auth, Joi validation, upload, error handling
+│   ├── models/              # Prisma database queries and mutations
+│   ├── routes/              # Express router definitions
+│   ├── services/            # Business logic and transaction orchestration
+│   ├── validators/          # Joi request validation schemas
+│   ├── utils/               # AppError classes, logger, responseFormatter
+│   ├── jobs/                # Scheduled background tasks (cron)
+│   └── types/               # System enums and constants
+├── tests/                   # Jest unit & integration test suites
+│   ├── setup.js             # Test environment variables
+│   ├── validators.test.js   # Joi validator schemas test
+│   ├── middleware.test.js   # Auth, validate, and error handling middleware tests
+│   ├── models.test.js       # Prisma models with mocked database
+│   └── routes.test.js       # Supertest HTTP endpoint integration tests
+├── uploads/                 # Storage for KYC verification documents
+├── jest.config.js           # Jest configuration
+└── package.json
 ```
 
-## Setup Instructions
+---
+
+## Getting Started
 
 ### 1. Prerequisites
 
-- Node.js (v18 or higher)
-- pnpm
-- Neon account ([neon.tech](https://neon.tech))
+- Node.js `>= 22.13`
+- `pnpm`
+- A PostgreSQL database on [Neon](https://neon.tech)
 
-### 2. Installation
+### 2. Environment Variables
 
-```bash
-# Install dependencies
-pnpm install
-
-# Copy environment variables
-cp .env.example .env
-```
-
-### 3. Configure Environment Variables
-
-Edit `.env` with your values:
+Create `.env` in `backend/` (or copy `.env.example`):
 
 ```env
 NODE_ENV=development
@@ -90,275 +98,89 @@ RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-### 4. Database Setup (Neon + Prisma)
+### 3. Database Migration with Prisma
 
-1. Create a project at [neon.tech](https://neon.tech)
-2. Copy your pooled (`DATABASE_URL`) and direct (`DIRECT_URL`) connection strings into `.env`
-3. Generate the Prisma Client and push your schema to Neon:
+Generate the Prisma Client and push your schema to Neon:
 
 ```bash
-pnpm prisma:generate
-pnpm prisma:push
+pnpm run prisma:generate
+pnpm run prisma:push
 ```
 
-To visually inspect and manage your tables and rows:
+To view and edit database records in Prisma Studio:
 
 ```bash
-pnpm prisma:studio
+pnpm run prisma:studio
 ```
 
-### 5. Run the Application
+### 4. Running the Server
 
 ```bash
-# Development mode with auto-reload
+# Development mode with nodemon auto-reload
 pnpm run dev
 
 # Production mode
 pnpm start
 ```
 
-The server will start at `http://localhost:3000`
+---
 
-## API Documentation
+## Testing & Quality Scripts
 
-### Base URL
+| Script                   | Command                  | Description                         |
+| ------------------------ | ------------------------ | ----------------------------------- |
+| `pnpm run test`          | `jest --passWithNoTests` | Runs all 39 Jest unit tests         |
+| `pnpm run test:watch`    | `jest --watch`           | Runs Jest in interactive watch mode |
+| `pnpm run test:coverage` | `jest --coverage`        | Generates coverage report           |
+| `pnpm run lint`          | `eslint .`               | Runs ESLint on backend source code  |
+| `pnpm run lint:fix`      | `eslint . --fix`         | Automatically fixes lint warnings   |
+| `pnpm run format`        | `prettier --write .`     | Formats all files with Prettier     |
+| `pnpm run format:check`  | `prettier --check .`     | Checks formatting without modifying |
 
-```
-http://localhost:3000/api
-```
+---
+
+## API Overview
+
+Base URL: `http://localhost:3000/api`
+
+### Health Checks
+
+- `GET /health` — Application health status
+- `GET /api/health` — API router health status
+
+### Public Directory
+
+- `GET /api/public/merchants` — List verified merchants with filtering & pagination
+- `GET /api/public/merchants/:id` — Get single merchant public profile
+- `GET /api/public/business-types` — Available merchant business categories
 
 ### Authentication
 
-Most endpoints require JWT authentication. Include the token in the Authorization header:
-
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-### Endpoints
-
-#### Health Check
-
-- `GET /health` - Server health status
-
-#### Merchant Authentication
-
-- `POST /api/auth/register` - Register new merchant
-
-  ```json
-  {
-    "email": "merchant@example.com",
-    "password": "SecurePass@123",
-    "business_name": "Campus Cafe",
-    "business_type": "cafe",
-    "business_description": "Coffee shop near campus",
-    "business_address": "123 Campus Road",
-    "business_phone": "+1234567890",
-    "owner_full_name": "John Doe",
-    "owner_phone": "+1234567890",
-    "owner_email": "john@example.com",
-    "proximity_to_campus": "on_campus",
-    "terms_accepted": true
-  }
-  ```
-
-- `POST /api/auth/login` - Merchant login
-
-  ```json
-  {
-    "email": "merchant@example.com",
-    "password": "SecurePass@123"
-  }
-  ```
-
-- `GET /api/auth/me` - Get current merchant profile (protected)
-
-- `PATCH /api/auth/profile` - Update merchant profile (protected)
-
-#### KYC Management
-
-- `POST /api/kyc/submit` - Submit KYC documents (protected, multipart/form-data)
-  - Form fields:
-    - `student_id_number` (optional)
-    - `national_id_number` (required if no student ID)
-    - `business_registration_number` (optional)
-    - `tax_identification_number` (optional)
-    - `years_in_operation` (optional)
-    - `average_monthly_revenue` (optional)
-  - File fields (all optional):
-    - `student_id_document`
-    - `national_id_document`
-    - `business_registration_document`
-    - `proof_of_address_document`
-    - `business_photo`
-
-- `GET /api/kyc/status` - Get KYC status and documents (protected)
-
-- `GET /api/kyc/documents/:type` - Get specific document URL (protected)
-
-- `DELETE /api/kyc/document/:type` - Delete specific document (protected)
-
-#### Admin Operations
-
-- `POST /api/admin/login` - Admin login
-
-  ```json
-  {
-    "email": "admin@midas.com",
-    "password": "Admin@123"
-  }
-  ```
-
-- `GET /api/admin/kyc/pending?page=1&limit=20` - List pending KYC submissions (protected)
-
-- `GET /api/admin/kyc/:id` - Get KYC details with documents (protected)
-
-- `POST /api/admin/kyc/:id/approve` - Approve KYC (protected)
-
-  ```json
-  {
-    "admin_notes": "All documents verified"
-  }
-  ```
-
-- `POST /api/admin/kyc/:id/reject` - Reject or request resubmission (protected)
-  ```json
-  {
-    "status": "rejected",
-    "rejection_reason": "Invalid business registration",
-    "admin_notes": "Please provide valid registration document"
-  }
-  ```
-
-### Response Format
-
-#### Success Response
-
-```json
-{
-  "success": true,
-  "message": "Operation successful",
-  "data": {}
-}
-```
-
-#### Error Response
-
-```json
-{
-  "success": false,
-  "message": "Error message",
-  "errors": []
-}
-```
-
-## File Upload Requirements
-
-- **Allowed types**: JPEG, PNG, PDF
-- **Max size**: 5MB per file
-- **Storage**: Supabase Storage (private bucket)
-- **Path structure**: `{merchant_id}/{document_type}/{filename}`
-
-## Security Features
-
-- ✅ Password hashing with bcrypt (12 rounds)
-- ✅ JWT token authentication
-- ✅ Rate limiting on sensitive endpoints
-- ✅ CORS protection
-- ✅ Helmet.js security headers
-- ✅ Input validation and sanitization
-- ✅ SQL injection protection (parameterized queries)
-- ✅ File type and size validation
-
-## Rate Limits
-
-- **Registration**: 5 attempts per hour per IP
-- **Login**: 10 attempts per 15 minutes per IP
-- **General API**: 100 requests per 15 minutes per user
-
-## Logging
-
-Logs are stored in the `logs/` directory:
-
-- `error.log` - Error logs only
-- `combined.log` - All logs
-
-## Database Schema
-
-### Merchants Table
-
-- Business and owner information
-- Account and KYC status tracking
-- Terms acceptance
-
-### Merchant KYC Table
-
-- Identity documents (optional student ID)
-- Business documents
-- Document URLs in Supabase Storage
-- Review status and admin notes
-
-### Admins Table
-
-- Admin user accounts
-- Role-based access
-
-### KYC Submission History
-
-- Audit trail of all KYC submissions
-- Historical data for compliance
-
-## Default Admin Account
-
-**Email**: admin@midas.com
-**Password**: Admin@123
-
-⚠️ **Important**: Change this password immediately in production!
-
-## Testing with Postman/Thunder Client
-
-1. Register a merchant via `POST /api/auth/register`
-2. Login to get JWT token
-3. Submit KYC with documents via `POST /api/kyc/submit`
-4. Login as admin
-5. Review pending KYC via `GET /api/admin/kyc/pending`
-6. Approve/reject via admin endpoints
-
-## Production Deployment
-
-1. Set `NODE_ENV=production` in environment variables
-2. Use a strong `JWT_SECRET` (min 32 characters)
-3. Configure proper CORS origins
-4. Set up proper Supabase RLS policies
-5. Change default admin password
-6. Set up log rotation
-7. Use process manager (PM2, systemd)
-8. Set up monitoring and alerting
-
-## Troubleshooting
-
-### Database Connection Issues
-
-- Verify Supabase credentials in `.env`
-- Check if tables were created successfully
-- Ensure service role key is used (not anon key)
-
-### File Upload Issues
-
-- Verify Supabase Storage bucket exists and is named `kyc-documents`
-- Check bucket is set to private
-- Ensure sufficient storage quota
-
-### Authentication Issues
-
-- Verify JWT_SECRET is set
-- Check token expiration time
-- Ensure Authorization header format: `Bearer <token>`
-
-## License
-
-Proprietary - Midas Platform
-
-## Support
-
-For issues and questions, contact the development team.
+- `POST /api/auth/register` — Merchant registration
+- `POST /api/auth/login` — Merchant login
+- `GET /api/auth/me` — Merchant current profile (Bearer token required)
+- `POST /api/students/register` — Student registration
+- `POST /api/students/login` — Student login
+- `GET /api/students/me` — Student current profile (Bearer token required)
+- `POST /api/admin/login` — Admin reviewer login
+
+### KYC (Know Your Customer)
+
+- `POST /api/kyc/submit` — Submit KYC documents (`multipart/form-data`)
+- `GET /api/kyc/status` — Current merchant verification status
+- `GET /api/documents/:filename` — Static secure KYC document serving
+
+### Admin Review
+
+- `GET /api/admin/kyc/pending` — List pending KYC submissions
+- `GET /api/admin/kyc/:id` — Detail view for submission audit
+- `POST /api/admin/kyc/:id/approve` — Approve KYC and activate merchant
+- `POST /api/admin/kyc/:id/reject` — Reject or request resubmission
+
+### Investments & Wallets
+
+- `POST /api/investments` — Student invests in verified merchant
+- `GET /api/investments/portfolio` — Student portfolio summary and holdings
+- `GET /api/wallet/balance` — Student wallet balance
+- `POST /api/wallet/fund` — Fund student wallet
+- `POST /api/wallet/withdraw` — Withdraw from student wallet

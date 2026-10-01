@@ -1,324 +1,320 @@
 # Midas
 
-A micro-investment platform that connects university students with verified campus merchants. Students invest small amounts in local businesses they use and trust, while merchants raise capital through a KYC-verified onboarding process.
+[![CI](https://github.com/Kaycee276/Midas/actions/workflows/ci.yml/badge.svg)](https://github.com/Kaycee276/Midas/actions/workflows/ci.yml)
+[![Latest Release](https://img.shields.io/github/v/release/Kaycee276/Midas)](https://github.com/Kaycee276/Midas/releases)
+
+Midas is a campus micro-investment and merchant KYC platform connecting university students with verified local merchants. Students invest small amounts in campus businesses they frequent and trust, while merchants raise growth capital through a rigorous, KYC-verified onboarding pipeline.
+
+---
 
 ## Table of Contents
 
-- [Features](#features)
+- [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
+- [Monorepo Architecture](#monorepo-architecture)
+- [Quick Start](#quick-start)
 - [Environment Variables](#environment-variables)
-- [Database Setup](#database-setup)
+- [Database Setup (Neon + Prisma)](#database-setup-neon--prisma)
+- [Monorepo Scripts](#monorepo-scripts)
+- [Testing](#testing)
+- [CI/CD & Release Workflow](#cicd--release-workflow)
 - [API Reference](#api-reference)
-- [User Workflows](#user-workflows)
+- [Frontend Routes](#frontend-routes)
 - [Security](#security)
 
-## Features
+---
 
-**For Students (Investors)**
+## Key Features
 
-- Browse verified merchants near campus with filters (business type, proximity, search)
-- Invest in merchants with amounts from $10 to $1,000,000
-- Track portfolio performance with aggregated summaries
-- View transaction history and withdraw investments
+### For Students (Investors)
+- **Merchant Directory**: Browse campus-verified merchants with real-time category, proximity, and keyword search filters.
+- **Micro-Investments**: Invest in campus businesses with amounts from $10 up to $1,000,000.
+- **Portfolio Tracking**: Real-time aggregated summaries, current value, returns, and transaction history.
+- **Wallet System**: Deposit, withdraw, and track cash balance alongside investment holdings.
 
-**For Merchants (Business Owners)**
+### For Merchants (Business Owners)
+- **Business Profile**: Detailed registration including proximity to campus, business category, and contact details.
+- **KYC Verification**: Single-step document upload (ID, business registration, proof of address, business photos).
+- **Investor & Revenue Management**: View investor support, track capital raised, and submit periodic revenue reports.
+- **Merchant Wallet**: Secure withdrawals and investment credit management.
 
-- Register a business with detailed profile information
-- Submit KYC documents (identity, business registration, proof of address)
-- View investor activity and capital raised once verified
-- Manage business profile and track account status
+### For Administrators (Compliance & Reviewers)
+- **KYC Review Queue**: Inspect submitted identity and business verification documents.
+- **Audit Controls**: Approve, reject, or request resubmission with detailed reviewer notes.
+- **Full History**: Immutable audit log of all submission reviews and status transitions.
 
-**For Admins (KYC Reviewers)**
-
-- Review pending KYC submissions with uploaded documents
-- Approve, reject, or request resubmission with notes
-- Full audit trail of submission history
+---
 
 ## Tech Stack
 
-### Backend
+### Monorepo Tooling
+- **Package Manager**: [pnpm v11](https://pnpm.io/) workspaces
+- **Git Hooks**: [Husky](https://typicode.github.io/husky/) pre-commit runner
+- **Code Formatting**: [Prettier](https://prettier.io/)
+- **Linting**: [ESLint](https://eslint.org/) (Flat Config)
+- **CI/CD**: GitHub Actions
 
-- **Runtime**: Node.js with Express 5
-- **Database & ORM**: PostgreSQL (via Neon) with Prisma ORM
-- **Auth**: JWT with bcrypt password hashing
-- **Validation**: Joi schema validation
-- **File Storage**: Local filesystem document storage (served via `/api/documents`)
-- **Logging**: Winston
-- **Security**: Helmet, CORS, express-rate-limit
+### Backend
+- **Runtime**: Node.js (`>= 22.13`)
+- **Framework**: Express.js 5.x
+- **Database**: PostgreSQL hosted on [Neon](https://neon.tech)
+- **ORM**: [Prisma ORM](https://www.prisma.io/) v6.19.3
+- **Authentication**: JWT (`jsonwebtoken`) & `bcrypt` password hashing
+- **Validation**: Joi schema validators
+- **Document Storage**: Local secure filesystem storage served at `/api/documents`
+- **Testing**: Jest & Supertest
+- **Logging & Security**: Winston, Helmet, CORS, express-rate-limit
 
 ### Frontend
-
-- **Framework**: React 19 with TypeScript (strict mode)
-- **Bundler**: Vite 7
+- **Framework**: React 19 + TypeScript (strict mode)
+- **Build Tool**: Vite 7
 - **Routing**: React Router DOM 7
-- **State Management**: Zustand
-- **Styling**: Tailwind CSS 4 with CSS custom properties for theming
-- **HTTP Client**: Axios with interceptors
-- **Icons**: Lucide React
-- **Notifications**: React Hot Toast
+- **Styling**: Tailwind CSS 4 with CSS custom properties (dark/light themes)
+- **State Management**: Zustand (persistent auth & theme stores)
+- **HTTP Client**: Axios with bearer token interceptors
+- **Testing**: Vitest + React Testing Library + `@testing-library/jest-dom`
+- **Deployment**: Vercel
 
-## Project Structure
+---
+
+## Monorepo Architecture
 
 ```
 Midas/
-├── backend/
+├── .github/
+│   └── workflows/
+│       ├── ci.yml             # GitHub Actions CI (lint, format, typecheck, test, build)
+│       └── release.yml        # Automated GitHub Release generation on git tags (v*)
+├── .husky/
+│   └── pre-commit             # Automated pre-commit checks hook
+├── backend/                   # Express.js + Prisma API
+│   ├── prisma/
+│   │   └── schema.prisma      # Prisma ORM schema & Neon DB models
 │   ├── src/
-│   │   ├── config/          # Express app setup, Supabase client
-│   │   ├── controllers/     # Request handlers
-│   │   ├── middleware/       # Auth, validation, file upload, error handling
-│   │   ├── models/          # Database access layer
-│   │   ├── routes/          # API route definitions
-│   │   ├── services/        # Business logic
-│   │   ├── types/           # Enums and constants
-│   │   ├── validators/      # Joi validation schemas
-│   │   └── utils/           # Error classes, logger, formatters
-│   ├── database/            # SQL schema files and setup guide
-│   ├── uploads/             # Temporary file storage (multer)
-│   ├── server.js            # Entry point
-│   └── .env.example
-│
-├── frontend/
+│   │   ├── config/            # Express app & Prisma singleton
+│   │   ├── controllers/       # HTTP request handlers
+│   │   ├── middleware/        # JWT auth, validation, upload, error handler
+│   │   ├── models/            # Database access layer
+│   │   ├── routes/            # Route modules (auth, student, kyc, investments, etc.)
+│   │   ├── services/          # Business logic
+│   │   └── validators/        # Joi schema definitions
+│   ├── tests/                 # Jest unit tests (39 tests)
+│   ├── uploads/               # KYC documents storage
+│   └── jest.config.js
+├── frontend/                  # React 19 + Vite + Tailwind 4 SPA
 │   ├── src/
-│   │   ├── api/             # Axios client and API modules
-│   │   ├── components/      # Layout and reusable UI components
-│   │   ├── hooks/           # Custom React hooks
-│   │   ├── pages/           # Page components (merchant, student, admin, public)
-│   │   ├── stores/          # Zustand state stores (auth, theme)
-│   │   └── types/           # TypeScript interfaces and enums
-│   ├── vite.config.ts
-│   └── tsconfig.json
-│
+│   │   ├── api/               # Axios API clients
+│   │   ├── components/        # UI components & layouts
+│   │   ├── pages/             # Student, Merchant, Admin, and Public views
+│   │   ├── stores/            # Zustand state stores (auth, theme)
+│   │   └── test/              # Vitest unit tests (18 tests)
+│   ├── vitest.config.ts       # Vitest configuration
+│   └── vite.config.ts         # Vite configuration
+├── package.json               # Root monorepo workspace configuration
+├── pnpm-workspace.yaml        # Workspace package definitions
 └── README.md
 ```
 
-## Getting Started
+---
 
-### Prerequisites
+## Quick Start
 
-- Node.js 18+
-- npm
-- A [Supabase](https://supabase.com) project
+### 1. Prerequisites
+- **Node.js**: `>= 22.13.0` (required for pnpm 11 `node:sqlite` engine)
+- **pnpm**: `npm install -g pnpm`
+- **Neon Database**: A free serverless PostgreSQL instance on [neon.tech](https://neon.tech)
 
-### Installation
+### 2. Installation
+Clone the repository and install all dependencies across the entire monorepo:
 
 ```bash
-# Clone the repository
-git clone <repo-url>
+git clone https://github.com/Kaycee276/Midas.git
 cd Midas
-
-# Install backend dependencies
-cd backend
-cp .env.example .env    # then fill in your values
-pnpm install
-
-# Install frontend dependencies
-cd ../frontend
 pnpm install
 ```
 
-### Running the App
+### 3. Environment Configuration
+Create the `.env` files for both backend and frontend:
 
-```bash
-# Start the backend (from /backend)
-pnpm run dev        # uses nodemon for auto-reload
-
-# Start the frontend (from /frontend)
-pnpm run dev        # Vite dev server on http://localhost:5173
+**Backend (`backend/.env`)**:
+```env
+NODE_ENV=development
+PORT=3000
+DATABASE_URL="postgresql://neondb_owner:***@ep-xyz-pooler.region.aws.neon.tech/neondb?sslmode=require"
+DIRECT_URL="postgresql://neondb_owner:***@ep-xyz.region.aws.neon.tech/neondb?sslmode=require"
+JWT_SECRET="your-super-secret-jwt-key-min-32-chars"
+JWT_EXPIRES_IN="7d"
+ALLOWED_ORIGINS="http://localhost:3000,http://localhost:5173"
+MAX_FILE_SIZE=5242880
+ALLOWED_FILE_TYPES="image/jpeg,image/png,application/pdf"
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-## Environment Variables
+**Frontend (`frontend/.env`)**:
+```env
+VITE_API_URL="http://localhost:3000/api"
+```
 
-### Backend (`backend/.env`)
-
-| Variable                  | Description                               | Example                                                                          |
-| ------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
-| `NODE_ENV`                | Environment                               | `development`                                                                    |
-| `PORT`                    | Server port                               | `3000`                                                                           |
-| `DATABASE_URL`            | Neon pooled connection string             | `postgresql://neondb_owner:***@ep-xyz-pooler.region.aws.neon.tech/neondb?sslmode=require` |
-| `DIRECT_URL`              | Neon direct connection string (migrations)| `postgresql://neondb_owner:***@ep-xyz.region.aws.neon.tech/neondb?sslmode=require`        |
-| `JWT_SECRET`              | JWT signing secret (min 32 chars)         | `your-secret-key`                                                                |
-| `JWT_EXPIRES_IN`          | Token expiry                              | `7d`                                                                             |
-| `ALLOWED_ORIGINS`         | CORS origins (comma-separated)            | `http://localhost:5173`                                                          |
-| `RATE_LIMIT_WINDOW_MS`    | Rate limit window                         | `900000`                                                                         |
-| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window                   | `100`                                                                            |
-
-### Frontend (`frontend/.env`)
-
-| Variable       | Description          | Example                     |
-| -------------- | -------------------- | --------------------------- |
-| `VITE_API_URL` | Backend API base URL | `http://localhost:3000/api` |
-
-## Database Setup (Neon + Prisma)
-
-1. Create a project at [neon.tech](https://neon.tech)
-2. Copy your pooled (`DATABASE_URL`) and direct (`DIRECT_URL`) connection strings into `backend/.env`
-3. Generate the Prisma Client and push the schema to your fresh Neon database:
+### 4. Database Initialization
+Push your schema directly to Neon and generate the Prisma Client:
 
 ```bash
 cd backend
-pnpm prisma:generate
-pnpm prisma:push
+pnpm run prisma:generate
+pnpm run prisma:push
 ```
 
-To inspect your database records visually at any time:
+*(Optional) Launch Prisma Studio to visually manage your database:*
 ```bash
-pnpm prisma:studio
+pnpm run prisma:studio
 ```
+
+### 5. Running the Application
+From the repository root:
+
+```bash
+# Start backend API (http://localhost:3000)
+pnpm --filter backend run dev
+
+# Start frontend application (http://localhost:5173)
+pnpm --filter frontend run dev
+```
+
+---
+
+## Monorepo Scripts
+
+Run these commands from the root directory:
+
+| Script | Command | Purpose |
+|---|---|---|
+| `pnpm test` | `pnpm -r run test` | Runs all 57 tests across backend and frontend |
+| `pnpm run lint` | `pnpm -r run lint` | Runs ESLint across all projects |
+| `pnpm run lint:fix` | `pnpm -r run lint:fix` | Automatically fixes autofixable lint issues |
+| `pnpm run format` | `pnpm -r run format` | Formats the entire codebase using Prettier |
+| `pnpm run format:check`| `pnpm -r run format:check` | Verifies formatting compliance |
+| `pnpm run typecheck` | `pnpm --filter frontend run typecheck` | Runs TypeScript compiler verification (`tsc -b`) |
+| `pnpm run pre-commit`| `pnpm run lint && pnpm run format:check && pnpm run typecheck` | Full pre-commit validation hook |
+
+---
+
+## Testing
+
+The repository includes a comprehensive unit testing suite with **57 passing tests**:
+
+- **Backend (39 tests)**: Powered by Jest and Supertest.
+  - Joi validation schemas (Student, Merchant, KYC, Investment, Wallet).
+  - Middleware (authentication token verification, role access guards, error handler).
+  - Prisma Models (Merchant, Student, Investment with mocked database).
+  - API Routes integration endpoints.
+- **Frontend (18 tests)**: Powered by Vitest, React Testing Library, and jsdom.
+  - UI Primitives: Button (loading/click/disabled), Badge variants, Input typing & errors, Card padding.
+  - State Stores: Auth session lifecycle and Theme toggle persistence.
+
+Run tests:
+```bash
+# Run all tests
+pnpm test
+
+# Run only backend tests
+pnpm --filter backend run test
+
+# Run only frontend tests
+pnpm --filter frontend run test
+```
+
+---
+
+## CI/CD & Release Workflow
+
+### GitHub Actions CI
+Every push and pull request to `master` triggers [`.github/workflows/ci.yml`](file:///home/kaycee/Desktop/Personal/Midas/.github/workflows/ci.yml):
+1. Installs dependencies using `pnpm install --frozen-lockfile` on Node.js 22.
+2. Generates Prisma Client.
+3. Executes pre-commit checks (ESLint, Prettier check, TypeScript typecheck).
+4. Runs full unit test suites (57 tests).
+5. Compiles frontend production bundle.
+
+### Releases & Tags
+Releases are automated via [`.github/workflows/release.yml`](file:///home/kaycee/Desktop/Personal/Midas/.github/workflows/release.yml):
+- Pushing any tag matching `v*` (e.g. `git tag -a v0.1.2 -m "..." && git push origin v0.1.2`) triggers GitHub Actions to automatically draft, generate changelogs, and publish the release.
+- Current releases and tags are available at [github.com/Kaycee276/Midas/releases](https://github.com/Kaycee276/Midas/releases).
+
+---
 
 ## API Reference
 
-All endpoints are prefixed with `/api`.
+All backend endpoints are prefixed with `/api`.
 
-### Public
-
-| Method | Endpoint                 | Description                                                                                           |
-| ------ | ------------------------ | ----------------------------------------------------------------------------------------------------- |
-| `GET`  | `/public/merchants`      | List active merchants (supports `page`, `limit`, `business_type`, `proximity`, `search` query params) |
-| `GET`  | `/public/merchants/:id`  | Get merchant details                                                                                  |
-| `GET`  | `/public/business-types` | List business type options                                                                            |
-| `GET`  | `/health`                | API health check                                                                                      |
-
-### Authentication — Merchants
-
-| Method  | Endpoint         | Auth | Description                  |
-| ------- | ---------------- | ---- | ---------------------------- |
-| `POST`  | `/auth/register` | No   | Register merchant            |
-| `POST`  | `/auth/login`    | No   | Login merchant               |
-| `GET`   | `/auth/me`       | Yes  | Get current merchant profile |
-| `PATCH` | `/auth/profile`  | Yes  | Update merchant profile      |
-
-### Authentication — Students
-
-| Method  | Endpoint             | Auth | Description                 |
-| ------- | -------------------- | ---- | --------------------------- |
-| `POST`  | `/students/register` | No   | Register student            |
-| `POST`  | `/students/login`    | No   | Login student               |
-| `GET`   | `/students/me`       | Yes  | Get current student profile |
-| `PATCH` | `/students/profile`  | Yes  | Update student profile      |
-
-### KYC (Merchant only)
-
-| Method   | Endpoint               | Auth     | Description                                |
-| -------- | ---------------------- | -------- | ------------------------------------------ |
-| `POST`   | `/kyc/submit`          | Merchant | Submit KYC documents (multipart/form-data) |
-| `GET`    | `/kyc/status`          | Merchant | Get KYC submission status                  |
-| `GET`    | `/kyc/documents/:type` | Merchant | Get signed URL for a document              |
-| `DELETE` | `/kyc/document/:type`  | Merchant | Delete a document                          |
-
-### Investments (Student only)
-
-| Method | Endpoint                             | Auth    | Description                       |
-| ------ | ------------------------------------ | ------- | --------------------------------- |
-| `POST` | `/investments`                       | Student | Create investment                 |
-| `GET`  | `/investments/portfolio`             | Student | Get portfolio with summary        |
-| `GET`  | `/investments/history`               | Student | Transaction history (paginated)   |
-| `GET`  | `/investments/:id`                   | Student | Get investment details            |
-| `POST` | `/investments/:id/withdraw`          | Student | Withdraw investment               |
-| `GET`  | `/investments/merchants/:merchantId` | No      | Get merchant's investment summary |
-
-### Admin
-
-| Method | Endpoint                 | Auth  | Description                    |
-| ------ | ------------------------ | ----- | ------------------------------ |
-| `POST` | `/admin/login`           | No    | Admin login                    |
-| `GET`  | `/admin/kyc/pending`     | Admin | List pending KYC submissions   |
-| `GET`  | `/admin/kyc/:id`         | Admin | Get KYC submission details     |
-| `POST` | `/admin/kyc/:id/approve` | Admin | Approve KYC                    |
-| `POST` | `/admin/kyc/:id/reject`  | Admin | Reject or request resubmission |
+### Public Endpoints
+- `GET /health` — Server health status
+- `GET /api/health` — API router health status
+- `GET /api/public/merchants` — List verified merchants (supports `page`, `limit`, `business_type`, `proximity`, `search`)
+- `GET /api/public/merchants/:id` — Merchant detail view
+- `GET /api/public/business-types` — Available merchant business types
 
 ### Authentication
+- `POST /api/auth/register` — Register merchant
+- `POST /api/auth/login` — Login merchant
+- `GET /api/auth/me` — Current merchant profile *(Merchant)*
+- `PATCH /api/auth/profile` — Update merchant profile *(Merchant)*
+- `POST /api/students/register` — Register student
+- `POST /api/students/login` — Login student
+- `GET /api/students/me` — Current student profile *(Student)*
+- `PATCH /api/students/profile` — Update student profile *(Student)*
+- `POST /api/admin/login` — Admin login
 
-All authenticated endpoints require a `Authorization: Bearer <token>` header. Tokens are returned by the login/register endpoints and expire after 7 days by default.
-
-## User Workflows
-
-### Merchant Onboarding
-
-1. Register with business details (name, type, address, proximity to campus)
-2. Submit KYC documents (identity docs, business registration, proof of address)
-3. Admin reviews and approves the submission
-4. Account becomes **active** and visible to student investors
-
-### Student Investment Flow
-
-1. Register with university information
-2. Browse verified merchants with filters
-3. Select a merchant and invest an amount ($10 minimum)
-4. Monitor portfolio value and returns on the dashboard
-5. Withdraw investments when desired
+### KYC Verification
+- `POST /api/kyc/submit` — Submit KYC documents *(Merchant, multipart/form-data)*
+- `GET /api/kyc/status` — Get KYC status and file records *(Merchant)*
+- `GET /api/documents/:filename` — Static secure document serving
 
 ### Admin Review
+- `GET /api/admin/kyc/pending` — List pending KYC submissions *(Admin)*
+- `GET /api/admin/kyc/:id` — Detail view of KYC submission *(Admin)*
+- `POST /api/admin/kyc/:id/approve` — Approve KYC *(Admin)*
+- `POST /api/admin/kyc/:id/reject` — Reject or request resubmission *(Admin)*
 
-1. Log in to the admin dashboard
-2. View queue of pending KYC submissions
-3. Review uploaded documents and merchant information
-4. Approve, reject, or request resubmission with notes
+### Investments & Wallet
+- `POST /api/investments` — Invest in a verified merchant *(Student)*
+- `GET /api/investments/portfolio` — Portfolio summary and holdings *(Student)*
+- `GET /api/investments/history` — Paginated investment transaction history *(Student)*
+- `POST /api/wallet/fund` — Fund student wallet balance *(Student)*
+- `POST /api/wallet/withdraw` — Withdraw from student wallet *(Student)*
+- `GET /api/wallet/transactions` — View student wallet transactions *(Student)*
 
-## Security
-
-- **Password Hashing**: bcrypt with 12 salt rounds
-- **JWT Tokens**: Signed, expiring tokens with role-based claims
-- **Rate Limiting**: Registration (5/hour), login (10/15min), general (100/15min)
-- **Input Validation**: Joi schemas on all endpoints
-- **File Validation**: MIME type and size checks (5MB max, JPEG/PNG/PDF only)
-- **Security Headers**: Helmet middleware
-- **CORS**: Configurable origin whitelist
-- **Private Storage**: KYC documents stored in a private Supabase bucket with time-limited signed URLs
-- **Role-Based Access Control**: Separate middleware guards for merchant, student, and admin routes
+---
 
 ## Frontend Routes
 
-| Path                       | Component         | Access   |
-| -------------------------- | ----------------- | -------- |
-| `/`                        | Landing           | Public   |
-| `/merchants`               | MerchantList      | Public   |
-| `/merchants/:id`           | MerchantDetail    | Public   |
-| `/merchant/login`          | MerchantLogin     | Public   |
-| `/merchant/register`       | MerchantRegister  | Public   |
-| `/merchant/dashboard`      | MerchantDashboard | Merchant |
-| `/merchant/profile`        | MerchantProfile   | Merchant |
-| `/merchant/kyc`            | KYCSubmission     | Merchant |
-| `/student/login`           | StudentLogin      | Public   |
-| `/student/register`        | StudentRegister   | Public   |
-| `/student/dashboard`       | StudentDashboard  | Student  |
-| `/student/profile`         | StudentProfile    | Student  |
-| `/student/portfolio`       | Portfolio         | Student  |
-| `/student/investments/:id` | InvestmentDetail  | Student  |
-| `/admin/login`             | AdminLogin        | Public   |
-| `/admin/dashboard`         | AdminDashboard    | Admin    |
-| `/admin/kyc/:id`           | KYCReview         | Admin    |
+| Path | Component | Description | Access |
+|---|---|---|---|
+| `/` | `Landing` | Marketplace landing page | Public |
+| `/merchants` | `MerchantList` | Browse and filter campus merchants | Public |
+| `/merchants/:id` | `MerchantDetail` | Merchant public profile and offerings | Public |
+| `/merchant/register` | `MerchantRegister` | Merchant business registration | Public |
+| `/merchant/login` | `MerchantLogin` | Merchant sign-in | Public |
+| `/merchant/dashboard` | `MerchantDashboard` | Business performance & investors | Merchant |
+| `/merchant/kyc` | `KYCSubmission` | KYC document upload | Merchant |
+| `/merchant/wallet` | `MerchantWallet` | Capital balance & withdrawals | Merchant |
+| `/student/register` | `StudentRegister` | Student investor registration | Public |
+| `/student/login` | `StudentLogin` | Student sign-in | Public |
+| `/student/dashboard` | `StudentDashboard` | Investment dashboard | Student |
+| `/student/invest/:id` | `Invest` | Make investment in merchant | Student |
+| `/student/portfolio` | `Portfolio` | Active holdings & returns | Student |
+| `/student/wallet` | `Wallet` | Wallet deposits & withdrawals | Student |
+| `/admin/login` | `AdminLogin` | Compliance reviewer login | Public |
+| `/admin/dashboard` | `AdminDashboard` | KYC submissions review queue | Admin |
+| `/admin/kyc/:id` | `KYCReview` | Document inspection & approval | Admin |
 
-## Data Model
+---
 
-```
-merchants ──────── merchant_kyc (1:1)
-    │                    │
-    │                    └── reviewed_by ──── admins
-    │
-    ├── kyc_submission_history (1:many, audit trail)
-    │
-    └── investments (1:many) ──── students (many:1)
-              │
-              └── investment_transactions (1:many)
-```
+## Security
 
-### Key Entities
-
-| Entity          | Description                                                             |
-| --------------- | ----------------------------------------------------------------------- |
-| **Merchant**    | Business owner with profile, KYC status, and account status             |
-| **Student**     | Investor with university info and portfolio                             |
-| **Admin**       | KYC reviewer (roles: `reviewer`, `super_admin`)                         |
-| **Investment**  | A student's investment in a merchant (amount, shares, status)           |
-| **Transaction** | Audit record for investment events (invest, withdraw, dividend, return) |
-| **KYC**         | Merchant verification submission with document URLs and review history  |
-
-### Business Types
-
-restaurant, cafe, food_truck, retail, bookstore, laundry, salon, gym, tutoring, printing, electronics, clothing, other
-
-### Proximity Options
-
-on_campus, within_1km, within_2km, within_5km, more_than_5km
+- **Password Hashing**: Strong bcrypt hashing with 12 salt rounds.
+- **JWT Authorization**: Cryptographically signed tokens with strict expiration and role-based checks.
+- **Data Integrity**: Enforced via Prisma ORM and PostgreSQL foreign key constraints on Neon.
+- **Input Validation**: Joi validation schemas strip unknown properties and enforce format rules.
+- **File Security**: MIME type verification, file size limits (5MB max), and secure local storage with restricted access.
+- **Protection**: Helmet security headers, CORS origin whitelisting, and multi-tier rate limiting.

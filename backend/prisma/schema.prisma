@@ -1,0 +1,346 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Merchant {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                String    @unique @db.VarChar
+  password_hash        String
+  business_name        String    @db.VarChar
+  business_type        String    @db.VarChar
+  business_description String?
+  business_address     String
+  business_phone       String    @db.VarChar
+  owner_full_name      String    @db.VarChar
+  owner_phone          String    @db.VarChar
+  owner_email          String?   @db.VarChar
+  proximity_to_campus  String    @db.VarChar
+  account_status       String    @default("pending_kyc") @db.VarChar
+  kyc_status           String    @default("not_started") @db.VarChar
+  created_at           DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+  last_login           DateTime? @db.Timestamptz(6)
+  terms_accepted       Boolean?  @default(false)
+  terms_accepted_at    DateTime? @db.Timestamptz(6)
+  is_verified          Boolean?  @default(false)
+  wallet_balance       Decimal   @default(0) @db.Decimal
+  stellar_address      String?
+
+  kyc                          MerchantKyc?
+  kyc_submission_history       KycSubmissionHistory[]
+  investments                  Investment[]
+  investment_transactions      InvestmentTransaction[]
+  merchant_wallet_transactions MerchantWalletTransaction[]
+  revenue_reports              RevenueReport[]
+  dividend_distributions       DividendDistribution[]
+  dividend_payouts             DividendPayout[]
+
+  @@map("merchants")
+}
+
+model Admin {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String    @unique @db.VarChar
+  password_hash String
+  full_name     String    @db.VarChar
+  role          String    @default("reviewer") @db.VarChar
+  is_active     Boolean?  @default(true)
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+  last_login    DateTime? @db.Timestamptz(6)
+
+  reviewed_kyc             MerchantKyc[]
+  reviewed_kyc_history     KycSubmissionHistory[]
+  reviewed_revenue_reports RevenueReport[]
+
+  @@map("admins")
+}
+
+model MerchantKyc {
+  id                                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  merchant_id                        String    @unique @db.Uuid
+  student_id_number                  String?   @db.VarChar
+  national_id_number                 String?   @db.VarChar
+  business_registration_number       String?   @db.VarChar
+  tax_identification_number          String?   @db.VarChar
+  student_id_document_url            String?
+  national_id_document_url           String?
+  business_registration_document_url String?
+  proof_of_address_document_url      String?
+  business_photo_url                 String?
+  years_in_operation                 Int?
+  average_monthly_revenue            Decimal?  @db.Decimal
+  status                             String    @default("pending") @db.VarChar
+  submitted_at                       DateTime? @db.Timestamptz(6)
+  reviewed_at                        DateTime? @db.Timestamptz(6)
+  reviewed_by                        String?   @db.Uuid
+  rejection_reason                   String?
+  admin_notes                        String?
+  created_at                         DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at                         DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  merchant Merchant @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviewer Admin?   @relation(fields: [reviewed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("merchant_kyc")
+}
+
+model KycSubmissionHistory {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  merchant_id      String    @db.Uuid
+  kyc_data         Json
+  status           String    @db.VarChar
+  rejection_reason String?
+  submitted_at     DateTime? @default(now()) @db.Timestamptz(6)
+  reviewed_at      DateTime? @db.Timestamptz(6)
+  reviewed_by      String?   @db.Uuid
+
+  merchant Merchant @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviewer Admin?   @relation(fields: [reviewed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("kyc_submission_history")
+}
+
+model Student {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email             String    @unique @db.VarChar
+  password_hash     String
+  full_name         String    @db.VarChar
+  student_id        String?   @db.VarChar
+  phone             String?   @db.VarChar
+  university        String?   @db.VarChar
+  program           String?   @db.VarChar
+  year_of_study     Int?
+  account_status    String    @default("active") @db.VarChar
+  is_verified       Boolean?  @default(false)
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+  last_login        DateTime? @db.Timestamptz(6)
+  terms_accepted    Boolean?  @default(false)
+  terms_accepted_at DateTime? @db.Timestamptz(6)
+  wallet_balance    Decimal   @default(0) @db.Decimal
+  stellar_address   String?
+
+  investments             Investment[]
+  investment_transactions InvestmentTransaction[]
+  wallet_transactions     WalletTransaction[]
+  dividend_payouts        DividendPayout[]
+
+  @@map("students")
+}
+
+model Investment {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id        String    @db.Uuid
+  merchant_id       String    @db.Uuid
+  amount            Decimal   @db.Decimal
+  shares            Decimal   @db.Decimal
+  price_per_share   Decimal   @db.Decimal
+  status            String    @default("active") @db.VarChar
+  invested_at       DateTime? @default(now()) @db.Timestamptz(6)
+  current_value     Decimal?  @db.Decimal
+  return_amount     Decimal?  @db.Decimal
+  return_percentage Decimal?  @db.Decimal
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+  notes             String?
+  escrow_id         String?
+  unsigned_xdr      String?
+  onchain_status    String?   @default("pending")
+
+  student                      Student                     @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  merchant                     Merchant                    @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  investment_transactions      InvestmentTransaction[]
+  wallet_transactions          WalletTransaction[]
+  merchant_wallet_transactions MerchantWalletTransaction[]
+  dividend_payouts             DividendPayout[]
+  investment_milestones        InvestmentMilestone[]
+
+  @@map("investments")
+}
+
+model InvestmentTransaction {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  investment_id    String    @db.Uuid
+  student_id       String    @db.Uuid
+  merchant_id      String    @db.Uuid
+  transaction_type String    @db.VarChar
+  amount           Decimal   @db.Decimal
+  shares           Decimal?  @db.Decimal
+  description      String?
+  metadata         Json?
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+
+  investment Investment @relation(fields: [investment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  student    Student    @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  merchant   Merchant   @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("investment_transactions")
+}
+
+model WalletTransaction {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id        String    @db.Uuid
+  type              String    @db.VarChar
+  amount            Decimal   @db.Decimal
+  balance_before    Decimal   @db.Decimal
+  balance_after     Decimal   @db.Decimal
+  payment_reference String?   @db.VarChar
+  status            String    @default("pending") @db.VarChar
+  investment_id     String?   @db.Uuid
+  description       String?
+  metadata          Json?     @default("{}")
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  student    Student     @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  investment Investment? @relation(fields: [investment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("wallet_transactions")
+}
+
+model MerchantWalletTransaction {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  merchant_id       String    @db.Uuid
+  type              String    @db.VarChar
+  amount            Decimal   @db.Decimal
+  balance_before    Decimal   @db.Decimal
+  balance_after     Decimal   @db.Decimal
+  payment_reference String?   @db.VarChar
+  status            String    @default("pending") @db.VarChar
+  investment_id     String?   @db.Uuid
+  description       String?
+  metadata          Json?     @default("{}")
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  merchant   Merchant    @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  investment Investment? @relation(fields: [investment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("merchant_wallet_transactions")
+}
+
+model RevenueReport {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  merchant_id      String    @db.Uuid
+  period_start     DateTime  @db.Date
+  period_end       DateTime  @db.Date
+  gross_revenue    Decimal   @default(0) @db.Decimal
+  expenses         Decimal   @default(0) @db.Decimal
+  net_profit       Decimal   @default(0) @db.Decimal
+  status           String    @default("pending") @db.VarChar
+  notes            String?
+  submitted_at     DateTime? @default(now()) @db.Timestamptz(6)
+  reviewed_at      DateTime? @db.Timestamptz(6)
+  reviewed_by      String?   @db.Uuid
+  rejection_reason String?
+  admin_notes      String?
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  merchant               Merchant               @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reviewer               Admin?                 @relation(fields: [reviewed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dividend_distributions DividendDistribution[]
+
+  @@map("revenue_reports")
+}
+
+model DividendDistribution {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  revenue_report_id   String    @db.Uuid
+  merchant_id         String    @db.Uuid
+  total_profit        Decimal   @default(0) @db.Decimal
+  merchant_share      Decimal   @default(0) @db.Decimal
+  investor_share_pool Decimal   @default(0) @db.Decimal
+  platform_share      Decimal   @default(0) @db.Decimal
+  status              String    @default("pending") @db.VarChar
+  distributed_at      DateTime? @db.Timestamptz(6)
+  created_at          DateTime? @default(now()) @db.Timestamptz(6)
+
+  revenue_report   RevenueReport    @relation(fields: [revenue_report_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  merchant         Merchant         @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dividend_payouts DividendPayout[]
+  dividend_escrows DividendEscrow[]
+
+  @@map("dividend_distributions")
+}
+
+model DividendPayout {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  distribution_id String    @db.Uuid
+  investment_id   String    @db.Uuid
+  student_id      String    @db.Uuid
+  merchant_id     String    @db.Uuid
+  amount          Decimal   @default(0) @db.Decimal
+  shares_held     Decimal   @default(0) @db.Decimal
+  total_shares    Decimal   @default(0) @db.Decimal
+  status          String    @default("pending") @db.VarChar
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+
+  distribution DividendDistribution @relation(fields: [distribution_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  investment   Investment           @relation(fields: [investment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  student      Student              @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  merchant     Merchant             @relation(fields: [merchant_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("dividend_payouts")
+}
+
+model PlatformWallet {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  balance    Decimal   @default(0) @db.Decimal
+  updated_at DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("platform_wallet")
+}
+
+model PlatformWalletTransaction {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type           String    @db.VarChar
+  amount         Decimal   @default(0) @db.Decimal
+  balance_before Decimal   @default(0) @db.Decimal
+  balance_after  Decimal   @default(0) @db.Decimal
+  reference_id   String?   @db.Uuid
+  description    String?
+  created_at     DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("platform_wallet_transactions")
+}
+
+model InvestmentMilestone {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  investment_id   String?   @db.Uuid
+  description     String
+  amount          Decimal   @db.Decimal
+  status          String?   @default("pending")
+  milestone_index Int?
+  onchain_id      String?
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  investment Investment? @relation(fields: [investment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("investment_milestones")
+}
+
+model DividendEscrow {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  distribution_id String?   @db.Uuid
+  escrow_id       String
+  unsigned_xdr    String?
+  amount          Decimal   @db.Decimal
+  status          String?   @default("pending")
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+
+  distribution DividendDistribution? @relation(fields: [distribution_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("dividend_escrows")
+}

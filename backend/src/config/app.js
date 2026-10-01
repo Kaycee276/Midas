@@ -57,6 +57,9 @@ app.get("/health", (req, res) => {
 	});
 });
 
+// Uploaded documents static serving
+app.use("/api/documents", express.static(require("path").resolve(__dirname, "../../uploads/kyc-documents")));
+
 // API routes
 app.use("/api", routes);
 

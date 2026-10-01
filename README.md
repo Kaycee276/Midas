@@ -41,10 +41,10 @@ A micro-investment platform that connects university students with verified camp
 ### Backend
 
 - **Runtime**: Node.js with Express 5
-- **Database**: PostgreSQL via Supabase
+- **Database & ORM**: PostgreSQL (via Neon) with Prisma ORM
 - **Auth**: JWT with bcrypt password hashing
 - **Validation**: Joi schema validation
-- **File Storage**: Supabase Storage (private bucket with signed URLs)
+- **File Storage**: Local filesystem document storage (served via `/api/documents`)
 - **Logging**: Winston
 - **Security**: Helmet, CORS, express-rate-limit
 
@@ -132,18 +132,17 @@ pnpm run dev        # Vite dev server on http://localhost:5173
 
 ### Backend (`backend/.env`)
 
-| Variable                    | Description                       | Example                   |
-| --------------------------- | --------------------------------- | ------------------------- |
-| `NODE_ENV`                  | Environment                       | `development`             |
-| `PORT`                      | Server port                       | `3000`                    |
-| `SUPABASE_URL`              | Supabase project URL              | `https://xxx.supabase.co` |
-| `SUPABASE_ANON_KEY`         | Supabase anonymous key            | `eyJ...`                  |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key         | `eyJ...`                  |
-| `JWT_SECRET`                | JWT signing secret (min 32 chars) | `your-secret-key`         |
-| `JWT_EXPIRES_IN`            | Token expiry                      | `7d`                      |
-| `ALLOWED_ORIGINS`           | CORS origins (comma-separated)    | `http://localhost:5173`   |
-| `RATE_LIMIT_WINDOW_MS`      | Rate limit window                 | `900000`                  |
-| `RATE_LIMIT_MAX_REQUESTS`   | Max requests per window           | `100`                     |
+| Variable                  | Description                               | Example                                                                          |
+| ------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
+| `NODE_ENV`                | Environment                               | `development`                                                                    |
+| `PORT`                    | Server port                               | `3000`                                                                           |
+| `DATABASE_URL`            | Neon pooled connection string             | `postgresql://neondb_owner:***@ep-xyz-pooler.region.aws.neon.tech/neondb?sslmode=require` |
+| `DIRECT_URL`              | Neon direct connection string (migrations)| `postgresql://neondb_owner:***@ep-xyz.region.aws.neon.tech/neondb?sslmode=require`        |
+| `JWT_SECRET`              | JWT signing secret (min 32 chars)         | `your-secret-key`                                                                |
+| `JWT_EXPIRES_IN`          | Token expiry                              | `7d`                                                                             |
+| `ALLOWED_ORIGINS`         | CORS origins (comma-separated)            | `http://localhost:5173`                                                          |
+| `RATE_LIMIT_WINDOW_MS`    | Rate limit window                         | `900000`                                                                         |
+| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window                   | `100`                                                                            |
 
 ### Frontend (`frontend/.env`)
 
@@ -151,21 +150,22 @@ pnpm run dev        # Vite dev server on http://localhost:5173
 | -------------- | -------------------- | --------------------------- |
 | `VITE_API_URL` | Backend API base URL | `http://localhost:3000/api` |
 
-## Database Setup
+## Database Setup (Neon + Prisma)
 
-1. Create a Supabase project at [supabase.com](https://supabase.com)
-2. Run the SQL schema files in the Supabase SQL Editor in order:
-   - `backend/database/schema.sql` — merchants, admins, KYC tables
-   - `backend/database/students-schema.sql` — students table
-   - `backend/database/investments-schema.sql` — investments and transactions tables
-3. Create a **private** storage bucket named `kyc-documents`
-4. Copy your Supabase credentials into `backend/.env`
+1. Create a project at [neon.tech](https://neon.tech)
+2. Copy your pooled (`DATABASE_URL`) and direct (`DIRECT_URL`) connection strings into `backend/.env`
+3. Generate the Prisma Client and push the schema to your fresh Neon database:
 
-The schema includes triggers for auto-updating `updated_at` timestamps, syncing KYC status to merchant account status, and auto-creating transaction records on investment.
+```bash
+cd backend
+pnpm prisma:generate
+pnpm prisma:push
+```
 
-**Default admin account**: `admin@midas.com` / `Admin@123`
-
-See `backend/database/SETUP.md` for detailed instructions.
+To inspect your database records visually at any time:
+```bash
+pnpm prisma:studio
+```
 
 ## API Reference
 

@@ -17,8 +17,8 @@ A comprehensive merchant registration and KYC (Know Your Customer) verification 
 
 - **Runtime**: Node.js
 - **Framework**: Express.js 5.x
-- **Database**: PostgreSQL (via Supabase)
-- **Storage**: Supabase Storage
+- **Database & ORM**: PostgreSQL (via Neon) with Prisma ORM
+- **Storage**: Local filesystem storage (served via `/api/documents`)
 - **Authentication**: JWT
 - **Validation**: Joi
 - **File Upload**: Multer
@@ -50,7 +50,7 @@ backend/
 
 - Node.js (v18 or higher)
 - pnpm
-- Supabase account
+- Neon account ([neon.tech](https://neon.tech))
 
 ### 2. Installation
 
@@ -70,10 +70,9 @@ Edit `.env` with your values:
 NODE_ENV=development
 PORT=3000
 
-# Supabase Configuration
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+# Database (Neon PostgreSQL via Prisma)
+DATABASE_URL="postgresql://neondb_owner:***@ep-xyz-pooler.region.aws.neon.tech/neondb?sslmode=require"
+DIRECT_URL="postgresql://neondb_owner:***@ep-xyz.region.aws.neon.tech/neondb?sslmode=require"
 
 # JWT Configuration
 JWT_SECRET=your-super-secret-jwt-key-min-32-chars
@@ -91,29 +90,21 @@ RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-### 4. Database Setup
+### 4. Database Setup (Neon + Prisma)
 
-#### Step 1: Run SQL Schema
+1. Create a project at [neon.tech](https://neon.tech)
+2. Copy your pooled (`DATABASE_URL`) and direct (`DIRECT_URL`) connection strings into `.env`
+3. Generate the Prisma Client and push your schema to Neon:
 
-1. Go to your Supabase project dashboard
-2. Navigate to SQL Editor
-3. Copy the contents of `database/schema.sql`
-4. Execute the script
+```bash
+pnpm prisma:generate
+pnpm prisma:push
+```
 
-This will create:
-- `merchants` table
-- `merchant_kyc` table
-- `admins` table
-- `kyc_submission_history` table
-- All necessary triggers and indexes
-- A test admin account (admin@midas.com / Admin@123)
-
-#### Step 2: Create Storage Bucket
-
-1. Go to Storage in Supabase dashboard
-2. Create a new bucket named `kyc-documents`
-3. Set it to **Private**
-4. Configure the bucket policies if needed
+To visually inspect and manage your tables and rows:
+```bash
+pnpm prisma:studio
+```
 
 ### 5. Run the Application
 

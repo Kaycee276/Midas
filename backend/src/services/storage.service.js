@@ -1,10 +1,11 @@
-const supabase = require('../config/supabase');
+const fs = require('fs/promises');
+const path = require('path');
 const { ValidationError } = require('../utils/errors');
 const { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } = require('../utils/constants');
 
 class StorageService {
   constructor() {
-    this.bucketName = 'kyc-documents';
+    this.uploadDir = path.resolve(__dirname, '../../uploads/kyc-documents');
   }
 
   async uploadFile(file, merchantId, documentType) {
@@ -14,39 +15,30 @@ class StorageService {
 
     this.validateFile(file);
 
-    const fileName = `${merchantId}/${documentType}/${Date.now()}_${file.originalname}`;
+    const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const relativePath = `${merchantId}/${documentType}/${Date.now()}_${safeName}`;
+    const fullPath = path.join(this.uploadDir, relativePath);
 
-    const { data, error } = await supabase.storage
-      .from(this.bucketName)
-      .upload(fileName, file.buffer, {
-        contentType: file.mimetype,
-        upsert: true
-      });
+    await fs.mkdir(path.dirname(fullPath), { recursive: true });
+    await fs.writeFile(fullPath, file.buffer);
 
-    if (error) throw error;
-
-    return data.path;
+    return relativePath;
   }
 
   async deleteFile(filePath) {
     if (!filePath) return;
-
-    const { error } = await supabase.storage
-      .from(this.bucketName)
-      .remove([filePath]);
-
-    if (error) throw error;
+    try {
+      const fullPath = path.join(this.uploadDir, filePath);
+      await fs.unlink(fullPath);
+    } catch {
+      // Ignore if file doesn't exist on disk
+    }
   }
 
-  async getSignedUrl(filePath, expiresIn = 3600) {
+  async getSignedUrl(filePath, _expiresIn = 3600) {
     if (!filePath) return null;
-
-    const { data, error } = await supabase.storage
-      .from(this.bucketName)
-      .createSignedUrl(filePath, expiresIn);
-
-    if (error) throw error;
-    return data.signedUrl;
+    const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+    return `${baseUrl}/api/documents/${filePath}`;
   }
 
   validateFile(file) {

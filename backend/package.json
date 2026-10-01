@@ -8,6 +8,8 @@
 		"dev": "nodemon server.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prisma:generate": "prisma generate",
+		"prisma:push": "prisma db push",
+		"prisma:migrate": "prisma migrate dev",
 		"prisma:studio": "prisma studio"
 	},
 	"packageManager": "pnpm@11.18.0",
@@ -17,7 +19,6 @@
 	"type": "commonjs",
 	"dependencies": {
 		"@prisma/client": "^6.19.3",
-		"@supabase/supabase-js": "^2.95.3",
 		"bcrypt": "^6.0.0",
 		"cors": "^2.8.6",
 		"dotenv": "^17.3.1",

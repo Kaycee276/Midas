@@ -1,47 +1,48 @@
-const supabase = require('../config/supabase');
+const prisma = require('../config/prisma');
 
 class PlatformWalletModel {
-	async getBalance() {
-		const { data, error } = await supabase
-			.from('platform_wallet')
-			.select('*')
-			.limit(1)
-			.single();
+  async getBalance() {
+    return prisma.platformWallet.findFirst();
+  }
 
-		if (error) throw error;
-		return data;
-	}
+  async creditBalance(amount) {
+    const wallet = await prisma.platformWallet.findFirst();
+    if (wallet) {
+      return prisma.platformWallet.update({
+        where: { id: wallet.id },
+        data: {
+          balance: {
+            increment: amount,
+          },
+        },
+      });
+    }
 
-	async creditBalance(amount) {
-		const { data, error } = await supabase.rpc('credit_platform_balance', {
-			p_amount: amount,
-		});
+    return prisma.platformWallet.create({
+      data: {
+        balance: amount,
+      },
+    });
+  }
 
-		if (error) throw error;
-		return data;
-	}
+  async createTransaction(txnData) {
+    return prisma.platformWalletTransaction.create({
+      data: txnData,
+    });
+  }
 
-	async createTransaction(txnData) {
-		const { data, error } = await supabase
-			.from('platform_wallet_transactions')
-			.insert([txnData])
-			.select()
-			.single();
+  async getTransactionHistory(limit = 20, offset = 0) {
+    const [data, count] = await Promise.all([
+      prisma.platformWalletTransaction.findMany({
+        orderBy: { created_at: 'desc' },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.platformWalletTransaction.count(),
+    ]);
 
-		if (error) throw error;
-		return data;
-	}
-
-	async getTransactionHistory(limit = 20, offset = 0) {
-		const { data, count, error } = await supabase
-			.from('platform_wallet_transactions')
-			.select('*', { count: 'exact' })
-			.order('created_at', { ascending: false })
-			.range(offset, offset + limit - 1);
-
-		if (error) throw error;
-		return { data, count };
-	}
+    return { data, count };
+  }
 }
 
 module.exports = new PlatformWalletModel();

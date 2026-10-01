@@ -1,4 +1,4 @@
-const supabase = require('../config/supabase');
+const prisma = require('../config/prisma');
 const { NotFoundError } = require('../utils/errors');
 const { ACCOUNT_STATUS } = require('../types/enums');
 
@@ -6,90 +6,91 @@ class PublicService {
   async getActiveMerchants(page = 1, limit = 20, filters = {}) {
     const offset = (page - 1) * limit;
 
-    let query = supabase
-      .from('merchants')
-      .select(`
-        id,
-        business_name,
-        business_type,
-        business_description,
-        business_address,
-        business_phone,
-        proximity_to_campus,
-        created_at
-      `, { count: 'exact' })
-      .eq('account_status', ACCOUNT_STATUS.ACTIVE);
+    const where = {
+      account_status: ACCOUNT_STATUS.ACTIVE,
+    };
 
-    // Apply filters
     if (filters.business_type) {
-      query = query.eq('business_type', filters.business_type);
+      where.business_type = filters.business_type;
     }
 
     if (filters.proximity_to_campus) {
-      query = query.eq('proximity_to_campus', filters.proximity_to_campus);
+      where.proximity_to_campus = filters.proximity_to_campus;
     }
 
     if (filters.search) {
-      query = query.or(`business_name.ilike.%${filters.search}%,business_description.ilike.%${filters.search}%`);
+      where.OR = [
+        { business_name: { contains: filters.search, mode: 'insensitive' } },
+        { business_description: { contains: filters.search, mode: 'insensitive' } },
+      ];
     }
 
-    const { data, error, count } = await query
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (error) throw error;
+    const [merchants, total] = await Promise.all([
+      prisma.merchant.findMany({
+        where,
+        select: {
+          id: true,
+          business_name: true,
+          business_type: true,
+          business_description: true,
+          business_address: true,
+          business_phone: true,
+          proximity_to_campus: true,
+          created_at: true,
+        },
+        orderBy: { created_at: 'desc' },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.merchant.count({ where }),
+    ]);
 
     return {
-      merchants: data,
+      merchants,
       pagination: {
-        total: count,
+        total,
         page,
         limit,
-        total_pages: Math.ceil(count / limit)
-      }
+        total_pages: Math.ceil(total / limit),
+      },
     };
   }
 
   async getMerchantDetails(merchantId) {
-    const { data, error } = await supabase
-      .from('merchants')
-      .select(`
-        id,
-        business_name,
-        business_type,
-        business_description,
-        business_address,
-        business_phone,
-        proximity_to_campus,
-        account_status,
-        created_at
-      `)
-      .eq('id', merchantId)
-      .single();
+    const merchant = await prisma.merchant.findUnique({
+      where: { id: merchantId },
+      select: {
+        id: true,
+        business_name: true,
+        business_type: true,
+        business_description: true,
+        business_address: true,
+        business_phone: true,
+        proximity_to_campus: true,
+        account_status: true,
+        created_at: true,
+      },
+    });
 
-    if (error && error.code === 'PGRST116') {
+    if (!merchant) {
       throw new NotFoundError('Merchant not found');
     }
-    if (error) throw error;
 
-    if (data.account_status !== ACCOUNT_STATUS.ACTIVE) {
+    if (merchant.account_status !== ACCOUNT_STATUS.ACTIVE) {
       throw new NotFoundError('Merchant not available');
     }
 
-    return data;
+    return merchant;
   }
 
   async getBusinessTypes() {
-    const { data, error } = await supabase
-      .from('merchants')
-      .select('business_type')
-      .eq('account_status', ACCOUNT_STATUS.ACTIVE);
+    const merchants = await prisma.merchant.findMany({
+      where: { account_status: ACCOUNT_STATUS.ACTIVE },
+      select: { business_type: true },
+      distinct: ['business_type'],
+    });
 
-    if (error) throw error;
-
-    // Get unique business types
-    const types = [...new Set(data.map(m => m.business_type))];
-    return types;
+    return merchants.map((m) => m.business_type);
   }
 }
 

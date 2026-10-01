@@ -1,122 +1,136 @@
-const supabase = require('../config/supabase');
+const prisma = require('../config/prisma');
 
 class RevenueModel {
-	async create(data) {
-		const { data: report, error } = await supabase
-			.from('revenue_reports')
-			.insert([data])
-			.select()
-			.single();
+  async create(data) {
+    return prisma.revenueReport.create({
+      data,
+    });
+  }
 
-		if (error) throw error;
-		return report;
-	}
+  async findById(id) {
+    return prisma.revenueReport.findUnique({
+      where: { id },
+      include: {
+        merchant: {
+          select: {
+            id: true,
+            business_name: true,
+            business_type: true,
+          },
+        },
+      },
+    });
+  }
 
-	async findById(id) {
-		const { data, error } = await supabase
-			.from('revenue_reports')
-			.select(`
-				*,
-				merchant:merchants(id, business_name, business_type)
-			`)
-			.eq('id', id)
-			.single();
+  async findByMerchantId(merchantId, limit = 20, offset = 0) {
+    const [data, count] = await Promise.all([
+      prisma.revenueReport.findMany({
+        where: { merchant_id: merchantId },
+        orderBy: { created_at: 'desc' },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.revenueReport.count({
+        where: { merchant_id: merchantId },
+      }),
+    ]);
 
-		if (error && error.code !== 'PGRST116') throw error;
-		return data;
-	}
+    return { data, count };
+  }
 
-	async findByMerchantId(merchantId, limit = 20, offset = 0) {
-		const { data, count, error } = await supabase
-			.from('revenue_reports')
-			.select('*', { count: 'exact' })
-			.eq('merchant_id', merchantId)
-			.order('created_at', { ascending: false })
-			.range(offset, offset + limit - 1);
+  async updateStatus(id, status, extras = {}) {
+    return prisma.revenueReport.update({
+      where: { id },
+      data: {
+        status,
+        ...extras,
+        updated_at: new Date(),
+      },
+    });
+  }
 
-		if (error) throw error;
-		return { data, count };
-	}
+  async findPendingReports(limit = 20, offset = 0) {
+    const [data, count] = await Promise.all([
+      prisma.revenueReport.findMany({
+        where: { status: 'pending' },
+        include: {
+          merchant: {
+            select: {
+              id: true,
+              business_name: true,
+              business_type: true,
+            },
+          },
+        },
+        orderBy: { submitted_at: 'asc' },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.revenueReport.count({
+        where: { status: 'pending' },
+      }),
+    ]);
 
-	async updateStatus(id, status, extras = {}) {
-		const { data, error } = await supabase
-			.from('revenue_reports')
-			.update({
-				status,
-				...extras,
-				updated_at: new Date().toISOString()
-			})
-			.eq('id', id)
-			.select()
-			.single();
+    return { data, count };
+  }
 
-		if (error) throw error;
-		return data;
-	}
+  async findApprovedUndistributed() {
+    return prisma.revenueReport.findMany({
+      where: { status: 'approved' },
+      include: {
+        merchant: {
+          select: {
+            id: true,
+            business_name: true,
+            business_type: true,
+          },
+        },
+      },
+      orderBy: { submitted_at: 'asc' },
+    });
+  }
 
-	async findPendingReports(limit = 20, offset = 0) {
-		const { data, count, error } = await supabase
-			.from('revenue_reports')
-			.select(`
-				*,
-				merchant:merchants(id, business_name, business_type)
-			`, { count: 'exact' })
-			.eq('status', 'pending')
-			.order('submitted_at', { ascending: true })
-			.range(offset, offset + limit - 1);
+  async getPendingDistributionTotal(merchantId) {
+    const data = await prisma.revenueReport.findMany({
+      where: {
+        merchant_id: merchantId,
+        status: 'approved',
+      },
+      select: {
+        net_profit: true,
+      },
+    });
 
-		if (error) throw error;
-		return { data, count };
-	}
+    const total = (data || []).reduce((sum, r) => sum + Number(r.net_profit) * 0.35, 0);
+    return Math.round(total * 100) / 100;
+  }
 
-	async findApprovedUndistributed() {
-		const { data, error } = await supabase
-			.from('revenue_reports')
-			.select(`
-				*,
-				merchant:merchants(id, business_name, business_type)
-			`)
-			.eq('status', 'approved')
-			.order('submitted_at', { ascending: true });
+  async getRevenueSummary(merchantId) {
+    const reports = await prisma.revenueReport.findMany({
+      where: { merchant_id: merchantId },
+      select: {
+        gross_revenue: true,
+        net_profit: true,
+        status: true,
+      },
+    });
 
-		if (error) throw error;
-		return data;
-	}
+    const summary = (reports || []).reduce(
+      (acc, r) => {
+        acc.total_revenue += Number(r.gross_revenue) || 0;
+        if (r.status === 'distributed') {
+          acc.total_distributed += Number(r.net_profit) || 0;
+        }
+        if (r.status === 'pending') {
+          acc.pending_count += 1;
+        }
+        return acc;
+      },
+      { total_revenue: 0, total_distributed: 0, pending_count: 0 }
+    );
 
-	async getPendingDistributionTotal(merchantId) {
-		const { data, error } = await supabase
-			.from('revenue_reports')
-			.select('net_profit')
-			.eq('merchant_id', merchantId)
-			.eq('status', 'approved');
-
-		if (error) throw error;
-
-		const total = (data || []).reduce((sum, r) => sum + Number(r.net_profit) * 0.35, 0);
-		return Math.round(total * 100) / 100;
-	}
-
-	async getRevenueSummary(merchantId) {
-		const { data: reports, error } = await supabase
-			.from('revenue_reports')
-			.select('gross_revenue, net_profit, status')
-			.eq('merchant_id', merchantId);
-
-		if (error) throw error;
-
-		const summary = (reports || []).reduce((acc, r) => {
-			acc.total_revenue += Number(r.gross_revenue) || 0;
-			if (r.status === 'distributed') {
-				acc.total_distributed += Number(r.net_profit) || 0;
-			}
-			if (r.status === 'pending') {
-				acc.pending_count += 1;
-			}
-			return acc;
-		}, { total_revenue: 0, total_distributed: 0, pending_count: 0 });
-
-		return summary;
-	}
+    return summary;
+  }
 }
 
 module.exports = new RevenueModel();

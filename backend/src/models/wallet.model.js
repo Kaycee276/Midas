@@ -1,62 +1,83 @@
-const supabase = require('../config/supabase');
+const prisma = require('../config/prisma');
 
 class WalletModel {
-	// Atomic balance operations via RPC
-	async deductBalance(studentId, amount) {
-		const { data, error } = await supabase.rpc('deduct_wallet_balance', {
-			p_student_id: studentId,
-			p_amount: amount,
-		});
+  // Atomic balance operations via Prisma transactions
+  async deductBalance(studentId, amount) {
+    return prisma.$transaction(async (tx) => {
+      const student = await tx.student.findUnique({
+        where: { id: studentId },
+        select: { wallet_balance: true },
+      });
 
-		if (error) throw error;
-		return data; // new balance
-	}
+      if (!student) {
+        throw new Error('Student not found');
+      }
 
-	async creditBalance(studentId, amount) {
-		const { data, error } = await supabase.rpc('credit_wallet_balance', {
-			p_student_id: studentId,
-			p_amount: amount,
-		});
+      const currentBalance = Number(student.wallet_balance) || 0;
+      if (currentBalance < Number(amount)) {
+        throw new Error('Insufficient wallet balance');
+      }
 
-		if (error) throw error;
-		return data; // new balance
-	}
+      const updated = await tx.student.update({
+        where: { id: studentId },
+        data: {
+          wallet_balance: {
+            decrement: amount,
+          },
+        },
+        select: { wallet_balance: true },
+      });
 
-	// Wallet transactions
-	async createTransaction(txnData) {
-		const { data, error } = await supabase
-			.from('wallet_transactions')
-			.insert([txnData])
-			.select()
-			.single();
+      return Number(updated.wallet_balance);
+    });
+  }
 
-		if (error) throw error;
-		return data;
-	}
+  async creditBalance(studentId, amount) {
+    const updated = await prisma.student.update({
+      where: { id: studentId },
+      data: {
+        wallet_balance: {
+          increment: amount,
+        },
+      },
+      select: { wallet_balance: true },
+    });
 
-	async updateTransaction(id, updates) {
-		const { data, error } = await supabase
-			.from('wallet_transactions')
-			.update({ ...updates, updated_at: new Date().toISOString() })
-			.eq('id', id)
-			.select()
-			.single();
+    return Number(updated.wallet_balance);
+  }
 
-		if (error) throw error;
-		return data;
-	}
+  // Wallet transactions
+  async createTransaction(txnData) {
+    return prisma.walletTransaction.create({
+      data: txnData,
+    });
+  }
 
-	async getTransactionHistory(studentId, limit = 20, offset = 0) {
-		const { data, count, error } = await supabase
-			.from('wallet_transactions')
-			.select('*', { count: 'exact' })
-			.eq('student_id', studentId)
-			.order('created_at', { ascending: false })
-			.range(offset, offset + limit - 1);
+  async updateTransaction(id, updates) {
+    return prisma.walletTransaction.update({
+      where: { id },
+      data: {
+        ...updates,
+        updated_at: new Date(),
+      },
+    });
+  }
 
-		if (error) throw error;
-		return { data, count };
-	}
+  async getTransactionHistory(studentId, limit = 20, offset = 0) {
+    const [data, count] = await Promise.all([
+      prisma.walletTransaction.findMany({
+        where: { student_id: studentId },
+        orderBy: { created_at: 'desc' },
+        skip: offset,
+        take: limit,
+      }),
+      prisma.walletTransaction.count({
+        where: { student_id: studentId },
+      }),
+    ]);
+
+    return { data, count };
+  }
 }
 
 module.exports = new WalletModel();

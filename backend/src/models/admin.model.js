@@ -1,132 +1,122 @@
-const supabase = require('../config/supabase');
+const prisma = require('../config/prisma');
 
 class AdminModel {
   async create(adminData) {
-    const { data, error } = await supabase
-      .from('admins')
-      .insert([adminData])
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return prisma.admin.create({
+      data: adminData,
+    });
   }
 
   async findById(id) {
-    const { data, error } = await supabase
-      .from('admins')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error && error.code !== 'PGRST116') throw error;
-    return data;
+    return prisma.admin.findUnique({
+      where: { id },
+    });
   }
 
   async findByEmail(email) {
-    const { data, error } = await supabase
-      .from('admins')
-      .select('*')
-      .eq('email', email.toLowerCase())
-      .single();
-
-    if (error && error.code !== 'PGRST116') throw error;
-    return data;
+    return prisma.admin.findUnique({
+      where: { email: email.toLowerCase() },
+    });
   }
 
   async getDashboardStats() {
     // Students counts
     const [
-      { count: totalStudents },
-      { count: activeStudents },
-      { count: suspendedStudents },
-      { count: inactiveStudents },
+      totalStudents,
+      activeStudents,
+      suspendedStudents,
+      inactiveStudents,
     ] = await Promise.all([
-      supabase.from('students').select('*', { count: 'exact', head: true }),
-      supabase.from('students').select('*', { count: 'exact', head: true }).eq('account_status', 'active'),
-      supabase.from('students').select('*', { count: 'exact', head: true }).eq('account_status', 'suspended'),
-      supabase.from('students').select('*', { count: 'exact', head: true }).eq('account_status', 'inactive'),
+      prisma.student.count(),
+      prisma.student.count({ where: { account_status: 'active' } }),
+      prisma.student.count({ where: { account_status: 'suspended' } }),
+      prisma.student.count({ where: { account_status: 'inactive' } }),
     ]);
 
     // Merchants counts
     const [
-      { count: totalMerchants },
-      { count: activeMerchants },
-      { count: pendingKycMerchants },
-      { count: kycSubmittedMerchants },
-      { count: kycRejectedMerchants },
-      { count: suspendedMerchants },
-      { count: inactiveMerchants },
+      totalMerchants,
+      activeMerchants,
+      pendingKycMerchants,
+      kycSubmittedMerchants,
+      kycRejectedMerchants,
+      suspendedMerchants,
+      inactiveMerchants,
     ] = await Promise.all([
-      supabase.from('merchants').select('*', { count: 'exact', head: true }),
-      supabase.from('merchants').select('*', { count: 'exact', head: true }).eq('account_status', 'active'),
-      supabase.from('merchants').select('*', { count: 'exact', head: true }).eq('account_status', 'pending_kyc'),
-      supabase.from('merchants').select('*', { count: 'exact', head: true }).eq('account_status', 'kyc_submitted'),
-      supabase.from('merchants').select('*', { count: 'exact', head: true }).eq('account_status', 'kyc_rejected'),
-      supabase.from('merchants').select('*', { count: 'exact', head: true }).eq('account_status', 'suspended'),
-      supabase.from('merchants').select('*', { count: 'exact', head: true }).eq('account_status', 'inactive'),
+      prisma.merchant.count(),
+      prisma.merchant.count({ where: { account_status: 'active' } }),
+      prisma.merchant.count({ where: { account_status: 'pending_kyc' } }),
+      prisma.merchant.count({ where: { account_status: 'kyc_submitted' } }),
+      prisma.merchant.count({ where: { account_status: 'kyc_rejected' } }),
+      prisma.merchant.count({ where: { account_status: 'suspended' } }),
+      prisma.merchant.count({ where: { account_status: 'inactive' } }),
     ]);
 
     // Investments counts + financial totals
     const [
-      { count: totalInvestments },
-      { count: activeInvestments },
-      { count: withdrawnInvestments },
-      investmentTotals,
+      totalInvestments,
+      activeInvestments,
+      withdrawnInvestments,
+      investmentAggregate,
     ] = await Promise.all([
-      supabase.from('investments').select('*', { count: 'exact', head: true }),
-      supabase.from('investments').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-      supabase.from('investments').select('*', { count: 'exact', head: true }).eq('status', 'withdrawn'),
-      supabase.from('investments').select('amount, current_value'),
+      prisma.investment.count(),
+      prisma.investment.count({ where: { status: 'active' } }),
+      prisma.investment.count({ where: { status: 'withdrawn' } }),
+      prisma.investment.aggregate({
+        _sum: {
+          amount: true,
+          current_value: true,
+        },
+      }),
     ]);
 
-    const totalInvested = (investmentTotals.data || []).reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
-    const totalCurrentValue = (investmentTotals.data || []).reduce((sum, inv) => sum + (Number(inv.current_value) || 0), 0);
+    const totalInvested = Number(investmentAggregate._sum.amount) || 0;
+    const totalCurrentValue = Number(investmentAggregate._sum.current_value) || 0;
 
     // KYC counts
     const [
-      { count: totalKyc },
-      { count: pendingKyc },
-      { count: approvedKyc },
-      { count: rejectedKyc },
-      { count: resubmissionKyc },
+      totalKyc,
+      pendingKyc,
+      approvedKyc,
+      rejectedKyc,
+      resubmissionKyc,
     ] = await Promise.all([
-      supabase.from('kyc_submissions').select('*', { count: 'exact', head: true }),
-      supabase.from('kyc_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('kyc_submissions').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
-      supabase.from('kyc_submissions').select('*', { count: 'exact', head: true }).eq('status', 'rejected'),
-      supabase.from('kyc_submissions').select('*', { count: 'exact', head: true }).eq('status', 'resubmission_required'),
+      prisma.merchantKyc.count(),
+      prisma.merchantKyc.count({ where: { status: 'pending' } }),
+      prisma.merchantKyc.count({ where: { status: 'approved' } }),
+      prisma.merchantKyc.count({ where: { status: 'rejected' } }),
+      prisma.merchantKyc.count({ where: { status: 'resubmission_required' } }),
     ]);
 
     return {
       students: {
-        total: totalStudents || 0,
-        active: activeStudents || 0,
-        suspended: suspendedStudents || 0,
-        inactive: inactiveStudents || 0,
+        total: totalStudents,
+        active: activeStudents,
+        suspended: suspendedStudents,
+        inactive: inactiveStudents,
       },
       merchants: {
-        total: totalMerchants || 0,
-        active: activeMerchants || 0,
-        pending_kyc: pendingKycMerchants || 0,
-        kyc_submitted: kycSubmittedMerchants || 0,
-        kyc_rejected: kycRejectedMerchants || 0,
-        suspended: suspendedMerchants || 0,
-        inactive: inactiveMerchants || 0,
+        total: totalMerchants,
+        active: activeMerchants,
+        pending_kyc: pendingKycMerchants,
+        kyc_submitted: kycSubmittedMerchants,
+        kyc_rejected: kycRejectedMerchants,
+        suspended: suspendedMerchants,
+        inactive: inactiveMerchants,
       },
       investments: {
-        total: totalInvestments || 0,
-        active: activeInvestments || 0,
-        withdrawn: withdrawnInvestments || 0,
+        total: totalInvestments,
+        active: activeInvestments,
+        withdrawn: withdrawnInvestments,
         total_invested: totalInvested,
         total_current_value: totalCurrentValue,
       },
       kyc: {
-        total: totalKyc || 0,
-        pending: pendingKyc || 0,
-        approved: approvedKyc || 0,
-        rejected: rejectedKyc || 0,
-        resubmission_required: resubmissionKyc || 0,
+        total: totalKyc,
+        pending: pendingKyc,
+        approved: approvedKyc,
+        rejected: rejectedKyc,
+        resubmission_required: resubmissionKyc,
       },
     };
   }
@@ -135,28 +125,52 @@ class AdminModel {
     // Investment trend - last 6 months
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    const sixMonthsAgoISO = sixMonthsAgo.toISOString();
 
-    const { data: recentInvestments } = await supabase
-      .from('investments')
-      .select('amount, invested_at')
-      .gte('invested_at', sixMonthsAgoISO);
+    const recentInvestments = await prisma.investment.findMany({
+      where: {
+        invested_at: {
+          gte: sixMonthsAgo,
+        },
+      },
+      select: {
+        amount: true,
+        invested_at: true,
+      },
+    });
 
     const investmentTrend = this._groupByMonth(recentInvestments || [], 'invested_at', 'amount');
 
     // Revenue trend - last 6 months (distributed reports)
-    const { data: distributedReports } = await supabase
-      .from('revenue_reports')
-      .select('gross_revenue, net_profit, submitted_at, status')
-      .eq('status', 'distributed')
-      .gte('submitted_at', sixMonthsAgoISO);
+    const distributedReports = await prisma.revenueReport.findMany({
+      where: {
+        status: 'distributed',
+        submitted_at: {
+          gte: sixMonthsAgo,
+        },
+      },
+      select: {
+        gross_revenue: true,
+        net_profit: true,
+        submitted_at: true,
+        status: true,
+      },
+    });
 
     const revenueTrend = this._groupRevenueByMonth(distributedReports || []);
 
     // Top merchants by capital raised
-    const { data: allInvestments } = await supabase
-      .from('investments')
-      .select('merchant_id, amount, merchant:merchants(business_name, business_type)');
+    const allInvestments = await prisma.investment.findMany({
+      select: {
+        merchant_id: true,
+        amount: true,
+        merchant: {
+          select: {
+            business_name: true,
+            business_type: true,
+          },
+        },
+      },
+    });
 
     const merchantTotals = {};
     (allInvestments || []).forEach(inv => {
@@ -166,7 +180,7 @@ class AdminModel {
           merchant_id: mid,
           business_name: inv.merchant?.business_name || 'Unknown',
           business_type: inv.merchant?.business_type || 'other',
-          total_raised: 0
+          total_raised: 0,
         };
       }
       merchantTotals[mid].total_raised += Number(inv.amount) || 0;
@@ -183,51 +197,66 @@ class AdminModel {
     });
     const investmentsByTypeArr = Object.entries(investmentsByType).map(([type, amount]) => ({
       business_type: type,
-      total_amount: amount
+      total_amount: amount,
     }));
 
     // Recent distributions
-    const { data: recentDistributions } = await supabase
-      .from('dividend_distributions')
-      .select(`
-        *,
-        merchant:merchants(business_name, business_type)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(10);
+    const recentDistributions = await prisma.dividendDistribution.findMany({
+      take: 10,
+      orderBy: {
+        created_at: 'desc',
+      },
+      include: {
+        merchant: {
+          select: {
+            business_name: true,
+            business_type: true,
+          },
+        },
+      },
+    });
 
     // Platform balance
-    const { data: platformWallet } = await supabase
-      .from('platform_wallet')
-      .select('balance')
-      .limit(1)
-      .single();
+    const platformWallet = await prisma.platformWallet.findFirst({
+      select: {
+        balance: true,
+      },
+    });
 
     // Total platform commission
-    const { data: commissionData } = await supabase
-      .from('platform_wallet_transactions')
-      .select('amount')
-      .eq('type', 'commission');
-
-    const totalCommission = (commissionData || []).reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+    const commissionAggregate = await prisma.platformWalletTransaction.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        type: 'commission',
+      },
+    });
+    const totalCommission = Number(commissionAggregate._sum.amount) || 0;
 
     // Recent platform transactions
-    const { data: platformTransactions } = await supabase
-      .from('platform_wallet_transactions')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(5);
+    const platformTransactions = await prisma.platformWalletTransaction.findMany({
+      take: 5,
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
 
     // Pending revenue count
-    const { count: pendingRevenueCount } = await supabase
-      .from('revenue_reports')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'pending');
+    const pendingRevenueCount = await prisma.revenueReport.count({
+      where: {
+        status: 'pending',
+      },
+    });
 
     // Total revenue & distributed
-    const { data: allReports } = await supabase
-      .from('revenue_reports')
-      .select('gross_revenue, net_profit, status');
+    const allReports = await prisma.revenueReport.findMany({
+      select: {
+        gross_revenue: true,
+        net_profit: true,
+        status: true,
+      },
+    });
 
     let totalRevenue = 0;
     let totalDistributed = 0;
@@ -249,7 +278,7 @@ class AdminModel {
       platform_transactions: platformTransactions || [],
       pending_revenue_count: pendingRevenueCount || 0,
       total_revenue: totalRevenue,
-      total_distributed: totalDistributed
+      total_distributed: totalDistributed,
     };
   }
 
@@ -293,15 +322,10 @@ class AdminModel {
   }
 
   async updateLastLogin(id) {
-    const { data, error } = await supabase
-      .from('admins')
-      .update({ last_login: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return prisma.admin.update({
+      where: { id },
+      data: { last_login: new Date() },
+    });
   }
 }
 

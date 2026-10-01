@@ -10,7 +10,9 @@ interface MerchantListParams {
 }
 
 export const listMerchants = (params?: MerchantListParams) =>
-  client.get<ApiResponse<{ merchants: Merchant[]; pagination: Pagination }>>('/public/merchants', { params });
+  client.get<ApiResponse<{ merchants: Merchant[]; pagination: Pagination }>>('/public/merchants', {
+    params,
+  });
 
 export const getMerchant = (id: string) =>
   client.get<ApiResponse<{ merchant: Merchant }>>(`/public/merchants/${id}`);

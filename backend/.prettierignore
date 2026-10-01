@@ -1,0 +1,4 @@
+node_modules
+logs
+uploads
+pnpm-lock.yaml

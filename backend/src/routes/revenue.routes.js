@@ -6,25 +6,15 @@ const { verifyToken, requireMerchant } = require('../middleware/auth');
 const { submitReportSchema } = require('../validators/revenue.validator');
 
 router.post(
-	'/',
-	verifyToken,
-	requireMerchant,
-	validate(submitReportSchema),
-	revenueController.submitReport
+  '/',
+  verifyToken,
+  requireMerchant,
+  validate(submitReportSchema),
+  revenueController.submitReport
 );
 
-router.get(
-	'/',
-	verifyToken,
-	requireMerchant,
-	revenueController.getReportHistory
-);
+router.get('/', verifyToken, requireMerchant, revenueController.getReportHistory);
 
-router.get(
-	'/summary',
-	verifyToken,
-	requireMerchant,
-	revenueController.getRevenueSummary
-);
+router.get('/summary', verifyToken, requireMerchant, revenueController.getRevenueSummary);
 
 module.exports = router;

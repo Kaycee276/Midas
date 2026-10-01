@@ -66,31 +66,150 @@ const App = () => (
 
       {/* Student protected — sidebar layout */}
       <Route element={<StudentLayout />}>
-        <Route path="/student/dashboard" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
-        <Route path="/student/profile" element={<ProtectedRoute role="student"><StudentProfile /></ProtectedRoute>} />
-        <Route path="/student/portfolio" element={<ProtectedRoute role="student"><Portfolio /></ProtectedRoute>} />
-        <Route path="/student/investments/:id" element={<ProtectedRoute role="student"><InvestmentDetail /></ProtectedRoute>} />
-        <Route path="/student/wallet" element={<ProtectedRoute role="student"><Wallet /></ProtectedRoute>} />
-        <Route path="/student/wallet/fund" element={<ProtectedRoute role="student"><FundWallet /></ProtectedRoute>} />
-        <Route path="/student/wallet/withdraw" element={<ProtectedRoute role="student"><Withdraw /></ProtectedRoute>} />
-        <Route path="/student/invest/:merchantId" element={<ProtectedRoute role="student"><Invest /></ProtectedRoute>} />
+        <Route
+          path="/student/dashboard"
+          element={
+            <ProtectedRoute role="student">
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/profile"
+          element={
+            <ProtectedRoute role="student">
+              <StudentProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/portfolio"
+          element={
+            <ProtectedRoute role="student">
+              <Portfolio />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/investments/:id"
+          element={
+            <ProtectedRoute role="student">
+              <InvestmentDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/wallet"
+          element={
+            <ProtectedRoute role="student">
+              <Wallet />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/wallet/fund"
+          element={
+            <ProtectedRoute role="student">
+              <FundWallet />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/wallet/withdraw"
+          element={
+            <ProtectedRoute role="student">
+              <Withdraw />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/invest/:merchantId"
+          element={
+            <ProtectedRoute role="student">
+              <Invest />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       {/* Merchant protected — sidebar layout */}
       <Route element={<MerchantLayout />}>
-        <Route path="/merchant/dashboard" element={<ProtectedRoute role="merchant"><MerchantDashboard /></ProtectedRoute>} />
-        <Route path="/merchant/profile" element={<ProtectedRoute role="merchant"><MerchantProfile /></ProtectedRoute>} />
-        <Route path="/merchant/kyc" element={<ProtectedRoute role="merchant"><KYCSubmission /></ProtectedRoute>} />
-        <Route path="/merchant/wallet" element={<ProtectedRoute role="merchant"><MerchantWallet /></ProtectedRoute>} />
-        <Route path="/merchant/wallet/withdraw" element={<ProtectedRoute role="merchant"><MerchantWithdraw /></ProtectedRoute>} />
-        <Route path="/merchant/revenue" element={<ProtectedRoute role="merchant"><RevenueHistory /></ProtectedRoute>} />
-        <Route path="/merchant/revenue/submit" element={<ProtectedRoute role="merchant"><RevenueReport /></ProtectedRoute>} />
+        <Route
+          path="/merchant/dashboard"
+          element={
+            <ProtectedRoute role="merchant">
+              <MerchantDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/merchant/profile"
+          element={
+            <ProtectedRoute role="merchant">
+              <MerchantProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/merchant/kyc"
+          element={
+            <ProtectedRoute role="merchant">
+              <KYCSubmission />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/merchant/wallet"
+          element={
+            <ProtectedRoute role="merchant">
+              <MerchantWallet />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/merchant/wallet/withdraw"
+          element={
+            <ProtectedRoute role="merchant">
+              <MerchantWithdraw />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/merchant/revenue"
+          element={
+            <ProtectedRoute role="merchant">
+              <RevenueHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/merchant/revenue/submit"
+          element={
+            <ProtectedRoute role="merchant">
+              <RevenueReport />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       {/* Admin protected — self-contained layout */}
       <Route element={<AdminLayout />}>
-        <Route path="/admin/dashboard" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/kyc/:id" element={<ProtectedRoute role="admin"><KYCReview /></ProtectedRoute>} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/kyc/:id"
+          element={
+            <ProtectedRoute role="admin">
+              <KYCReview />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   </BrowserRouter>

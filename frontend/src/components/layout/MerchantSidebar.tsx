@@ -1,5 +1,16 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Wallet, FileText, User, Store, BarChart3, Sun, Moon, LogOut, X } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Wallet,
+  FileText,
+  User,
+  Store,
+  BarChart3,
+  Sun,
+  Moon,
+  LogOut,
+  X,
+} from 'lucide-react';
 import { useThemeStore } from '../../stores/useThemeStore';
 import { useAuth } from '../../stores/useAuthStore';
 
@@ -30,12 +41,7 @@ const MerchantSidebar = ({ open, onClose }: MerchantSidebarProps) => {
   return (
     <>
       {/* Mobile backdrop */}
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={onClose}
-        />
-      )}
+      {open && <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={onClose} />}
 
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-60 flex-col border-r border-(--border) bg-(--bg) transition-transform duration-200 lg:translate-x-0 ${

@@ -3,7 +3,7 @@ const KYC_STATUS = {
   PENDING: 'pending',
   APPROVED: 'approved',
   REJECTED: 'rejected',
-  RESUBMISSION_REQUIRED: 'resubmission_required'
+  RESUBMISSION_REQUIRED: 'resubmission_required',
 };
 
 const ACCOUNT_STATUS = {
@@ -12,12 +12,12 @@ const ACCOUNT_STATUS = {
   KYC_REJECTED: 'kyc_rejected',
   ACTIVE: 'active',
   SUSPENDED: 'suspended',
-  INACTIVE: 'inactive'
+  INACTIVE: 'inactive',
 };
 
 const ADMIN_ROLE = {
   REVIEWER: 'reviewer',
-  SUPER_ADMIN: 'super_admin'
+  SUPER_ADMIN: 'super_admin',
 };
 
 const DOCUMENT_TYPE = {
@@ -25,21 +25,21 @@ const DOCUMENT_TYPE = {
   NATIONAL_ID: 'national_id_document',
   BUSINESS_REGISTRATION: 'business_registration_document',
   PROOF_OF_ADDRESS: 'proof_of_address_document',
-  BUSINESS_PHOTO: 'business_photo'
+  BUSINESS_PHOTO: 'business_photo',
 };
 
 const INVESTMENT_STATUS = {
   ACTIVE: 'active',
   WITHDRAWN: 'withdrawn',
   MATURED: 'matured',
-  CANCELLED: 'cancelled'
+  CANCELLED: 'cancelled',
 };
 
 const TRANSACTION_TYPE = {
   INVESTMENT: 'investment',
   DIVIDEND: 'dividend',
   WITHDRAWAL: 'withdrawal',
-  RETURN: 'return'
+  RETURN: 'return',
 };
 
 const WALLET_TRANSACTION_TYPE = {
@@ -47,38 +47,38 @@ const WALLET_TRANSACTION_TYPE = {
   WITHDRAWAL: 'withdrawal',
   INVESTMENT_DEBIT: 'investment_debit',
   INVESTMENT_REFUND: 'investment_refund',
-  DIVIDEND_CREDIT: 'dividend_credit'
+  DIVIDEND_CREDIT: 'dividend_credit',
 };
 
 const MERCHANT_WALLET_TRANSACTION_TYPE = {
   INVESTMENT_CREDIT: 'investment_credit',
   WITHDRAWAL: 'withdrawal',
-  DIVIDEND_DEBIT: 'dividend_debit'
+  DIVIDEND_DEBIT: 'dividend_debit',
 };
 
 const WALLET_TRANSACTION_STATUS = {
   PENDING: 'pending',
   COMPLETED: 'completed',
   FAILED: 'failed',
-  REVERSED: 'reversed'
+  REVERSED: 'reversed',
 };
 
 const REVENUE_REPORT_STATUS = {
   PENDING: 'pending',
   APPROVED: 'approved',
   REJECTED: 'rejected',
-  DISTRIBUTED: 'distributed'
+  DISTRIBUTED: 'distributed',
 };
 
 const DISTRIBUTION_STATUS = {
   PENDING: 'pending',
   COMPLETED: 'completed',
-  FAILED: 'failed'
+  FAILED: 'failed',
 };
 
 const PLATFORM_TRANSACTION_TYPE = {
   COMMISSION: 'commission',
-  WITHDRAWAL: 'withdrawal'
+  WITHDRAWAL: 'withdrawal',
 };
 
 module.exports = {
@@ -93,5 +93,5 @@ module.exports = {
   WALLET_TRANSACTION_STATUS,
   REVENUE_REPORT_STATUS,
   DISTRIBUTION_STATUS,
-  PLATFORM_TRANSACTION_TYPE
+  PLATFORM_TRANSACTION_TYPE,
 };

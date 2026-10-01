@@ -34,7 +34,7 @@ class AdminService {
 
     return {
       admin: adminWithoutPassword,
-      token
+      token,
     };
   }
 
@@ -52,8 +52,8 @@ class AdminService {
         total: count,
         page,
         limit,
-        total_pages: Math.ceil(count / limit)
-      }
+        total_pages: Math.ceil(count / limit),
+      },
     };
   }
 
@@ -70,7 +70,7 @@ class AdminService {
       'national_id_document_url',
       'business_registration_document_url',
       'proof_of_address_document_url',
-      'business_photo_url'
+      'business_photo_url',
     ];
 
     for (const field of documentFields) {
@@ -81,7 +81,7 @@ class AdminService {
 
     return {
       ...kyc,
-      documents: signedUrls
+      documents: signedUrls,
     };
   }
 
@@ -97,13 +97,13 @@ class AdminService {
 
     const updatedKyc = await kycModel.updateStatus(kycId, KYC_STATUS.APPROVED, {
       reviewed_by: adminId,
-      admin_notes: notes
+      admin_notes: notes,
     });
 
     // Update merchant status to active
     await merchantModel.update(kyc.merchant_id, {
       kyc_status: KYC_STATUS.APPROVED,
-      account_status: ACCOUNT_STATUS.ACTIVE
+      account_status: ACCOUNT_STATUS.ACTIVE,
     });
 
     // Create history entry
@@ -127,13 +127,13 @@ class AdminService {
     const updatedKyc = await kycModel.updateStatus(kycId, KYC_STATUS.REJECTED, {
       reviewed_by: adminId,
       rejection_reason: reason,
-      admin_notes: notes
+      admin_notes: notes,
     });
 
     // Update merchant status
     await merchantModel.update(kyc.merchant_id, {
       kyc_status: KYC_STATUS.REJECTED,
-      account_status: ACCOUNT_STATUS.KYC_REJECTED
+      account_status: ACCOUNT_STATUS.KYC_REJECTED,
     });
 
     // Create history entry
@@ -153,13 +153,13 @@ class AdminService {
     const updatedKyc = await kycModel.updateStatus(kycId, KYC_STATUS.RESUBMISSION_REQUIRED, {
       reviewed_by: adminId,
       rejection_reason: reason,
-      admin_notes: notes
+      admin_notes: notes,
     });
 
     // Update merchant status
     await merchantModel.update(kyc.merchant_id, {
       kyc_status: KYC_STATUS.RESUBMISSION_REQUIRED,
-      account_status: ACCOUNT_STATUS.PENDING_KYC
+      account_status: ACCOUNT_STATUS.PENDING_KYC,
     });
 
     // Create history entry
@@ -178,8 +178,8 @@ class AdminService {
         total: count,
         page,
         limit,
-        total_pages: Math.ceil(count / limit)
-      }
+        total_pages: Math.ceil(count / limit),
+      },
     };
   }
 
@@ -195,7 +195,7 @@ class AdminService {
     const result = await revenueModel.updateStatus(reportId, REVENUE_REPORT_STATUS.APPROVED, {
       reviewed_at: new Date().toISOString(),
       reviewed_by: adminId,
-      admin_notes: notes || null
+      admin_notes: notes || null,
     });
 
     emitDashboardUpdate();
@@ -216,7 +216,7 @@ class AdminService {
       reviewed_at: new Date().toISOString(),
       reviewed_by: adminId,
       rejection_reason: reason || null,
-      admin_notes: notes || null
+      admin_notes: notes || null,
     });
 
     emitDashboardUpdate();
@@ -231,7 +231,7 @@ class AdminService {
     return {
       balance: Number(wallet.balance),
       transactions,
-      total_transactions: count
+      total_transactions: count,
     };
   }
 
@@ -240,11 +240,9 @@ class AdminService {
   }
 
   generateToken(userId, type) {
-    return jwt.sign(
-      { id: userId, type },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
+    return jwt.sign({ id: userId, type }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    });
   }
 }
 

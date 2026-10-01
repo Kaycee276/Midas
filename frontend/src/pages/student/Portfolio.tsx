@@ -61,14 +61,28 @@ const Portfolio = () => {
                 <Link key={inv.id} to={`/student/investments/${inv.id}`}>
                   <Card className="flex items-center justify-between transition-colors hover:border-(--accent-primary)">
                     <div>
-                      <p className="font-medium text-(--text)">{inv.merchant?.business_name || 'Merchant'}</p>
+                      <p className="font-medium text-(--text)">
+                        {inv.merchant?.business_name || 'Merchant'}
+                      </p>
                       <p className="text-sm text-(--text-secondary)">
-                        {inv.shares} shares &middot; Invested {'\u20A6'}{inv.amount.toLocaleString()}
+                        {inv.shares} shares &middot; Invested {'\u20A6'}
+                        {inv.amount.toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-(--text)">{'\u20A6'}{inv.current_value.toLocaleString()}</p>
-                      <Badge variant={inv.status === 'active' ? 'success' : inv.status === 'withdrawn' ? 'default' : 'warning'}>
+                      <p className="font-semibold text-(--text)">
+                        {'\u20A6'}
+                        {inv.current_value.toLocaleString()}
+                      </p>
+                      <Badge
+                        variant={
+                          inv.status === 'active'
+                            ? 'success'
+                            : inv.status === 'withdrawn'
+                              ? 'default'
+                              : 'warning'
+                        }
+                      >
                         {inv.status}
                       </Badge>
                     </div>
@@ -86,14 +100,27 @@ const Portfolio = () => {
                 <div>
                   <p className="font-medium text-(--text)">{tx.description}</p>
                   <p className="text-sm text-(--text-secondary)">
-                    {tx.merchant?.business_name} &middot; {new Date(tx.created_at).toLocaleDateString()}
+                    {tx.merchant?.business_name} &middot;{' '}
+                    {new Date(tx.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className={`font-semibold ${tx.transaction_type === 'withdrawal' ? 'text-(--error)' : 'text-(--success)'}`}>
-                    {tx.transaction_type === 'withdrawal' ? '-' : '+'}{'\u20A6'}{tx.amount.toLocaleString()}
+                  <p
+                    className={`font-semibold ${tx.transaction_type === 'withdrawal' ? 'text-(--error)' : 'text-(--success)'}`}
+                  >
+                    {tx.transaction_type === 'withdrawal' ? '-' : '+'}
+                    {'\u20A6'}
+                    {tx.amount.toLocaleString()}
                   </p>
-                  <Badge variant={tx.transaction_type === 'investment' ? 'info' : tx.transaction_type === 'withdrawal' ? 'error' : 'success'}>
+                  <Badge
+                    variant={
+                      tx.transaction_type === 'investment'
+                        ? 'info'
+                        : tx.transaction_type === 'withdrawal'
+                          ? 'error'
+                          : 'success'
+                    }
+                  >
                     {tx.transaction_type}
                   </Badge>
                 </div>

@@ -15,25 +15,10 @@ router.post(
   kycController.submitKyc
 );
 
-router.get(
-  '/status',
-  verifyToken,
-  requireMerchant,
-  kycController.getKycStatus
-);
+router.get('/status', verifyToken, requireMerchant, kycController.getKycStatus);
 
-router.get(
-  '/documents/:type',
-  verifyToken,
-  requireMerchant,
-  kycController.getDocument
-);
+router.get('/documents/:type', verifyToken, requireMerchant, kycController.getDocument);
 
-router.delete(
-  '/document/:type',
-  verifyToken,
-  requireMerchant,
-  kycController.deleteDocument
-);
+router.delete('/document/:type', verifyToken, requireMerchant, kycController.deleteDocument);
 
 module.exports = router;

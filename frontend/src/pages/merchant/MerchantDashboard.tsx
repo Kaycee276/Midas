@@ -1,18 +1,44 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileCheck, AlertCircle, Clock, CheckCircle, XCircle, Upload, Wallet, TrendingUp, Users, Activity, BarChart3 } from 'lucide-react';
+import {
+  FileCheck,
+  AlertCircle,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Upload,
+  Wallet,
+  TrendingUp,
+  Users,
+  Activity,
+  BarChart3,
+} from 'lucide-react';
 import { useAuth } from '../../stores/useAuthStore';
 import { getKYCStatus } from '../../api/kyc';
 import { getMerchantInvestments } from '../../api/investments';
 import { getMerchantWalletInfo } from '../../api/merchant-wallet';
 import { getRevenueSummary } from '../../api/revenue';
-import type { Merchant, KYC, Investment, MerchantInvestmentSummary, MerchantWalletInfo, RevenueSummary } from '../../types';
+import type {
+  Merchant,
+  KYC,
+  Investment,
+  MerchantInvestmentSummary,
+  MerchantWalletInfo,
+  RevenueSummary,
+} from '../../types';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 
-const statusConfig: Record<string, { variant: 'success' | 'error' | 'warning' | 'info' | 'default'; icon: typeof CheckCircle; label: string }> = {
+const statusConfig: Record<
+  string,
+  {
+    variant: 'success' | 'error' | 'warning' | 'info' | 'default';
+    icon: typeof CheckCircle;
+    label: string;
+  }
+> = {
   not_started: { variant: 'default', icon: Upload, label: 'Not Started' },
   pending: { variant: 'warning', icon: Clock, label: 'Under Review' },
   approved: { variant: 'success', icon: CheckCircle, label: 'Approved' },
@@ -25,7 +51,9 @@ const MerchantDashboard = () => {
   const merchant = user?.data as Merchant;
   const [kyc, setKyc] = useState<KYC | null>(null);
   const [walletInfo, setWalletInfo] = useState<MerchantWalletInfo | null>(null);
-  const [investmentSummary, setInvestmentSummary] = useState<MerchantInvestmentSummary | null>(null);
+  const [investmentSummary, setInvestmentSummary] = useState<MerchantInvestmentSummary | null>(
+    null
+  );
   const [recentInvestments, setRecentInvestments] = useState<Investment[]>([]);
   const [revenueSummary, setRevenueSummary] = useState<RevenueSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -121,7 +149,9 @@ const MerchantDashboard = () => {
             </Card>
           );
           return s.link ? (
-            <Link key={s.label} to={s.link}>{content}</Link>
+            <Link key={s.label} to={s.link}>
+              {content}
+            </Link>
           ) : (
             <div key={s.label}>{content}</div>
           );
@@ -138,16 +168,22 @@ const MerchantDashboard = () => {
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-(--text)">KYC Verification</h3>
-              <Badge variant={config.variant} className="mt-1">{config.label}</Badge>
+              <Badge variant={config.variant} className="mt-1">
+                {config.label}
+              </Badge>
               {kycStatus === 'rejected' && kyc?.rejection_reason && (
                 <p className="mt-2 text-sm text-(--error)">{kyc.rejection_reason}</p>
               )}
               {kycStatus === 'resubmission_required' && kyc?.rejection_reason && (
                 <p className="mt-2 text-sm text-(--warning)">{kyc.rejection_reason}</p>
               )}
-              {(kycStatus === 'not_started' || kycStatus === 'rejected' || kycStatus === 'resubmission_required') && (
+              {(kycStatus === 'not_started' ||
+                kycStatus === 'rejected' ||
+                kycStatus === 'resubmission_required') && (
                 <Link to="/merchant/kyc" className="mt-3 block">
-                  <Button size="sm">{kycStatus === 'not_started' ? 'Start KYC' : 'Resubmit KYC'}</Button>
+                  <Button size="sm">
+                    {kycStatus === 'not_started' ? 'Start KYC' : 'Resubmit KYC'}
+                  </Button>
                 </Link>
               )}
             </div>
@@ -162,8 +198,13 @@ const MerchantDashboard = () => {
             </div>
             <div>
               <h3 className="font-semibold text-(--text)">Account Status</h3>
-              <Badge variant={merchant.account_status === 'active' ? 'success' : 'warning'} className="mt-1">
-                {merchant.account_status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
+              <Badge
+                variant={merchant.account_status === 'active' ? 'success' : 'warning'}
+                className="mt-1"
+              >
+                {merchant.account_status
+                  .replace(/_/g, ' ')
+                  .replace(/\b\w/g, (c) => c.toUpperCase())}
               </Badge>
               <p className="mt-2 text-sm text-(--text-secondary)">
                 {merchant.account_status === 'active'
@@ -180,7 +221,10 @@ const MerchantDashboard = () => {
         <h2 className="text-lg font-semibold text-(--text)">Recent Investments</h2>
         {recentInvestments.length === 0 ? (
           <Card className="mt-4 text-center">
-            <p className="text-(--text-secondary)">No investments yet. Investments will appear here when students invest in your business.</p>
+            <p className="text-(--text-secondary)">
+              No investments yet. Investments will appear here when students invest in your
+              business.
+            </p>
           </Card>
         ) : (
           <div className="mt-4 space-y-3">
@@ -194,9 +238,18 @@ const MerchantDashboard = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-(--success)">
-                    +{'\u20A6'}{inv.amount.toLocaleString()}
+                    +{'\u20A6'}
+                    {inv.amount.toLocaleString()}
                   </p>
-                  <Badge variant={inv.status === 'active' ? 'success' : inv.status === 'withdrawn' ? 'default' : 'warning'}>
+                  <Badge
+                    variant={
+                      inv.status === 'active'
+                        ? 'success'
+                        : inv.status === 'withdrawn'
+                          ? 'default'
+                          : 'warning'
+                    }
+                  >
                     {inv.status}
                   </Badge>
                 </div>

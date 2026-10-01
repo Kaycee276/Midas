@@ -6,8 +6,7 @@ export const submitKYC = (formData: FormData) =>
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-export const getKYCStatus = () =>
-  client.get<ApiResponse<{ kyc: KYC }>>('/kyc/status');
+export const getKYCStatus = () => client.get<ApiResponse<{ kyc: KYC }>>('/kyc/status');
 
 export const getDocument = (type: string) =>
   client.get<ApiResponse<{ url: string }>>(`/kyc/documents/${type}`);

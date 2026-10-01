@@ -59,16 +59,21 @@ const Wallet = () => {
             <div>
               <p className="text-sm text-(--text-secondary)">Available Balance</p>
               <p className="text-3xl font-bold text-(--text)">
-                {'\u20A6'}{(info?.balance || 0).toLocaleString()}
+                {'\u20A6'}
+                {(info?.balance || 0).toLocaleString()}
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <Link to="/student/wallet/fund">
-              <Button><Plus className="h-4 w-4" /> Fund Wallet</Button>
+              <Button>
+                <Plus className="h-4 w-4" /> Fund Wallet
+              </Button>
             </Link>
             <Link to="/student/wallet/withdraw">
-              <Button variant="outline"><CreditCard className="h-4 w-4" /> Withdraw</Button>
+              <Button variant="outline">
+                <CreditCard className="h-4 w-4" /> Withdraw
+              </Button>
             </Link>
           </div>
         </div>
@@ -96,15 +101,21 @@ const Wallet = () => {
                     <ArrowUpRight className="h-5 w-5 text-(--error)" />
                   )}
                   <div>
-                    <p className="font-medium text-(--text)">{txnTypeLabel[txn.type] || txn.type}</p>
+                    <p className="font-medium text-(--text)">
+                      {txnTypeLabel[txn.type] || txn.type}
+                    </p>
                     <p className="text-sm text-(--text-tertiary)">
                       {new Date(txn.created_at).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={`font-semibold ${isCredit(txn.type) ? 'text-(--success)' : 'text-(--text)'}`}>
-                    {isCredit(txn.type) ? '+' : '-'}{'\u20A6'}{parseFloat(String(txn.amount)).toLocaleString()}
+                  <p
+                    className={`font-semibold ${isCredit(txn.type) ? 'text-(--success)' : 'text-(--text)'}`}
+                  >
+                    {isCredit(txn.type) ? '+' : '-'}
+                    {'\u20A6'}
+                    {parseFloat(String(txn.amount)).toLocaleString()}
                   </p>
                   <Badge variant={txnBadgeVariant(txn.status)}>{txn.status}</Badge>
                 </div>

@@ -12,8 +12,11 @@ import Button from '../../components/ui/Button';
 import { useAuth } from '../../stores/useAuthStore';
 
 const proximityLabels: Record<string, string> = {
-  on_campus: 'On Campus', within_1km: 'Within 1km', within_2km: 'Within 2km',
-  within_5km: 'Within 5km', more_than_5km: 'More than 5km',
+  on_campus: 'On Campus',
+  within_1km: 'Within 1km',
+  within_2km: 'Within 2km',
+  within_5km: 'Within 5km',
+  more_than_5km: 'More than 5km',
 };
 
 const MerchantDetail = () => {
@@ -43,11 +46,15 @@ const MerchantDetail = () => {
   }, [id]);
 
   if (loading) return <Spinner size="lg" className="py-20" />;
-  if (!merchant) return <div className="py-20 text-center text-(--text-secondary)">Merchant not found</div>;
+  if (!merchant)
+    return <div className="py-20 text-center text-(--text-secondary)">Merchant not found</div>;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <Link to="/merchants" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
+      <Link
+        to="/merchants"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)"
+      >
         <ArrowLeft className="h-4 w-4" /> Back to Merchants
       </Link>
 
@@ -58,20 +65,27 @@ const MerchantDetail = () => {
             <div className="mt-2 flex flex-wrap items-center gap-3">
               <Badge>{merchant.business_type.replace(/_/g, ' ')}</Badge>
               <span className="flex items-center gap-1 text-sm text-(--text-tertiary)">
-                <MapPin className="h-3 w-3" /> {proximityLabels[merchant.proximity_to_campus] || merchant.proximity_to_campus}
+                <MapPin className="h-3 w-3" />{' '}
+                {proximityLabels[merchant.proximity_to_campus] || merchant.proximity_to_campus}
               </span>
             </div>
           </div>
           {user?.role === 'student' && (
             <Link to={`/student/invest/${merchant.id}`}>
-              <Button><TrendingUp className="h-4 w-4" /> Invest</Button>
+              <Button>
+                <TrendingUp className="h-4 w-4" /> Invest
+              </Button>
             </Link>
           )}
         </div>
         <p className="mt-4 text-(--text-secondary)">{merchant.business_description}</p>
         <div className="mt-4 space-y-1 text-sm text-(--text-secondary)">
-          <p className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {merchant.business_address}</p>
-          <p className="flex items-center gap-2"><Phone className="h-4 w-4" /> {merchant.business_phone}</p>
+          <p className="flex items-center gap-2">
+            <MapPin className="h-4 w-4" /> {merchant.business_address}
+          </p>
+          <p className="flex items-center gap-2">
+            <Phone className="h-4 w-4" /> {merchant.business_phone}
+          </p>
         </div>
       </Card>
 
@@ -90,7 +104,10 @@ const MerchantDetail = () => {
             <div className="flex items-center gap-3">
               <DollarSign className="h-8 w-8 text-(--success)" />
               <div>
-                <p className="text-2xl font-bold text-(--text)">{'\u20A6'}{summary.total_capital_raised.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-(--text)">
+                  {'\u20A6'}
+                  {summary.total_capital_raised.toLocaleString()}
+                </p>
                 <p className="text-sm text-(--text-secondary)">Capital Raised</p>
               </div>
             </div>

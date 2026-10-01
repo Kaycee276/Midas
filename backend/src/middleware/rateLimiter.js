@@ -6,7 +6,7 @@ const createRateLimiter = (windowMs, max, message) => {
     max,
     message: { success: false, message },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
   });
 };
 
@@ -31,5 +31,5 @@ const generalLimiter = createRateLimiter(
 module.exports = {
   registrationLimiter,
   loginLimiter,
-  generalLimiter
+  generalLimiter,
 };

@@ -50,5 +50,5 @@ module.exports = {
   verifyToken,
   requireMerchant,
   requireAdmin,
-  requireStudent
+  requireStudent,
 };

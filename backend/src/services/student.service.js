@@ -34,7 +34,7 @@ class StudentService {
       account_status: 'active',
       is_verified: false,
       terms_accepted: studentData.terms_accepted,
-      terms_accepted_at: new Date().toISOString()
+      terms_accepted_at: new Date().toISOString(),
     });
 
     try {
@@ -52,7 +52,7 @@ class StudentService {
 
     return {
       student: studentWithoutPassword,
-      message: 'Registration successful. Please check your email to verify your account.'
+      message: 'Registration successful. Please check your email to verify your account.',
     };
   }
 
@@ -83,7 +83,7 @@ class StudentService {
 
     return {
       student: studentWithoutPassword,
-      token
+      token,
     };
   }
 
@@ -110,11 +110,9 @@ class StudentService {
   }
 
   generateToken(userId, type) {
-    return jwt.sign(
-      { id: userId, type },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
+    return jwt.sign({ id: userId, type }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    });
   }
 
   generateVerificationToken(userId) {

@@ -1,17 +1,45 @@
 import { Link } from 'react-router-dom';
-import { TrendingUp, Shield, Users, ArrowRight, Store, GraduationCap, CheckCircle } from 'lucide-react';
+import {
+  TrendingUp,
+  Shield,
+  Users,
+  ArrowRight,
+  Store,
+  GraduationCap,
+  CheckCircle,
+} from 'lucide-react';
 import Button from '../components/ui/Button';
 
 const features = [
-  { icon: TrendingUp, title: 'Smart Investments', desc: 'Invest in verified campus merchants with transparent returns and real-time portfolio tracking.' },
-  { icon: Shield, title: 'KYC Verified', desc: 'Every merchant undergoes rigorous identity and business verification before accepting investments.' },
-  { icon: Users, title: 'Student-Powered', desc: 'Built for students to grow their money by supporting businesses they already use every day.' },
+  {
+    icon: TrendingUp,
+    title: 'Smart Investments',
+    desc: 'Invest in verified campus merchants with transparent returns and real-time portfolio tracking.',
+  },
+  {
+    icon: Shield,
+    title: 'KYC Verified',
+    desc: 'Every merchant undergoes rigorous identity and business verification before accepting investments.',
+  },
+  {
+    icon: Users,
+    title: 'Student-Powered',
+    desc: 'Built for students to grow their money by supporting businesses they already use every day.',
+  },
 ];
 
 const steps = [
   { step: '01', title: 'Sign Up', desc: 'Create your student or merchant account in minutes.' },
-  { step: '02', title: 'Get Verified', desc: 'Merchants complete KYC. Students browse verified businesses.' },
-  { step: '03', title: 'Invest & Grow', desc: 'Students invest in merchants and track portfolio performance.' },
+  {
+    step: '02',
+    title: 'Get Verified',
+    desc: 'Merchants complete KYC. Students browse verified businesses.',
+  },
+  {
+    step: '03',
+    title: 'Invest & Grow',
+    desc: 'Students invest in merchants and track portfolio performance.',
+  },
 ];
 
 const Landing = () => (
@@ -20,12 +48,13 @@ const Landing = () => (
     <section className="relative overflow-hidden px-4 py-24 md:py-32">
       <div className="mx-auto max-w-7xl text-center">
         <h1 className="text-4xl font-bold tracking-tight text-(--text) md:text-6xl">
-          Invest in Campus<br />
+          Invest in Campus
+          <br />
           <span className="text-(--accent-primary)">Businesses You Trust</span>
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg text-(--text-secondary)">
-          Midas connects students with verified campus merchants for micro-investments.
-          Grow your portfolio while supporting the businesses that power your campus life.
+          Midas connects students with verified campus merchants for micro-investments. Grow your
+          portfolio while supporting the businesses that power your campus life.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link to="/student/register">
@@ -93,9 +122,15 @@ const Landing = () => (
             </Button>
           </Link>
           <div className="flex items-center gap-6 text-sm text-(--text-tertiary)">
-            <span className="flex items-center gap-1"><CheckCircle className="h-4 w-4 text-(--success)" /> KYC Verified</span>
-            <span className="flex items-center gap-1"><CheckCircle className="h-4 w-4 text-(--success)" /> Secure</span>
-            <span className="flex items-center gap-1"><CheckCircle className="h-4 w-4 text-(--success)" /> Transparent</span>
+            <span className="flex items-center gap-1">
+              <CheckCircle className="h-4 w-4 text-(--success)" /> KYC Verified
+            </span>
+            <span className="flex items-center gap-1">
+              <CheckCircle className="h-4 w-4 text-(--success)" /> Secure
+            </span>
+            <span className="flex items-center gap-1">
+              <CheckCircle className="h-4 w-4 text-(--success)" /> Transparent
+            </span>
           </div>
         </div>
       </div>

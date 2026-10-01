@@ -15,38 +15,15 @@ router.post(
   investmentController.createInvestment
 );
 
-router.get(
-  '/portfolio',
-  verifyToken,
-  requireStudent,
-  investmentController.getPortfolio
-);
+router.get('/portfolio', verifyToken, requireStudent, investmentController.getPortfolio);
 
-router.get(
-  '/history',
-  verifyToken,
-  requireStudent,
-  investmentController.getInvestmentHistory
-);
+router.get('/history', verifyToken, requireStudent, investmentController.getInvestmentHistory);
 
-router.get(
-  '/:id',
-  verifyToken,
-  requireStudent,
-  investmentController.getInvestmentDetails
-);
+router.get('/:id', verifyToken, requireStudent, investmentController.getInvestmentDetails);
 
-router.post(
-  '/:id/withdraw',
-  verifyToken,
-  requireStudent,
-  investmentController.withdrawInvestment
-);
+router.post('/:id/withdraw', verifyToken, requireStudent, investmentController.withdrawInvestment);
 
 // Public route to view merchant's investments (summary)
-router.get(
-  '/merchants/:merchantId',
-  investmentController.getMerchantInvestments
-);
+router.get('/merchants/:merchantId', investmentController.getMerchantInvestments);
 
 module.exports = router;

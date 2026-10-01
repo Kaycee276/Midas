@@ -22,7 +22,15 @@ const sizes = {
   lg: 'px-6 py-3 text-base',
 };
 
-const Button = ({ variant = 'primary', size = 'md', loading, children, disabled, className = '', ...props }: ButtonProps) => (
+const Button = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  children,
+  disabled,
+  className = '',
+  ...props
+}: ButtonProps) => (
   <button
     className={`inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
     disabled={disabled || loading}

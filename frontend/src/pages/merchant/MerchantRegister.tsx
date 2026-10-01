@@ -11,8 +11,19 @@ import Button from '../../components/ui/Button';
 import type { BusinessType, ProximityType } from '../../types';
 
 const businessTypeOptions = [
-  'restaurant', 'cafe', 'food_truck', 'retail', 'bookstore', 'laundry',
-  'salon', 'gym', 'tutoring', 'printing', 'electronics', 'clothing', 'other',
+  'restaurant',
+  'cafe',
+  'food_truck',
+  'retail',
+  'bookstore',
+  'laundry',
+  'salon',
+  'gym',
+  'tutoring',
+  'printing',
+  'electronics',
+  'clothing',
+  'other',
 ].map((v) => ({ value: v, label: v.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) }));
 
 const proximityOptions = [
@@ -25,15 +36,24 @@ const proximityOptions = [
 
 const MerchantRegister = () => {
   const [form, setForm] = useState({
-    email: '', password: '', business_name: '', business_type: '' as BusinessType,
-    business_description: '', business_address: '', business_phone: '',
-    owner_full_name: '', owner_phone: '', owner_email: '',
-    proximity_to_campus: '' as ProximityType, terms_accepted: false,
+    email: '',
+    password: '',
+    business_name: '',
+    business_type: '' as BusinessType,
+    business_description: '',
+    business_address: '',
+    business_phone: '',
+    owner_full_name: '',
+    owner_phone: '',
+    owner_email: '',
+    proximity_to_campus: '' as ProximityType,
+    terms_accepted: false,
   });
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
 
-  const update = (field: string, value: string | boolean) => setForm((p) => ({ ...p, [field]: value }));
+  const update = (field: string, value: string | boolean) =>
+    setForm((p) => ({ ...p, [field]: value }));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -43,7 +63,9 @@ const MerchantRegister = () => {
       await merchantRegister(form);
       setRegistered(true);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Registration failed';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Registration failed';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -57,11 +79,15 @@ const MerchantRegister = () => {
           <Mail className="mx-auto h-12 w-12 text-(--accent-primary)" />
           <h2 className="mt-4 text-xl font-bold text-(--text)">Check Your Email</h2>
           <p className="mt-2 text-(--text-secondary)">
-            We've sent a verification link to <strong>{form.email}</strong>. Please check your inbox and click the link to verify your account.
+            We've sent a verification link to <strong>{form.email}</strong>. Please check your inbox
+            and click the link to verify your account.
           </p>
           <p className="mt-4 text-sm text-(--text-tertiary)">
             Didn't receive the email? Check your spam folder or{' '}
-            <Link to="/merchant/login" className="text-(--accent-primary) hover:underline">try logging in</Link> to resend.
+            <Link to="/merchant/login" className="text-(--accent-primary) hover:underline">
+              try logging in
+            </Link>{' '}
+            to resend.
           </p>
         </Card>
       </div>
@@ -74,45 +100,125 @@ const MerchantRegister = () => {
         <div className="mb-6 text-center">
           <Store className="mx-auto h-10 w-10 text-(--accent-primary)" />
           <h1 className="mt-3 text-2xl font-bold text-(--text)">Register Your Business</h1>
-          <p className="mt-1 text-sm text-(--text-secondary)">Join Midas and attract student investors</p>
+          <p className="mt-1 text-sm text-(--text-secondary)">
+            Join Midas and attract student investors
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">Account</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <Input label="Email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} required />
-              <PasswordInput label="Password" value={form.password} onChange={(e) => update('password', e.target.value)} required showCriteria />
+              <Input
+                label="Email"
+                type="email"
+                value={form.email}
+                onChange={(e) => update('email', e.target.value)}
+                required
+              />
+              <PasswordInput
+                label="Password"
+                value={form.password}
+                onChange={(e) => update('password', e.target.value)}
+                required
+                showCriteria
+              />
             </div>
           </div>
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">Business Info</h3>
+            <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">
+              Business Info
+            </h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <Input label="Business Name" value={form.business_name} onChange={(e) => update('business_name', e.target.value)} required />
-              <Select label="Business Type" options={businessTypeOptions} value={form.business_type} onChange={(e) => update('business_type', e.target.value)} required placeholder="Select type" />
+              <Input
+                label="Business Name"
+                value={form.business_name}
+                onChange={(e) => update('business_name', e.target.value)}
+                required
+              />
+              <Select
+                label="Business Type"
+                options={businessTypeOptions}
+                value={form.business_type}
+                onChange={(e) => update('business_type', e.target.value)}
+                required
+                placeholder="Select type"
+              />
               <div className="md:col-span-2">
-                <Input label="Business Description" value={form.business_description} onChange={(e) => update('business_description', e.target.value)} required />
+                <Input
+                  label="Business Description"
+                  value={form.business_description}
+                  onChange={(e) => update('business_description', e.target.value)}
+                  required
+                />
               </div>
-              <Input label="Business Address" value={form.business_address} onChange={(e) => update('business_address', e.target.value)} required placeholder="Min 10 characters" />
-              <Input label="Business Phone" value={form.business_phone} onChange={(e) => update('business_phone', e.target.value)} required placeholder="+1234567890" />
-              <Select label="Proximity to Campus" options={proximityOptions} value={form.proximity_to_campus} onChange={(e) => update('proximity_to_campus', e.target.value)} required placeholder="Select proximity" />
+              <Input
+                label="Business Address"
+                value={form.business_address}
+                onChange={(e) => update('business_address', e.target.value)}
+                required
+                placeholder="Min 10 characters"
+              />
+              <Input
+                label="Business Phone"
+                value={form.business_phone}
+                onChange={(e) => update('business_phone', e.target.value)}
+                required
+                placeholder="+1234567890"
+              />
+              <Select
+                label="Proximity to Campus"
+                options={proximityOptions}
+                value={form.proximity_to_campus}
+                onChange={(e) => update('proximity_to_campus', e.target.value)}
+                required
+                placeholder="Select proximity"
+              />
             </div>
           </div>
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">Owner Info</h3>
+            <h3 className="mb-3 text-sm font-semibold uppercase text-(--text-tertiary)">
+              Owner Info
+            </h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <Input label="Full Name" value={form.owner_full_name} onChange={(e) => update('owner_full_name', e.target.value)} required />
-              <Input label="Phone" value={form.owner_phone} onChange={(e) => update('owner_phone', e.target.value)} required />
-              <Input label="Email" type="email" value={form.owner_email} onChange={(e) => update('owner_email', e.target.value)} required />
+              <Input
+                label="Full Name"
+                value={form.owner_full_name}
+                onChange={(e) => update('owner_full_name', e.target.value)}
+                required
+              />
+              <Input
+                label="Phone"
+                value={form.owner_phone}
+                onChange={(e) => update('owner_phone', e.target.value)}
+                required
+              />
+              <Input
+                label="Email"
+                type="email"
+                value={form.owner_email}
+                onChange={(e) => update('owner_email', e.target.value)}
+                required
+              />
             </div>
           </div>
           <label className="flex items-center gap-2 text-sm text-(--text-secondary)">
-            <input type="checkbox" checked={form.terms_accepted} onChange={(e) => update('terms_accepted', e.target.checked)} className="accent-(--accent-primary)" />
+            <input
+              type="checkbox"
+              checked={form.terms_accepted}
+              onChange={(e) => update('terms_accepted', e.target.checked)}
+              className="accent-(--accent-primary)"
+            />
             I accept the terms and conditions
           </label>
-          <Button type="submit" loading={loading} className="w-full">Create Account</Button>
+          <Button type="submit" loading={loading} className="w-full">
+            Create Account
+          </Button>
         </form>
         <p className="mt-4 text-center text-sm text-(--text-secondary)">
-          Already have an account? <Link to="/merchant/login" className="text-(--accent-primary) hover:underline">Sign In</Link>
+          Already have an account?{' '}
+          <Link to="/merchant/login" className="text-(--accent-primary) hover:underline">
+            Sign In
+          </Link>
         </p>
       </Card>
     </div>

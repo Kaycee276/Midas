@@ -30,7 +30,7 @@ class MerchantService {
       kyc_status: KYC_STATUS.NOT_STARTED,
       is_verified: false,
       terms_accepted: merchantData.terms_accepted,
-      terms_accepted_at: new Date().toISOString()
+      terms_accepted_at: new Date().toISOString(),
     });
 
     try {
@@ -48,7 +48,7 @@ class MerchantService {
 
     return {
       merchant: merchantWithoutPassword,
-      message: 'Registration successful. Please check your email to verify your account.'
+      message: 'Registration successful. Please check your email to verify your account.',
     };
   }
 
@@ -75,7 +75,7 @@ class MerchantService {
 
     return {
       merchant: merchantWithoutPassword,
-      token
+      token,
     };
   }
 
@@ -102,11 +102,9 @@ class MerchantService {
   }
 
   generateToken(userId, type) {
-    return jwt.sign(
-      { id: userId, type },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-    );
+    return jwt.sign({ id: userId, type }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    });
   }
 
   generateVerificationToken(userId) {

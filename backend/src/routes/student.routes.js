@@ -7,7 +7,7 @@ const { registrationLimiter, loginLimiter } = require('../middleware/rateLimiter
 const {
   studentRegistrationSchema,
   studentLoginSchema,
-  studentUpdateSchema
+  studentUpdateSchema,
 } = require('../validators/student.validator');
 
 router.post(
@@ -17,19 +17,9 @@ router.post(
   studentController.register
 );
 
-router.post(
-  '/login',
-  loginLimiter,
-  validate(studentLoginSchema),
-  studentController.login
-);
+router.post('/login', loginLimiter, validate(studentLoginSchema), studentController.login);
 
-router.get(
-  '/me',
-  verifyToken,
-  requireStudent,
-  studentController.getMe
-);
+router.get('/me', verifyToken, requireStudent, studentController.getMe);
 
 router.patch(
   '/profile',

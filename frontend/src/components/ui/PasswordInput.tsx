@@ -66,7 +66,10 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             {criteria.map((c) => {
               const met = c.test(pwd);
               return (
-                <li key={c.label} className={`flex items-center gap-2 text-xs ${met ? 'text-(--success)' : 'text-(--text-tertiary)'}`}>
+                <li
+                  key={c.label}
+                  className={`flex items-center gap-2 text-xs ${met ? 'text-(--success)' : 'text-(--text-tertiary)'}`}
+                >
                   {met ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
                   {c.label}
                 </li>

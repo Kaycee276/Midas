@@ -126,9 +126,29 @@ export interface MerchantInvestmentSummary {
 
 export interface DashboardStats {
   students: { total: number; active: number; suspended: number; inactive: number };
-  merchants: { total: number; active: number; pending_kyc: number; kyc_submitted: number; kyc_rejected: number; suspended: number; inactive: number };
-  investments: { total: number; active: number; withdrawn: number; total_invested: number; total_current_value: number };
-  kyc: { total: number; pending: number; approved: number; rejected: number; resubmission_required: number };
+  merchants: {
+    total: number;
+    active: number;
+    pending_kyc: number;
+    kyc_submitted: number;
+    kyc_rejected: number;
+    suspended: number;
+    inactive: number;
+  };
+  investments: {
+    total: number;
+    active: number;
+    withdrawn: number;
+    total_invested: number;
+    total_current_value: number;
+  };
+  kyc: {
+    total: number;
+    pending: number;
+    approved: number;
+    rejected: number;
+    resubmission_required: number;
+  };
 }
 
 // Revenue & Distribution types
@@ -257,18 +277,28 @@ export interface ApiResponse<T = unknown> {
 }
 
 export type BusinessType =
-  | 'restaurant' | 'cafe' | 'food_truck' | 'retail' | 'bookstore'
-  | 'laundry' | 'salon' | 'gym' | 'tutoring' | 'printing'
-  | 'electronics' | 'clothing' | 'other';
+  | 'restaurant'
+  | 'cafe'
+  | 'food_truck'
+  | 'retail'
+  | 'bookstore'
+  | 'laundry'
+  | 'salon'
+  | 'gym'
+  | 'tutoring'
+  | 'printing'
+  | 'electronics'
+  | 'clothing'
+  | 'other';
 
 export type ProximityType =
-  | 'on_campus' | 'within_1km' | 'within_2km' | 'within_5km' | 'more_than_5km';
+  'on_campus' | 'within_1km' | 'within_2km' | 'within_5km' | 'more_than_5km';
 
 export type MerchantAccountStatus =
-  | 'pending_kyc' | 'kyc_submitted' | 'kyc_rejected' | 'active' | 'suspended' | 'inactive';
+  'pending_kyc' | 'kyc_submitted' | 'kyc_rejected' | 'active' | 'suspended' | 'inactive';
 
 export type KYCStatus =
-  | 'not_started' | 'pending' | 'approved' | 'rejected' | 'resubmission_required';
+  'not_started' | 'pending' | 'approved' | 'rejected' | 'resubmission_required';
 
 export type InvestmentStatus = 'active' | 'withdrawn' | 'matured' | 'cancelled';
 
@@ -315,7 +345,8 @@ export interface LoginData {
 }
 
 // Wallet types
-export type WalletTransactionType = 'deposit' | 'withdrawal' | 'investment_debit' | 'investment_refund' | 'dividend_credit';
+export type WalletTransactionType =
+  'deposit' | 'withdrawal' | 'investment_debit' | 'investment_refund' | 'dividend_credit';
 export type WalletTransactionStatus = 'pending' | 'completed' | 'failed' | 'reversed';
 
 export interface WalletTransaction {
@@ -360,4 +391,3 @@ export interface MerchantWalletInfo {
   balance: number;
   recent_transactions: MerchantWalletTransaction[];
 }
-

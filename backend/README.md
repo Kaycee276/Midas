@@ -102,6 +102,7 @@ pnpm prisma:push
 ```
 
 To visually inspect and manage your tables and rows:
+
 ```bash
 pnpm prisma:studio
 ```
@@ -137,11 +138,13 @@ Authorization: Bearer <your-jwt-token>
 ### Endpoints
 
 #### Health Check
+
 - `GET /health` - Server health status
 
 #### Merchant Authentication
 
 - `POST /api/auth/register` - Register new merchant
+
   ```json
   {
     "email": "merchant@example.com",
@@ -160,6 +163,7 @@ Authorization: Bearer <your-jwt-token>
   ```
 
 - `POST /api/auth/login` - Merchant login
+
   ```json
   {
     "email": "merchant@example.com",
@@ -197,6 +201,7 @@ Authorization: Bearer <your-jwt-token>
 #### Admin Operations
 
 - `POST /api/admin/login` - Admin login
+
   ```json
   {
     "email": "admin@midas.com",
@@ -209,6 +214,7 @@ Authorization: Bearer <your-jwt-token>
 - `GET /api/admin/kyc/:id` - Get KYC details with documents (protected)
 
 - `POST /api/admin/kyc/:id/approve` - Approve KYC (protected)
+
   ```json
   {
     "admin_notes": "All documents verified"
@@ -227,15 +233,17 @@ Authorization: Bearer <your-jwt-token>
 ### Response Format
 
 #### Success Response
+
 ```json
 {
   "success": true,
   "message": "Operation successful",
-  "data": { }
+  "data": {}
 }
 ```
 
 #### Error Response
+
 ```json
 {
   "success": false,
@@ -278,21 +286,25 @@ Logs are stored in the `logs/` directory:
 ## Database Schema
 
 ### Merchants Table
+
 - Business and owner information
 - Account and KYC status tracking
 - Terms acceptance
 
 ### Merchant KYC Table
+
 - Identity documents (optional student ID)
 - Business documents
 - Document URLs in Supabase Storage
 - Review status and admin notes
 
 ### Admins Table
+
 - Admin user accounts
 - Role-based access
 
 ### KYC Submission History
+
 - Audit trail of all KYC submissions
 - Historical data for compliance
 
@@ -326,16 +338,19 @@ Logs are stored in the `logs/` directory:
 ## Troubleshooting
 
 ### Database Connection Issues
+
 - Verify Supabase credentials in `.env`
 - Check if tables were created successfully
 - Ensure service role key is used (not anon key)
 
 ### File Upload Issues
+
 - Verify Supabase Storage bucket exists and is named `kyc-documents`
 - Check bucket is set to private
 - Ensure sufficient storage quota
 
 ### Authentication Issues
+
 - Verify JWT_SECRET is set
 - Check token expiration time
 - Ensure Authorization header format: `Bearer <token>`

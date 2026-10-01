@@ -7,7 +7,7 @@ const { registrationLimiter, loginLimiter } = require('../middleware/rateLimiter
 const {
   merchantRegistrationSchema,
   merchantLoginSchema,
-  merchantUpdateSchema
+  merchantUpdateSchema,
 } = require('../validators/merchant.validator');
 
 router.post(
@@ -17,19 +17,9 @@ router.post(
   authController.register
 );
 
-router.post(
-  '/login',
-  loginLimiter,
-  validate(merchantLoginSchema),
-  authController.login
-);
+router.post('/login', loginLimiter, validate(merchantLoginSchema), authController.login);
 
-router.get(
-  '/me',
-  verifyToken,
-  requireMerchant,
-  authController.getMe
-);
+router.get('/me', verifyToken, requireMerchant, authController.getMe);
 
 router.patch(
   '/profile',

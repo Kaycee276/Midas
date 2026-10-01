@@ -11,8 +11,19 @@ import Spinner from '../../components/ui/Spinner';
 import Button from '../../components/ui/Button';
 
 const businessTypeOptions = [
-  'restaurant', 'cafe', 'food_truck', 'retail', 'bookstore', 'laundry',
-  'salon', 'gym', 'tutoring', 'printing', 'electronics', 'clothing', 'other',
+  'restaurant',
+  'cafe',
+  'food_truck',
+  'retail',
+  'bookstore',
+  'laundry',
+  'salon',
+  'gym',
+  'tutoring',
+  'printing',
+  'electronics',
+  'clothing',
+  'other',
 ].map((v) => ({ value: v, label: v.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) }));
 
 const proximityOptions = [
@@ -38,7 +49,8 @@ const MerchantList = () => {
     setLoading(true);
     try {
       const { data } = await listMerchants({
-        page, limit: 12,
+        page,
+        limit: 12,
         search: search || undefined,
         business_type: businessType || undefined,
         proximity: proximity || undefined,
@@ -52,15 +64,22 @@ const MerchantList = () => {
     }
   };
 
-  useEffect(() => { fetchMerchants(); }, [page, businessType, proximity]);
+  useEffect(() => {
+    fetchMerchants();
+  }, [page, businessType, proximity]);
 
-  const handleSearch = () => { setPage(1); fetchMerchants(); };
+  const handleSearch = () => {
+    setPage(1);
+    fetchMerchants();
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-(--text)">Browse Merchants</h1>
-        <p className="mt-2 text-(--text-secondary)">Discover verified campus businesses to invest in</p>
+        <p className="mt-2 text-(--text-secondary)">
+          Discover verified campus businesses to invest in
+        </p>
       </div>
 
       {/* Filters */}
@@ -69,13 +88,36 @@ const MerchantList = () => {
           <div className="md:col-span-2">
             <div className="flex gap-2">
               <div className="flex-1">
-                <Input placeholder="Search merchants..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()} />
+                <Input
+                  placeholder="Search merchants..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
               </div>
-              <Button onClick={handleSearch}><Search className="h-4 w-4" /></Button>
+              <Button onClick={handleSearch}>
+                <Search className="h-4 w-4" />
+              </Button>
             </div>
           </div>
-          <Select options={businessTypeOptions} value={businessType} onChange={(e) => { setBusinessType(e.target.value); setPage(1); }} placeholder="All Types" />
-          <Select options={proximityOptions} value={proximity} onChange={(e) => { setProximity(e.target.value); setPage(1); }} placeholder="Any Distance" />
+          <Select
+            options={businessTypeOptions}
+            value={businessType}
+            onChange={(e) => {
+              setBusinessType(e.target.value);
+              setPage(1);
+            }}
+            placeholder="All Types"
+          />
+          <Select
+            options={proximityOptions}
+            value={proximity}
+            onChange={(e) => {
+              setProximity(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Any Distance"
+          />
         </div>
       </Card>
 
@@ -96,7 +138,9 @@ const MerchantList = () => {
                     <h3 className="text-lg font-semibold text-(--text)">{m.business_name}</h3>
                     <Badge>{m.business_type.replace(/_/g, ' ')}</Badge>
                   </div>
-                  <p className="mt-2 line-clamp-2 text-sm text-(--text-secondary)">{m.business_description}</p>
+                  <p className="mt-2 line-clamp-2 text-sm text-(--text-secondary)">
+                    {m.business_description}
+                  </p>
                   <div className="mt-4 flex items-center gap-1 text-xs text-(--text-tertiary)">
                     <MapPin className="h-3 w-3" />
                     {formatProximity(m.proximity_to_campus)}
@@ -108,9 +152,25 @@ const MerchantList = () => {
 
           {pagination && pagination.total_pages > 1 && (
             <div className="mt-8 flex items-center justify-center gap-2">
-              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Previous</Button>
-              <span className="text-sm text-(--text-secondary)">Page {page} of {pagination.total_pages}</span>
-              <Button variant="outline" size="sm" disabled={page >= pagination.total_pages} onClick={() => setPage(page + 1)}>Next</Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+              >
+                Previous
+              </Button>
+              <span className="text-sm text-(--text-secondary)">
+                Page {page} of {pagination.total_pages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= pagination.total_pages}
+                onClick={() => setPage(page + 1)}
+              >
+                Next
+              </Button>
             </div>
           )}
         </>

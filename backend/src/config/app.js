@@ -1,15 +1,15 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const routes = require("../routes");
-const errorHandler = require("../middleware/errorHandler");
-const { generalLimiter } = require("../middleware/rateLimiter");
-const logger = require("../utils/logger");
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const routes = require('../routes');
+const errorHandler = require('../middleware/errorHandler');
+const { generalLimiter } = require('../middleware/rateLimiter');
+const logger = require('../utils/logger');
 
 const app = express();
 
 // Trust proxy (required behind reverse proxies like Render)
-app.set("trust proxy", 1);
+app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet());
@@ -18,57 +18,60 @@ app.use(helmet());
 const allowedOrigins = process.env.ALLOWED_ORIGINS;
 
 app.use(
-	cors({
-		origin: (origin, callback) => {
-			if (!origin || allowedOrigins.includes(origin)) {
-				callback(null, true);
-			} else {
-				callback(new Error("Not allowed by CORS"));
-			}
-		},
-		credentials: true,
-	}),
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
 );
 
 // Body parsing middleware
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Rate limiting
 app.use(generalLimiter);
 
 // Request logging
 app.use((req, res, next) => {
-	logger.info(`${req.method} ${req.path}`, {
-		ip: req.ip,
-		userAgent: req.get("user-agent"),
-	});
-	next();
+  logger.info(`${req.method} ${req.path}`, {
+    ip: req.ip,
+    userAgent: req.get('user-agent'),
+  });
+  next();
 });
 
 // Health check endpoint (before API routes for easy access)
-app.get("/health", (req, res) => {
-	res.json({
-		success: true,
-		message: "Server is healthy",
-		timestamp: new Date().toISOString(),
-		uptime: process.uptime(),
-		environment: process.env.NODE_ENV || "development",
-	});
+app.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Server is healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+  });
 });
 
 // Uploaded documents static serving
-app.use("/api/documents", express.static(require("path").resolve(__dirname, "../../uploads/kyc-documents")));
+app.use(
+  '/api/documents',
+  express.static(require('path').resolve(__dirname, '../../uploads/kyc-documents'))
+);
 
 // API routes
-app.use("/api", routes);
+app.use('/api', routes);
 
 // 404 handler
 app.use((req, res) => {
-	res.status(404).json({
-		success: false,
-		message: "Route not found",
-	});
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  });
 });
 
 // Global error handler (must be last)

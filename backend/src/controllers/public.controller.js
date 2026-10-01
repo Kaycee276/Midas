@@ -10,7 +10,7 @@ class PublicController {
       const filters = {
         business_type: req.query.business_type,
         proximity_to_campus: req.query.proximity,
-        search: req.query.search
+        search: req.query.search,
       };
 
       const result = await publicService.getActiveMerchants(page, limit, filters);

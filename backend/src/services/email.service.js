@@ -1,31 +1,31 @@
 class EmailService {
-	async sendVerificationEmail(to, name, verificationToken) {
-		const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+  async sendVerificationEmail(to, name, verificationToken) {
+    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
 
-		const response = await fetch("https://api.mailjet.com/v3.1/send", {
-			method: "POST",
-			headers: {
-				Authorization:
-					"Basic " +
-					Buffer.from(
-						`${process.env.MAILJET_API_KEY}:${process.env.MAILJET_SECRET_KEY}`,
-					).toString("base64"),
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				Messages: [
-					{
-						From: {
-							Email: process.env.EMAIL_FROM,
-							Name: "Kelechi from Midas",
-						},
-						To: [
-							{
-								Email: to,
-							},
-						],
-						Subject: "Verify your Midas account",
-						HTMLPart: `
+    const response = await fetch('https://api.mailjet.com/v3.1/send', {
+      method: 'POST',
+      headers: {
+        Authorization:
+          'Basic ' +
+          Buffer.from(`${process.env.MAILJET_API_KEY}:${process.env.MAILJET_SECRET_KEY}`).toString(
+            'base64'
+          ),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Messages: [
+          {
+            From: {
+              Email: process.env.EMAIL_FROM,
+              Name: 'Kelechi from Midas',
+            },
+            To: [
+              {
+                Email: to,
+              },
+            ],
+            Subject: 'Verify your Midas account',
+            HTMLPart: `
 							<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
 								<h2 style="color: #333;">Welcome to Midas, ${name}!</h2>
 								<p style="color: #555; font-size: 16px;">
@@ -46,18 +46,16 @@ class EmailService {
 								</p>
 							</div>
 						`,
-					},
-				],
-			}),
-		});
+          },
+        ],
+      }),
+    });
 
-		if (!response.ok) {
-			const error = await response.json();
-			throw new Error(
-				`Mailjet API error: ${JSON.stringify(error.Messages || error)}`,
-			);
-		}
-	}
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Mailjet API error: ${JSON.stringify(error.Messages || error)}`);
+    }
+  }
 }
 
 module.exports = new EmailService();

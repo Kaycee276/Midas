@@ -21,12 +21,7 @@ class AdminModel {
 
   async getDashboardStats() {
     // Students counts
-    const [
-      totalStudents,
-      activeStudents,
-      suspendedStudents,
-      inactiveStudents,
-    ] = await Promise.all([
+    const [totalStudents, activeStudents, suspendedStudents, inactiveStudents] = await Promise.all([
       prisma.student.count(),
       prisma.student.count({ where: { account_status: 'active' } }),
       prisma.student.count({ where: { account_status: 'suspended' } }),
@@ -53,34 +48,24 @@ class AdminModel {
     ]);
 
     // Investments counts + financial totals
-    const [
-      totalInvestments,
-      activeInvestments,
-      withdrawnInvestments,
-      investmentAggregate,
-    ] = await Promise.all([
-      prisma.investment.count(),
-      prisma.investment.count({ where: { status: 'active' } }),
-      prisma.investment.count({ where: { status: 'withdrawn' } }),
-      prisma.investment.aggregate({
-        _sum: {
-          amount: true,
-          current_value: true,
-        },
-      }),
-    ]);
+    const [totalInvestments, activeInvestments, withdrawnInvestments, investmentAggregate] =
+      await Promise.all([
+        prisma.investment.count(),
+        prisma.investment.count({ where: { status: 'active' } }),
+        prisma.investment.count({ where: { status: 'withdrawn' } }),
+        prisma.investment.aggregate({
+          _sum: {
+            amount: true,
+            current_value: true,
+          },
+        }),
+      ]);
 
     const totalInvested = Number(investmentAggregate._sum.amount) || 0;
     const totalCurrentValue = Number(investmentAggregate._sum.current_value) || 0;
 
     // KYC counts
-    const [
-      totalKyc,
-      pendingKyc,
-      approvedKyc,
-      rejectedKyc,
-      resubmissionKyc,
-    ] = await Promise.all([
+    const [totalKyc, pendingKyc, approvedKyc, rejectedKyc, resubmissionKyc] = await Promise.all([
       prisma.merchantKyc.count(),
       prisma.merchantKyc.count({ where: { status: 'pending' } }),
       prisma.merchantKyc.count({ where: { status: 'approved' } }),
@@ -173,7 +158,7 @@ class AdminModel {
     });
 
     const merchantTotals = {};
-    (allInvestments || []).forEach(inv => {
+    (allInvestments || []).forEach((inv) => {
       const mid = inv.merchant_id;
       if (!merchantTotals[mid]) {
         merchantTotals[mid] = {
@@ -191,7 +176,7 @@ class AdminModel {
 
     // Investments by business type
     const investmentsByType = {};
-    (allInvestments || []).forEach(inv => {
+    (allInvestments || []).forEach((inv) => {
       const type = inv.merchant?.business_type || 'other';
       investmentsByType[type] = (investmentsByType[type] || 0) + (Number(inv.amount) || 0);
     });
@@ -260,7 +245,7 @@ class AdminModel {
 
     let totalRevenue = 0;
     let totalDistributed = 0;
-    (allReports || []).forEach(r => {
+    (allReports || []).forEach((r) => {
       totalRevenue += Number(r.gross_revenue) || 0;
       if (r.status === 'distributed') {
         totalDistributed += Number(r.net_profit) || 0;
@@ -291,7 +276,7 @@ class AdminModel {
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       months[key] = { month: key, count: 0, total_amount: 0 };
     }
-    items.forEach(item => {
+    items.forEach((item) => {
       const d = new Date(item[dateField]);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       if (months[key]) {
@@ -310,7 +295,7 @@ class AdminModel {
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       months[key] = { month: key, total_revenue: 0, total_distributed: 0 };
     }
-    reports.forEach(r => {
+    reports.forEach((r) => {
       const d = new Date(r.submitted_at);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       if (months[key]) {

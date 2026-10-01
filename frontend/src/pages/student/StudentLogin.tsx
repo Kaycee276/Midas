@@ -25,7 +25,9 @@ const StudentLogin = () => {
       toast.success('Welcome back!');
       navigate('/student/dashboard');
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Login failed';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -41,13 +43,30 @@ const StudentLogin = () => {
           <p className="mt-1 text-sm text-(--text-secondary)">Sign in to your investment account</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="student@university.edu" />
-          <PasswordInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Enter your password" />
-          <Button type="submit" loading={loading} className="w-full">Sign In</Button>
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="student@university.edu"
+          />
+          <PasswordInput
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Enter your password"
+          />
+          <Button type="submit" loading={loading} className="w-full">
+            Sign In
+          </Button>
         </form>
         <p className="mt-4 text-center text-sm text-(--text-secondary)">
           Don't have an account?{' '}
-          <Link to="/student/register" className="text-(--accent-primary) hover:underline">Register</Link>
+          <Link to="/student/register" className="text-(--accent-primary) hover:underline">
+            Register
+          </Link>
         </p>
       </Card>
     </div>

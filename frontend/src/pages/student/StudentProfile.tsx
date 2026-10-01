@@ -38,7 +38,9 @@ const StudentProfile = () => {
       updateUser(data.data.student);
       toast.success('Profile updated');
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Update failed';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Update failed';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -66,8 +68,14 @@ const StudentProfile = () => {
           <div className="flex-1 text-center sm:text-left">
             <h2 className="text-xl font-bold text-(--text)">{student.full_name}</h2>
             <div className="mt-1 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-(--text-secondary) sm:justify-start">
-              <span className="flex items-center gap-1"><Mail className="h-3.5 w-3.5" /> {student.email}</span>
-              {student.phone && <span className="flex items-center gap-1"><Phone className="h-3.5 w-3.5" /> {student.phone}</span>}
+              <span className="flex items-center gap-1">
+                <Mail className="h-3.5 w-3.5" /> {student.email}
+              </span>
+              {student.phone && (
+                <span className="flex items-center gap-1">
+                  <Phone className="h-3.5 w-3.5" /> {student.phone}
+                </span>
+              )}
             </div>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
               <Badge variant={student.account_status === 'active' ? 'success' : 'warning'}>
@@ -91,11 +99,15 @@ const StudentProfile = () => {
           </div>
           <div className="text-center">
             <p className="text-xs text-(--text-tertiary)">Year</p>
-            <p className="mt-0.5 text-sm font-medium text-(--text)">{student.year_of_study || '—'}</p>
+            <p className="mt-0.5 text-sm font-medium text-(--text)">
+              {student.year_of_study || '—'}
+            </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-(--text-tertiary)">Joined</p>
-            <p className="mt-0.5 text-sm font-medium text-(--text)">{new Date(student.created_at).toLocaleDateString()}</p>
+            <p className="mt-0.5 text-sm font-medium text-(--text)">
+              {new Date(student.created_at).toLocaleDateString()}
+            </p>
           </div>
         </div>
       </Card>
@@ -107,8 +119,18 @@ const StudentProfile = () => {
             <User className="h-4 w-4" /> Personal Information
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Input label="Full Name" value={form.full_name} onChange={(e) => update('full_name', e.target.value)} required />
-            <Input label="Phone" value={form.phone} onChange={(e) => update('phone', e.target.value)} placeholder="Optional" />
+            <Input
+              label="Full Name"
+              value={form.full_name}
+              onChange={(e) => update('full_name', e.target.value)}
+              required
+            />
+            <Input
+              label="Phone"
+              value={form.phone}
+              onChange={(e) => update('phone', e.target.value)}
+              placeholder="Optional"
+            />
           </div>
         </Card>
 
@@ -117,13 +139,33 @@ const StudentProfile = () => {
             <GraduationCap className="h-4 w-4" /> Academic Information
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Input label="University" value={form.university} onChange={(e) => update('university', e.target.value)} placeholder="Optional" />
-            <Input label="Program" value={form.program} onChange={(e) => update('program', e.target.value)} placeholder="Optional" />
-            <Input label="Year of Study" type="number" min="1" max="10" value={form.year_of_study} onChange={(e) => update('year_of_study', e.target.value)} placeholder="Optional" />
+            <Input
+              label="University"
+              value={form.university}
+              onChange={(e) => update('university', e.target.value)}
+              placeholder="Optional"
+            />
+            <Input
+              label="Program"
+              value={form.program}
+              onChange={(e) => update('program', e.target.value)}
+              placeholder="Optional"
+            />
+            <Input
+              label="Year of Study"
+              type="number"
+              min="1"
+              max="10"
+              value={form.year_of_study}
+              onChange={(e) => update('year_of_study', e.target.value)}
+              placeholder="Optional"
+            />
           </div>
         </Card>
 
-        <Button type="submit" loading={loading} className="w-full" size="lg">Save Changes</Button>
+        <Button type="submit" loading={loading} className="w-full" size="lg">
+          Save Changes
+        </Button>
       </form>
     </div>
   );

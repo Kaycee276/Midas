@@ -1,0 +1,17 @@
+{
+  "name": "midas",
+  "private": true,
+  "packageManager": "pnpm@11.18.0",
+  "scripts": {
+    "lint": "pnpm -r run lint",
+    "lint:fix": "pnpm -r run lint:fix",
+    "format": "pnpm -r run format",
+    "format:check": "pnpm -r run format:check",
+    "typecheck": "pnpm --filter frontend run typecheck",
+    "pre-commit": "pnpm run lint && pnpm run format:check && pnpm run typecheck",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

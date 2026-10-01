@@ -2,14 +2,14 @@ const successResponse = (res, data, message = 'Success', statusCode = 200) => {
   return res.status(statusCode).json({
     success: true,
     message,
-    data
+    data,
   });
 };
 
 const errorResponse = (res, message, errors = null, statusCode = 500) => {
   const response = {
     success: false,
-    message
+    message,
   };
 
   if (errors) {
@@ -21,5 +21,5 @@ const errorResponse = (res, message, errors = null, statusCode = 500) => {
 
 module.exports = {
   successResponse,
-  errorResponse
+  errorResponse,
 };

@@ -9,7 +9,13 @@ interface FileUploadProps {
   value?: File | null;
 }
 
-const FileUpload = ({ label, accept = 'image/jpeg,image/png,application/pdf', error, onChange, value }: FileUploadProps) => {
+const FileUpload = ({
+  label,
+  accept = 'image/jpeg,image/png,application/pdf',
+  error,
+  onChange,
+  value,
+}: FileUploadProps) => {
   const [preview, setPreview] = useState<string | null>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +51,11 @@ const FileUpload = ({ label, accept = 'image/jpeg,image/png,application/pdf', er
             <p className="truncate text-sm text-(--text)">{value.name}</p>
             <p className="text-xs text-(--text-tertiary)">{(value.size / 1024).toFixed(1)} KB</p>
           </div>
-          <button type="button" onClick={handleRemove} className="rounded-lg p-1 hover:bg-(--bg-tertiary) text-(--text-secondary)">
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="rounded-lg p-1 hover:bg-(--bg-tertiary) text-(--text-secondary)"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>

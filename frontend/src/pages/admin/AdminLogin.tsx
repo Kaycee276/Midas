@@ -25,7 +25,9 @@ const AdminLogin = () => {
       toast.success('Welcome, admin');
       navigate('/admin/dashboard');
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Login failed';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Login failed';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -41,9 +43,22 @@ const AdminLogin = () => {
           <p className="mt-1 text-sm text-(--text-secondary)">Access the admin dashboard</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <PasswordInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <Button type="submit" loading={loading} className="w-full">Sign In</Button>
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <PasswordInput
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" loading={loading} className="w-full">
+            Sign In
+          </Button>
         </form>
       </Card>
     </div>

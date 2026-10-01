@@ -8,9 +8,10 @@ class AppError extends Error {
 }
 
 class ValidationError extends AppError {
-  constructor(message) {
+  constructor(message, errors = null) {
     super(message, 400);
     this.name = 'ValidationError';
+    this.errors = errors;
   }
 }
 
@@ -48,5 +49,5 @@ module.exports = {
   AuthenticationError,
   AuthorizationError,
   NotFoundError,
-  ConflictError
+  ConflictError,
 };

@@ -27,7 +27,11 @@ const KYCReview = () => {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [showReject, setShowReject] = useState(false);
-  const [rejectForm, setRejectForm] = useState({ status: 'rejected' as 'rejected' | 'resubmission_required', rejection_reason: '', admin_notes: '' });
+  const [rejectForm, setRejectForm] = useState({
+    status: 'rejected' as 'rejected' | 'resubmission_required',
+    rejection_reason: '',
+    admin_notes: '',
+  });
 
   useEffect(() => {
     if (!id) return;
@@ -52,7 +56,9 @@ const KYCReview = () => {
       toast.success('KYC approved');
       navigate('/admin/dashboard');
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Approval failed';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Approval failed';
       toast.error(msg);
     } finally {
       setProcessing(false);
@@ -70,7 +76,9 @@ const KYCReview = () => {
       toast.success(rejectForm.status === 'rejected' ? 'KYC rejected' : 'Resubmission requested');
       navigate('/admin/dashboard');
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Rejection failed';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Rejection failed';
       toast.error(msg);
     } finally {
       setProcessing(false);
@@ -82,7 +90,10 @@ const KYCReview = () => {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <Link to="/admin/dashboard" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
+      <Link
+        to="/admin/dashboard"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)"
+      >
         <ArrowLeft className="h-4 w-4" /> Back to Dashboard
       </Link>
 
@@ -96,14 +107,49 @@ const KYCReview = () => {
 
       {/* Details */}
       <Card className="mt-6">
-        <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Identification</h3>
+        <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">
+          Identification
+        </h3>
         <div className="grid gap-3 sm:grid-cols-2 text-sm">
-          {kyc.student_id_number && <div><span className="text-(--text-secondary)">Student ID:</span> <span className="text-(--text)">{kyc.student_id_number}</span></div>}
-          {kyc.national_id_number && <div><span className="text-(--text-secondary)">National ID:</span> <span className="text-(--text)">{kyc.national_id_number}</span></div>}
-          {kyc.business_registration_number && <div><span className="text-(--text-secondary)">Business Reg:</span> <span className="text-(--text)">{kyc.business_registration_number}</span></div>}
-          {kyc.tax_identification_number && <div><span className="text-(--text-secondary)">Tax ID:</span> <span className="text-(--text)">{kyc.tax_identification_number}</span></div>}
-          {kyc.years_in_operation != null && <div><span className="text-(--text-secondary)">Years Operating:</span> <span className="text-(--text)">{kyc.years_in_operation}</span></div>}
-          {kyc.average_monthly_revenue != null && <div><span className="text-(--text-secondary)">Avg Monthly Revenue:</span> <span className="text-(--text)">{'\u20A6'}{kyc.average_monthly_revenue.toLocaleString()}</span></div>}
+          {kyc.student_id_number && (
+            <div>
+              <span className="text-(--text-secondary)">Student ID:</span>{' '}
+              <span className="text-(--text)">{kyc.student_id_number}</span>
+            </div>
+          )}
+          {kyc.national_id_number && (
+            <div>
+              <span className="text-(--text-secondary)">National ID:</span>{' '}
+              <span className="text-(--text)">{kyc.national_id_number}</span>
+            </div>
+          )}
+          {kyc.business_registration_number && (
+            <div>
+              <span className="text-(--text-secondary)">Business Reg:</span>{' '}
+              <span className="text-(--text)">{kyc.business_registration_number}</span>
+            </div>
+          )}
+          {kyc.tax_identification_number && (
+            <div>
+              <span className="text-(--text-secondary)">Tax ID:</span>{' '}
+              <span className="text-(--text)">{kyc.tax_identification_number}</span>
+            </div>
+          )}
+          {kyc.years_in_operation != null && (
+            <div>
+              <span className="text-(--text-secondary)">Years Operating:</span>{' '}
+              <span className="text-(--text)">{kyc.years_in_operation}</span>
+            </div>
+          )}
+          {kyc.average_monthly_revenue != null && (
+            <div>
+              <span className="text-(--text-secondary)">Avg Monthly Revenue:</span>{' '}
+              <span className="text-(--text)">
+                {'\u20A6'}
+                {kyc.average_monthly_revenue.toLocaleString()}
+              </span>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -114,10 +160,18 @@ const KYCReview = () => {
           {documentFields.map(({ key, label }) => {
             const url = kyc[key as keyof KYC] as string | undefined;
             return (
-              <div key={key} className="flex items-center justify-between rounded-lg bg-(--bg-tertiary) px-4 py-3">
+              <div
+                key={key}
+                className="flex items-center justify-between rounded-lg bg-(--bg-tertiary) px-4 py-3"
+              >
                 <span className="text-sm text-(--text)">{label}</span>
                 {url ? (
-                  <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm text-(--accent-primary) hover:underline">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-sm text-(--accent-primary) hover:underline"
+                  >
                     View <ExternalLink className="h-3 w-3" />
                   </a>
                 ) : (
@@ -150,13 +204,32 @@ const KYCReview = () => {
               { value: 'resubmission_required', label: 'Request Resubmission' },
             ]}
             value={rejectForm.status}
-            onChange={(e) => setRejectForm((p) => ({ ...p, status: e.target.value as 'rejected' | 'resubmission_required' }))}
+            onChange={(e) =>
+              setRejectForm((p) => ({
+                ...p,
+                status: e.target.value as 'rejected' | 'resubmission_required',
+              }))
+            }
           />
-          <Input label="Reason" value={rejectForm.rejection_reason} onChange={(e) => setRejectForm((p) => ({ ...p, rejection_reason: e.target.value }))} required placeholder="Explain why..." />
-          <Input label="Admin Notes (optional)" value={rejectForm.admin_notes} onChange={(e) => setRejectForm((p) => ({ ...p, admin_notes: e.target.value }))} />
+          <Input
+            label="Reason"
+            value={rejectForm.rejection_reason}
+            onChange={(e) => setRejectForm((p) => ({ ...p, rejection_reason: e.target.value }))}
+            required
+            placeholder="Explain why..."
+          />
+          <Input
+            label="Admin Notes (optional)"
+            value={rejectForm.admin_notes}
+            onChange={(e) => setRejectForm((p) => ({ ...p, admin_notes: e.target.value }))}
+          />
           <div className="flex justify-end gap-3">
-            <Button variant="ghost" onClick={() => setShowReject(false)}>Cancel</Button>
-            <Button variant="danger" loading={processing} onClick={handleReject}>Confirm</Button>
+            <Button variant="ghost" onClick={() => setShowReject(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" loading={processing} onClick={handleReject}>
+              Confirm
+            </Button>
           </div>
         </div>
       </Modal>

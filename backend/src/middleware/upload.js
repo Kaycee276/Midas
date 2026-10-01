@@ -8,7 +8,10 @@ const fileFilter = (req, file, cb) => {
   if (ALLOWED_FILE_TYPES.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new ValidationError(`Invalid file type. Allowed types: ${ALLOWED_FILE_TYPES.join(', ')}`), false);
+    cb(
+      new ValidationError(`Invalid file type. Allowed types: ${ALLOWED_FILE_TYPES.join(', ')}`),
+      false
+    );
   }
 };
 
@@ -16,8 +19,8 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: MAX_FILE_SIZE
-  }
+    fileSize: MAX_FILE_SIZE,
+  },
 });
 
 const uploadFields = upload.fields([
@@ -25,10 +28,10 @@ const uploadFields = upload.fields([
   { name: 'national_id_document', maxCount: 1 },
   { name: 'business_registration_document', maxCount: 1 },
   { name: 'proof_of_address_document', maxCount: 1 },
-  { name: 'business_photo', maxCount: 1 }
+  { name: 'business_photo', maxCount: 1 },
 ]);
 
 module.exports = {
   upload,
-  uploadFields
+  uploadFields,
 };

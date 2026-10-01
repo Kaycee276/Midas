@@ -4,10 +4,7 @@ const { successResponse } = require('../utils/responseFormatter');
 class InvestmentController {
   async createInvestment(req, res, next) {
     try {
-      const investment = await investmentService.createInvestment(
-        req.user.id,
-        req.validatedData
-      );
+      const investment = await investmentService.createInvestment(req.user.id, req.validatedData);
       successResponse(res, { investment }, 'Investment created successfully', 201);
     } catch (error) {
       next(error);

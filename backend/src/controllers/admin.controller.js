@@ -64,7 +64,12 @@ class AdminController {
       if (status === KYC_STATUS.REJECTED) {
         kyc = await adminService.rejectKyc(id, req.user.id, rejection_reason, admin_notes);
       } else if (status === KYC_STATUS.RESUBMISSION_REQUIRED) {
-        kyc = await adminService.requestResubmission(id, req.user.id, rejection_reason, admin_notes);
+        kyc = await adminService.requestResubmission(
+          id,
+          req.user.id,
+          rejection_reason,
+          admin_notes
+        );
       }
 
       successResponse(res, { kyc }, 'KYC review completed successfully');
@@ -98,7 +103,12 @@ class AdminController {
     try {
       const { id } = req.params;
       const { rejection_reason, admin_notes } = req.body || {};
-      const report = await adminService.rejectRevenue(id, req.user.id, rejection_reason, admin_notes);
+      const report = await adminService.rejectRevenue(
+        id,
+        req.user.id,
+        rejection_reason,
+        admin_notes
+      );
       successResponse(res, { report }, 'Revenue report rejected');
     } catch (error) {
       next(error);

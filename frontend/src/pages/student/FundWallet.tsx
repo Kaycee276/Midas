@@ -29,7 +29,9 @@ const FundWallet = () => {
       setSuccess(true);
       toast.success('Wallet funded successfully!');
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed to fund wallet';
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Failed to fund wallet';
       toast.error(message);
     } finally {
       setLoading(false);
@@ -43,11 +45,20 @@ const FundWallet = () => {
           <CheckCircle className="mx-auto h-16 w-16 text-(--success)" />
           <h2 className="mt-4 text-xl font-bold text-(--text)">Wallet Funded!</h2>
           <p className="mt-2 text-(--text-secondary)">
-            {'\u20A6'}{parseFloat(amount).toLocaleString()} has been added to your wallet.
+            {'\u20A6'}
+            {parseFloat(amount).toLocaleString()} has been added to your wallet.
           </p>
           <div className="mt-6 flex justify-center gap-3">
             <Button onClick={() => navigate('/student/wallet')}>Go to Wallet</Button>
-            <Button variant="outline" onClick={() => { setSuccess(false); setAmount(''); }}>Fund Again</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSuccess(false);
+                setAmount('');
+              }}
+            >
+              Fund Again
+            </Button>
           </div>
         </Card>
       </div>
@@ -56,7 +67,10 @@ const FundWallet = () => {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8">
-      <Link to="/student/wallet" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
+      <Link
+        to="/student/wallet"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)"
+      >
         <ArrowLeft className="h-4 w-4" /> Back to Wallet
       </Link>
 
@@ -90,14 +104,16 @@ const FundWallet = () => {
                       : 'border-(--border) text-(--text-secondary) hover:border-(--accent-primary)'
                   }`}
                 >
-                  {'\u20A6'}{a.toLocaleString()}
+                  {'\u20A6'}
+                  {a.toLocaleString()}
                 </button>
               ))}
             </div>
           </div>
 
           <Button type="submit" loading={loading} className="w-full">
-            Fund {'\u20A6'}{parseFloat(amount || '0').toLocaleString()}
+            Fund {'\u20A6'}
+            {parseFloat(amount || '0').toLocaleString()}
           </Button>
         </form>
       </Card>

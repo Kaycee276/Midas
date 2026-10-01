@@ -25,10 +25,7 @@ const Invest = () => {
     if (!merchantId) return;
     const fetch = async () => {
       try {
-        const [mRes, wRes] = await Promise.all([
-          getMerchant(merchantId),
-          getWalletInfo(),
-        ]);
+        const [mRes, wRes] = await Promise.all([getMerchant(merchantId), getWalletInfo()]);
         setMerchant(mRes.data.data.merchant);
         setBalance(wRes.data.data.balance);
       } catch {
@@ -62,7 +59,9 @@ const Invest = () => {
       toast.success('Investment created successfully!');
       navigate('/student/portfolio');
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Investment failed';
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Investment failed';
       toast.error(message);
     } finally {
       setSubmitting(false);
@@ -70,11 +69,15 @@ const Invest = () => {
   };
 
   if (loading) return <Spinner size="lg" className="py-20" />;
-  if (!merchant) return <div className="py-20 text-center text-(--text-secondary)">Merchant not found</div>;
+  if (!merchant)
+    return <div className="py-20 text-center text-(--text-secondary)">Merchant not found</div>;
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8">
-      <Link to={`/merchants/${merchantId}`} className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
+      <Link
+        to={`/merchants/${merchantId}`}
+        className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)"
+      >
         <ArrowLeft className="h-4 w-4" /> Back to {merchant.business_name}
       </Link>
 
@@ -82,7 +85,10 @@ const Invest = () => {
 
       <Card className="mt-4 flex items-center justify-between">
         <span className="text-sm text-(--text-secondary)">Wallet Balance</span>
-        <span className="font-semibold text-(--text)">{'\u20A6'}{balance.toLocaleString()}</span>
+        <span className="font-semibold text-(--text)">
+          {'\u20A6'}
+          {balance.toLocaleString()}
+        </span>
       </Card>
 
       <Card className="mt-4">
@@ -115,7 +121,9 @@ const Invest = () => {
           {parseFloat(amount) > balance && (
             <p className="text-sm text-(--error)">
               Insufficient balance.{' '}
-              <Link to="/student/wallet/fund" className="underline">Fund your wallet</Link>
+              <Link to="/student/wallet/fund" className="underline">
+                Fund your wallet
+              </Link>
             </p>
           )}
 
@@ -125,7 +133,8 @@ const Invest = () => {
             disabled={!amount || parseFloat(amount) > balance}
             className="w-full"
           >
-            Invest {'\u20A6'}{parseFloat(amount || '0').toLocaleString()}
+            Invest {'\u20A6'}
+            {parseFloat(amount || '0').toLocaleString()}
           </Button>
         </form>
       </Card>

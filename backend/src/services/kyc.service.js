@@ -3,7 +3,6 @@ const merchantModel = require('../models/merchant.model');
 const storageService = require('./storage.service');
 const { NotFoundError, ValidationError, ConflictError } = require('../utils/errors');
 const { KYC_STATUS, ACCOUNT_STATUS } = require('../types/enums');
-const { DOCUMENT_TYPE } = require('../types/enums');
 const { emitDashboardUpdate } = require('../config/socket');
 
 class KycService {
@@ -48,10 +47,9 @@ class KycService {
           if (fileArray && fileArray.length > 0) {
             const file = fileArray[0];
             uploadPromises.push(
-              storageService.uploadFile(file, merchantId, fieldName)
-                .then(path => {
-                  documentUrls[`${fieldName}_url`] = path;
-                })
+              storageService.uploadFile(file, merchantId, fieldName).then((path) => {
+                documentUrls[`${fieldName}_url`] = path;
+              })
             );
           }
         }
@@ -68,7 +66,7 @@ class KycService {
         years_in_operation: kycData.years_in_operation,
         average_monthly_revenue: kycData.average_monthly_revenue,
         ...documentUrls,
-        status: KYC_STATUS.PENDING
+        status: KYC_STATUS.PENDING,
       };
 
       let kycRecord;
@@ -83,7 +81,7 @@ class KycService {
       // Update merchant status
       await merchantModel.update(merchantId, {
         kyc_status: KYC_STATUS.PENDING,
-        account_status: ACCOUNT_STATUS.KYC_SUBMITTED
+        account_status: ACCOUNT_STATUS.KYC_SUBMITTED,
       });
 
       // Create history entry
@@ -102,7 +100,7 @@ class KycService {
     if (!kyc) {
       return {
         status: KYC_STATUS.NOT_STARTED,
-        message: 'KYC not yet submitted'
+        message: 'KYC not yet submitted',
       };
     }
 
@@ -113,7 +111,7 @@ class KycService {
       'national_id_document_url',
       'business_registration_document_url',
       'proof_of_address_document_url',
-      'business_photo_url'
+      'business_photo_url',
     ];
 
     for (const field of documentFields) {
@@ -124,7 +122,7 @@ class KycService {
 
     return {
       ...kyc,
-      documents: signedUrls
+      documents: signedUrls,
     };
   }
 
@@ -152,7 +150,7 @@ class KycService {
     await storageService.deleteFile(documentPath);
 
     await kycModel.update(merchantId, {
-      [documentField]: null
+      [documentField]: null,
     });
 
     return { message: 'Document deleted successfully' };

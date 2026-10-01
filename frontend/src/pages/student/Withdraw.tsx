@@ -48,7 +48,9 @@ const Withdraw = () => {
       setSuccess(true);
       toast.success('Withdrawal successful!');
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Withdrawal failed';
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Withdrawal failed';
       toast.error(message);
     } finally {
       setSubmitting(false);
@@ -64,7 +66,8 @@ const Withdraw = () => {
           <CheckCircle className="mx-auto h-16 w-16 text-(--success)" />
           <h2 className="mt-4 text-xl font-bold text-(--text)">Withdrawal Successful!</h2>
           <p className="mt-2 text-(--text-secondary)">
-            {'\u20A6'}{parseFloat(amount).toLocaleString()} has been withdrawn from your wallet.
+            {'\u20A6'}
+            {parseFloat(amount).toLocaleString()} has been withdrawn from your wallet.
           </p>
           <div className="mt-6">
             <Button onClick={() => navigate('/student/wallet')}>Go to Wallet</Button>
@@ -76,7 +79,10 @@ const Withdraw = () => {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8">
-      <Link to="/student/wallet" className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)">
+      <Link
+        to="/student/wallet"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)"
+      >
         <ArrowLeft className="h-4 w-4" /> Back to Wallet
       </Link>
 
@@ -84,7 +90,10 @@ const Withdraw = () => {
 
       <Card className="mt-4 flex items-center justify-between">
         <span className="text-sm text-(--text-secondary)">Available Balance</span>
-        <span className="font-semibold text-(--text)">{'\u20A6'}{balance.toLocaleString()}</span>
+        <span className="font-semibold text-(--text)">
+          {'\u20A6'}
+          {balance.toLocaleString()}
+        </span>
       </Card>
 
       <Card className="mt-4">
@@ -110,7 +119,8 @@ const Withdraw = () => {
             disabled={!amount || parseFloat(amount) > balance}
             className="w-full"
           >
-            Withdraw {'\u20A6'}{parseFloat(amount || '0').toLocaleString()}
+            Withdraw {'\u20A6'}
+            {parseFloat(amount || '0').toLocaleString()}
           </Button>
         </form>
       </Card>

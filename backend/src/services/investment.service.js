@@ -4,7 +4,13 @@ const studentModel = require('../models/student.model');
 const walletModel = require('../models/wallet.model');
 const merchantWalletModel = require('../models/merchant-wallet.model');
 const { NotFoundError, ValidationError } = require('../utils/errors');
-const { INVESTMENT_STATUS, ACCOUNT_STATUS, WALLET_TRANSACTION_TYPE, MERCHANT_WALLET_TRANSACTION_TYPE, WALLET_TRANSACTION_STATUS } = require('../types/enums');
+const {
+  INVESTMENT_STATUS,
+  ACCOUNT_STATUS,
+  WALLET_TRANSACTION_TYPE,
+  MERCHANT_WALLET_TRANSACTION_TYPE,
+  WALLET_TRANSACTION_STATUS,
+} = require('../types/enums');
 
 class InvestmentService {
   // Default price per share (can be dynamic in future)
@@ -55,7 +61,7 @@ class InvestmentService {
       current_value: investmentData.amount, // Initially same as invested amount
       return_amount: 0,
       return_percentage: 0,
-      notes: investmentData.notes
+      notes: investmentData.notes,
     });
 
     // Record student wallet transaction
@@ -72,7 +78,10 @@ class InvestmentService {
 
     // Credit merchant wallet
     const merchantBalanceBefore = parseFloat(merchant.wallet_balance) || 0;
-    const merchantNewBalance = await merchantWalletModel.creditBalance(merchant.id, investmentData.amount);
+    const merchantNewBalance = await merchantWalletModel.creditBalance(
+      merchant.id,
+      investmentData.amount
+    );
 
     await merchantWalletModel.createTransaction({
       merchant_id: merchant.id,
@@ -110,9 +119,9 @@ class InvestmentService {
         current_portfolio_value: 0,
         total_returns: 0,
         average_return_percentage: 0,
-        active_investments: 0
+        active_investments: 0,
       },
-      investments
+      investments,
     };
   }
 
@@ -141,8 +150,8 @@ class InvestmentService {
         total: count,
         page,
         limit,
-        total_pages: Math.ceil(count / limit)
-      }
+        total_pages: Math.ceil(count / limit),
+      },
     };
   }
 
@@ -164,15 +173,15 @@ class InvestmentService {
         total_investments: 0,
         total_capital_raised: 0,
         total_shares_issued: 0,
-        active_investments: 0
+        active_investments: 0,
       },
       investments: data,
       pagination: {
         total: count,
         page,
         limit,
-        total_pages: Math.ceil(count / limit)
-      }
+        total_pages: Math.ceil(count / limit),
+      },
     };
   }
 
@@ -200,7 +209,7 @@ class InvestmentService {
 
     // Update status to withdrawn
     const updatedInvestment = await investmentModel.update(investmentId, {
-      status: INVESTMENT_STATUS.WITHDRAWN
+      status: INVESTMENT_STATUS.WITHDRAWN,
     });
 
     // Record wallet transaction
@@ -220,10 +229,13 @@ class InvestmentService {
 
   // Calculate portfolio stats
   calculateStats(investments) {
-    const active = investments.filter(inv => inv.status === INVESTMENT_STATUS.ACTIVE);
+    const active = investments.filter((inv) => inv.status === INVESTMENT_STATUS.ACTIVE);
 
     const totalInvested = investments.reduce((sum, inv) => sum + parseFloat(inv.amount), 0);
-    const currentValue = active.reduce((sum, inv) => sum + parseFloat(inv.current_value || inv.amount), 0);
+    const currentValue = active.reduce(
+      (sum, inv) => sum + parseFloat(inv.current_value || inv.amount),
+      0
+    );
     const totalReturns = currentValue - totalInvested;
     const returnPercentage = totalInvested > 0 ? (totalReturns / totalInvested) * 100 : 0;
 
@@ -233,7 +245,7 @@ class InvestmentService {
       total_returns: totalReturns,
       return_percentage: returnPercentage.toFixed(2),
       total_investments: investments.length,
-      active_investments: active.length
+      active_investments: active.length,
     };
   }
 }

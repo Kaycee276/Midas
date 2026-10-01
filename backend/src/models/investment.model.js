@@ -95,8 +95,14 @@ class InvestmentModel {
         where: { student_id: studentId, status: 'active' },
       });
       const total_invested = investments.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
-      const current_value = investments.reduce((sum, inv) => sum + (Number(inv.current_value) || 0), 0);
-      const returns_earned = investments.reduce((sum, inv) => sum + (Number(inv.return_amount) || 0), 0);
+      const current_value = investments.reduce(
+        (sum, inv) => sum + (Number(inv.current_value) || 0),
+        0
+      );
+      const returns_earned = investments.reduce(
+        (sum, inv) => sum + (Number(inv.return_amount) || 0),
+        0
+      );
       return {
         student_id: studentId,
         total_investments: investments.length,
@@ -119,7 +125,7 @@ class InvestmentModel {
         where: { merchant_id: merchantId, status: 'active' },
       });
       const total_raised = investments.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
-      const uniqueInvestors = new Set(investments.map(i => i.student_id)).size;
+      const uniqueInvestors = new Set(investments.map((i) => i.student_id)).size;
       return {
         merchant_id: merchantId,
         total_raised,

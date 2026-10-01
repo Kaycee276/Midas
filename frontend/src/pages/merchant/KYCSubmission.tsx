@@ -47,9 +47,15 @@ const KYCSubmission = () => {
   });
 
   const updateField = (field: string, value: string) => setForm((p) => ({ ...p, [field]: value }));
-  const updateFile = (field: string, file: File | null) => setFiles((p) => ({ ...p, [field]: file }));
+  const updateFile = (field: string, file: File | null) =>
+    setFiles((p) => ({ ...p, [field]: file }));
 
-  const requiredFiles = ['national_id_document', 'business_registration_document', 'proof_of_address_document', 'business_photo'] as const;
+  const requiredFiles = [
+    'national_id_document',
+    'business_registration_document',
+    'proof_of_address_document',
+    'business_photo',
+  ] as const;
   const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: FormEvent) => {
@@ -68,13 +74,19 @@ const KYCSubmission = () => {
     setLoading(true);
     try {
       const formData = new FormData();
-      Object.entries(form).forEach(([key, val]) => { if (val) formData.append(key, val); });
-      Object.entries(files).forEach(([key, file]) => { if (file) formData.append(key, file); });
+      Object.entries(form).forEach(([key, val]) => {
+        if (val) formData.append(key, val);
+      });
+      Object.entries(files).forEach(([key, file]) => {
+        if (file) formData.append(key, file);
+      });
       await submitKYC(formData);
       toast.success('KYC submitted successfully');
       navigate('/merchant/dashboard');
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Submission failed';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        'Submission failed';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -93,7 +105,9 @@ const KYCSubmission = () => {
           <p className="mt-2 text-(--text-secondary)">
             Your identity and business documents have been verified. No further action is needed.
           </p>
-          <Badge variant="success" className="mt-4">Approved</Badge>
+          <Badge variant="success" className="mt-4">
+            Approved
+          </Badge>
           <div className="mt-6">
             <Link to="/merchant/dashboard">
               <Button variant="outline">Back to Dashboard</Button>
@@ -112,9 +126,12 @@ const KYCSubmission = () => {
           <Clock className="mx-auto h-16 w-16 text-(--warning)" />
           <h1 className="mt-4 text-2xl font-bold text-(--text)">KYC Under Review</h1>
           <p className="mt-2 text-(--text-secondary)">
-            Your documents have been submitted and are being reviewed. We'll notify you once the review is complete.
+            Your documents have been submitted and are being reviewed. We'll notify you once the
+            review is complete.
           </p>
-          <Badge variant="warning" className="mt-4">Under Review</Badge>
+          <Badge variant="warning" className="mt-4">
+            Under Review
+          </Badge>
           <div className="mt-6">
             <Link to="/merchant/dashboard">
               <Button variant="outline">Back to Dashboard</Button>
@@ -137,46 +154,113 @@ const KYCSubmission = () => {
 
       {kyc?.status === 'rejected' && kyc.rejection_reason && (
         <Card className="mb-6 border-(--error)/30 bg-(--error)/5">
-          <p className="text-sm font-medium text-(--error)">Rejection reason: {kyc.rejection_reason}</p>
+          <p className="text-sm font-medium text-(--error)">
+            Rejection reason: {kyc.rejection_reason}
+          </p>
         </Card>
       )}
       {kyc?.status === 'resubmission_required' && kyc.rejection_reason && (
         <Card className="mb-6 border-(--warning)/30 bg-(--warning)/5">
-          <p className="text-sm font-medium text-(--warning)">Resubmission required: {kyc.rejection_reason}</p>
+          <p className="text-sm font-medium text-(--warning)">
+            Resubmission required: {kyc.rejection_reason}
+          </p>
         </Card>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
-          <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Identification Numbers</h3>
+          <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">
+            Identification Numbers
+          </h3>
           <div className="grid gap-4 md:grid-cols-2">
-            <Input label="Student ID Number" value={form.student_id_number} onChange={(e) => updateField('student_id_number', e.target.value)} placeholder="Optional" />
-            <Input label="National ID Number" value={form.national_id_number} onChange={(e) => updateField('national_id_number', e.target.value)} placeholder="Required if no Student ID" />
-            <Input label="Business Registration No." value={form.business_registration_number} onChange={(e) => updateField('business_registration_number', e.target.value)} placeholder="Optional" />
-            <Input label="Tax ID Number" value={form.tax_identification_number} onChange={(e) => updateField('tax_identification_number', e.target.value)} placeholder="Optional" />
+            <Input
+              label="Student ID Number"
+              value={form.student_id_number}
+              onChange={(e) => updateField('student_id_number', e.target.value)}
+              placeholder="Optional"
+            />
+            <Input
+              label="National ID Number"
+              value={form.national_id_number}
+              onChange={(e) => updateField('national_id_number', e.target.value)}
+              placeholder="Required if no Student ID"
+            />
+            <Input
+              label="Business Registration No."
+              value={form.business_registration_number}
+              onChange={(e) => updateField('business_registration_number', e.target.value)}
+              placeholder="Optional"
+            />
+            <Input
+              label="Tax ID Number"
+              value={form.tax_identification_number}
+              onChange={(e) => updateField('tax_identification_number', e.target.value)}
+              placeholder="Optional"
+            />
           </div>
         </Card>
 
         <Card>
-          <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Business Details</h3>
+          <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">
+            Business Details
+          </h3>
           <div className="grid gap-4 md:grid-cols-2">
-            <Input label="Years in Operation" type="number" min="0" max="100" value={form.years_in_operation} onChange={(e) => updateField('years_in_operation', e.target.value)} />
-            <Input label="Avg Monthly Revenue (₦)" type="number" min="0" value={form.average_monthly_revenue} onChange={(e) => updateField('average_monthly_revenue', e.target.value)} />
+            <Input
+              label="Years in Operation"
+              type="number"
+              min="0"
+              max="100"
+              value={form.years_in_operation}
+              onChange={(e) => updateField('years_in_operation', e.target.value)}
+            />
+            <Input
+              label="Avg Monthly Revenue (₦)"
+              type="number"
+              min="0"
+              value={form.average_monthly_revenue}
+              onChange={(e) => updateField('average_monthly_revenue', e.target.value)}
+            />
           </div>
         </Card>
 
         <Card>
           <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Documents</h3>
           <div className="space-y-4">
-            <FileUpload label="Student ID Document" value={files.student_id_document} onChange={(f) => updateFile('student_id_document', f)} />
-            <FileUpload label="National ID Document *" value={files.national_id_document} onChange={(f) => updateFile('national_id_document', f)} error={fileErrors.national_id_document} />
-            <FileUpload label="Business Registration Document *" value={files.business_registration_document} onChange={(f) => updateFile('business_registration_document', f)} error={fileErrors.business_registration_document} />
-            <FileUpload label="Proof of Address *" value={files.proof_of_address_document} onChange={(f) => updateFile('proof_of_address_document', f)} error={fileErrors.proof_of_address_document} />
-            <FileUpload label="Business Photo *" value={files.business_photo} onChange={(f) => updateFile('business_photo', f)} error={fileErrors.business_photo} />
+            <FileUpload
+              label="Student ID Document"
+              value={files.student_id_document}
+              onChange={(f) => updateFile('student_id_document', f)}
+            />
+            <FileUpload
+              label="National ID Document *"
+              value={files.national_id_document}
+              onChange={(f) => updateFile('national_id_document', f)}
+              error={fileErrors.national_id_document}
+            />
+            <FileUpload
+              label="Business Registration Document *"
+              value={files.business_registration_document}
+              onChange={(f) => updateFile('business_registration_document', f)}
+              error={fileErrors.business_registration_document}
+            />
+            <FileUpload
+              label="Proof of Address *"
+              value={files.proof_of_address_document}
+              onChange={(f) => updateFile('proof_of_address_document', f)}
+              error={fileErrors.proof_of_address_document}
+            />
+            <FileUpload
+              label="Business Photo *"
+              value={files.business_photo}
+              onChange={(f) => updateFile('business_photo', f)}
+              error={fileErrors.business_photo}
+            />
           </div>
         </Card>
 
-        <Button type="submit" loading={loading} className="w-full" size="lg">Submit KYC</Button>
+        <Button type="submit" loading={loading} className="w-full" size="lg">
+          Submit KYC
+        </Button>
       </form>
     </div>
   );

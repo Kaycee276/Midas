@@ -17,9 +17,7 @@ const NotFound = () => (
     </p>
 
     <div className="mt-8 w-full max-w-sm">
-      <p className="mb-3 text-center text-sm font-medium text-(--text-tertiary)">
-        Quick Links
-      </p>
+      <p className="mb-3 text-center text-sm font-medium text-(--text-tertiary)">Quick Links</p>
       <div className="grid grid-cols-2 gap-3">
         {links.map(({ to, label, icon: Icon }) => (
           <Link

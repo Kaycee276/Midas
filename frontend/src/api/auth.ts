@@ -1,5 +1,12 @@
 import client from './client';
-import type { ApiResponse, Merchant, Student, MerchantRegisterData, StudentRegisterData, LoginData } from '../types';
+import type {
+  ApiResponse,
+  Merchant,
+  Student,
+  MerchantRegisterData,
+  StudentRegisterData,
+  LoginData,
+} from '../types';
 
 // Merchant auth
 export const merchantRegister = (data: MerchantRegisterData) =>
@@ -8,8 +15,7 @@ export const merchantRegister = (data: MerchantRegisterData) =>
 export const merchantLogin = (data: LoginData) =>
   client.post<ApiResponse<{ merchant: Merchant; token: string }>>('/auth/login', data);
 
-export const getMerchantProfile = () =>
-  client.get<ApiResponse<{ merchant: Merchant }>>('/auth/me');
+export const getMerchantProfile = () => client.get<ApiResponse<{ merchant: Merchant }>>('/auth/me');
 
 export const updateMerchantProfile = (data: Partial<MerchantRegisterData>) =>
   client.patch<ApiResponse<{ merchant: Merchant }>>('/auth/profile', data);

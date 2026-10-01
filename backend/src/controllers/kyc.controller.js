@@ -4,11 +4,7 @@ const { successResponse } = require('../utils/responseFormatter');
 class KycController {
   async submitKyc(req, res, next) {
     try {
-      const kyc = await kycService.submitKyc(
-        req.user.id,
-        req.validatedData,
-        req.files
-      );
+      const kyc = await kycService.submitKyc(req.user.id, req.validatedData, req.files);
       successResponse(res, { kyc }, 'KYC submitted successfully', 201);
     } catch (error) {
       next(error);

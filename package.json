@@ -8,6 +8,7 @@
     "format": "pnpm -r run format",
     "format:check": "pnpm -r run format:check",
     "typecheck": "pnpm --filter frontend run typecheck",
+    "test": "pnpm -r run test",
     "pre-commit": "pnpm run lint && pnpm run format:check && pnpm run typecheck",
     "prepare": "husky"
   },

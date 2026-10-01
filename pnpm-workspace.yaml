@@ -8,3 +8,5 @@ allowBuilds:
   bcrypt: true
   prisma: true
   esbuild: true
+  '@parcel/watcher': true
+  unrs-resolver: true

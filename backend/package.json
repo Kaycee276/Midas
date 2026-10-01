@@ -8,6 +8,7 @@
 		"dev": "nodemon server.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
+	"packageManager": "pnpm@11.18.0",
 	"keywords": [],
 	"author": "",
 	"license": "ISC",

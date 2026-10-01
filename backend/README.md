@@ -48,15 +48,15 @@ backend/
 
 ### 1. Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- Node.js (v18 or higher)
+- pnpm
 - Supabase account
 
 ### 2. Installation
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Copy environment variables
 cp .env.example .env
@@ -119,10 +119,10 @@ This will create:
 
 ```bash
 # Development mode with auto-reload
-npm run dev
+pnpm run dev
 
 # Production mode
-npm start
+pnpm start
 ```
 
 The server will start at `http://localhost:3000`

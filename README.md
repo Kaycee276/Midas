@@ -111,21 +111,21 @@ cd Midas
 # Install backend dependencies
 cd backend
 cp .env.example .env    # then fill in your values
-npm install
+pnpm install
 
 # Install frontend dependencies
 cd ../frontend
-npm install
+pnpm install
 ```
 
 ### Running the App
 
 ```bash
 # Start the backend (from /backend)
-npm run dev        # uses nodemon for auto-reload
+pnpm run dev        # uses nodemon for auto-reload
 
 # Start the frontend (from /frontend)
-npm run dev        # Vite dev server on http://localhost:5173
+pnpm run dev        # Vite dev server on http://localhost:5173
 ```
 
 ## Environment Variables

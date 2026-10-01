@@ -181,7 +181,7 @@ const AdminDashboard = () => {
 										<YAxis tick={{ fontSize: 12, fill: "var(--text-secondary)" }} />
 										<Tooltip
 											contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-											formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`, "Amount"]}
+											formatter={(value) => [`\u20A6${Number(value ?? 0).toLocaleString()}`, "Amount"]}
 										/>
 										<Bar dataKey="total_amount" fill="#6366f1" radius={[4, 4, 0, 0]} />
 									</BarChart>
@@ -199,7 +199,7 @@ const AdminDashboard = () => {
 										<YAxis tick={{ fontSize: 12, fill: "var(--text-secondary)" }} />
 										<Tooltip
 											contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-											formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`]}
+											formatter={(value) => [`\u20A6${Number(value ?? 0).toLocaleString()}`]}
 										/>
 										<Area type="monotone" dataKey="total_revenue" stackId="1" stroke="#22c55e" fill="#22c55e" fillOpacity={0.3} name="Revenue" />
 										<Area type="monotone" dataKey="total_distributed" stackId="2" stroke="#6366f1" fill="#6366f1" fillOpacity={0.3} name="Distributed" />
@@ -235,7 +235,7 @@ const AdminDashboard = () => {
 											</Pie>
 											<Tooltip
 												contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-												formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`]}
+												formatter={(value) => [`\u20A6${Number(value ?? 0).toLocaleString()}`]}
 											/>
 										</PieChart>
 									</ResponsiveContainer>
@@ -256,7 +256,7 @@ const AdminDashboard = () => {
 											<YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "var(--text-secondary)" }} width={100} />
 											<Tooltip
 												contentStyle={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)" }}
-												formatter={(value?: number) => [`\u20A6${(value ?? 0).toLocaleString()}`, "Raised"]}
+												formatter={(value) => [`\u20A6${Number(value ?? 0).toLocaleString()}`, "Raised"]}
 											/>
 											<Bar dataKey="total_raised" fill="#22c55e" radius={[0, 4, 4, 0]} />
 										</BarChart>

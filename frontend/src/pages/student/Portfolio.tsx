@@ -35,6 +35,9 @@ const Portfolio = () => {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <h1 className="text-2xl font-bold text-(--text)">Portfolio</h1>
+      <p className="mt-1 text-sm text-(--text-secondary)">
+        Track your campus investments and annual dividend returns
+      </p>
 
       <div className="mt-6 flex gap-2 border-b border-(--border)">
         <button

@@ -49,38 +49,80 @@ const RevenueReport = () => {
     }
   };
 
+  const setYearPreset = (year: number) => {
+    setForm((prev) => ({
+      ...prev,
+      period_start: `${year}-01-01`,
+      period_end: `${year}-12-31`,
+    }));
+  };
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-(--text)">Submit Revenue Report</h1>
+      <h1 className="text-2xl font-bold text-(--text)">Submit Annual Revenue Report</h1>
       <p className="mt-1 text-sm text-(--text-secondary)">
-        Report your business revenue for a specific period
+        Report your business revenue and expenses for the annual financial period. Approved profits
+        are distributed to investors as yearly dividends.
       </p>
+
+      {/* Yearly Distribution Callout */}
+      <div className="mt-4 rounded-xl border border-(--border) bg-(--bg-secondary) p-4 text-xs text-(--text-secondary)">
+        <p className="font-semibold text-(--text)">Annual Payout Distribution Model</p>
+        <p className="mt-1">
+          Dividends to investors are calculated and disbursed once a year from approved annual net
+          profit: <strong>65%</strong> retained by merchant, <strong>30%</strong> distributed to
+          active investors based on shareholding, and <strong>5%</strong> platform commission.
+        </p>
+      </div>
 
       <Card className="mt-6">
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm font-medium text-(--text)">Period Start</label>
-              <input
-                type="date"
-                name="period_start"
-                value={form.period_start}
-                onChange={handleChange}
-                required
-                className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
-              />
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-xs font-medium text-(--text-secondary)">
+                Quick Period Presets:
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setYearPreset(new Date().getFullYear() - 1)}
+                  className="rounded border border-(--border) px-2 py-0.5 text-xs text-(--text-secondary) hover:border-(--accent-primary) hover:text-(--text)"
+                >
+                  {new Date().getFullYear() - 1} Full Year
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setYearPreset(new Date().getFullYear())}
+                  className="rounded border border-(--border) px-2 py-0.5 text-xs text-(--text-secondary) hover:border-(--accent-primary) hover:text-(--text)"
+                >
+                  {new Date().getFullYear()} Full Year
+                </button>
+              </div>
             </div>
-            <div>
-              <label className="mb-1 block text-sm font-medium text-(--text)">Period End</label>
-              <input
-                type="date"
-                name="period_end"
-                value={form.period_end}
-                onChange={handleChange}
-                required
-                min={form.period_start}
-                className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
-              />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-(--text)">Period Start</label>
+                <input
+                  type="date"
+                  name="period_start"
+                  value={form.period_start}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-(--text)">Period End</label>
+                <input
+                  type="date"
+                  name="period_end"
+                  value={form.period_end}
+                  onChange={handleChange}
+                  required
+                  min={form.period_start}
+                  className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
+                />
+              </div>
             </div>
           </div>
 

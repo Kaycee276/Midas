@@ -52,7 +52,7 @@ const RevenueHistory = () => {
         <div>
           <h1 className="text-2xl font-bold text-(--text)">Revenue Reports</h1>
           <p className="mt-1 text-sm text-(--text-secondary)">
-            Track your business revenue and distributions
+            Track your business revenue and annual investor dividend distributions
           </p>
         </div>
         <Link to="/merchant/revenue/submit">

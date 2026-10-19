@@ -10,7 +10,7 @@ Production Express.js REST API and WebSocket service powering the Midas student 
 - **Admin Review System**: KYC application queue, document inspection, approval/rejection workflows, and audit history.
 - **Investment Management**: Student investment creation, portfolio aggregation, and return tracking.
 - **Wallet & Transactions**: Student and merchant wallet management with transaction ledger.
-- **Automated Dividend Distributions**: Scheduled node-cron background job for dividend distribution.
+- **Automated Dividend Distributions**: Scheduled node-cron background job for yearly dividend distributions (annually on January 1st).
 - **Testing Suite**: 39 Jest unit tests covering Joi validators, middleware, Prisma models, and Supertest route endpoints.
 - **Security & Reliability**: Helmet headers, configurable CORS, Winston logging, and express-rate-limit protection.
 

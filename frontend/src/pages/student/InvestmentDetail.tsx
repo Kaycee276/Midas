@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, DollarSign, TrendingUp, Calendar } from 'lucide-react';
+import { ArrowLeft, DollarSign, TrendingUp, Calendar, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getInvestmentDetail, withdrawInvestment } from '../../api/investments';
 import type { Investment } from '../../types';
@@ -125,6 +125,13 @@ const InvestmentDetail = () => {
               {investment.shares} @ {'\u20A6'}
               {investment.price_per_share}/share
             </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Clock className="h-5 w-5 text-(--text-tertiary)" />
+            <div>
+              <p className="text-sm text-(--text-secondary)">Payout Schedule</p>
+              <p className="text-lg font-semibold text-(--text)">Yearly (Annual Dividends)</p>
+            </div>
           </div>
         </div>
 

@@ -127,6 +127,14 @@ const Invest = () => {
             </p>
           )}
 
+          <div className="rounded-lg border border-(--border) bg-(--bg-tertiary) p-3 text-xs text-(--text-secondary)">
+            <p className="font-semibold text-(--text)">Yearly Investor Payouts</p>
+            <p className="mt-0.5">
+              Dividends from business profits are distributed to your wallet annually based on your
+              shareholding percentage.
+            </p>
+          </div>
+
           <Button
             type="submit"
             loading={submitting}

@@ -14,7 +14,7 @@ const features = [
   {
     icon: TrendingUp,
     title: 'Smart Investments',
-    desc: 'Invest in verified campus merchants with transparent returns and real-time portfolio tracking.',
+    desc: 'Invest in verified campus merchants with transparent annual dividend returns and real-time portfolio tracking.',
   },
   {
     icon: Shield,
@@ -38,7 +38,7 @@ const steps = [
   {
     step: '03',
     title: 'Invest & Grow',
-    desc: 'Students invest in merchants and track portfolio performance.',
+    desc: 'Students invest in merchants, earn yearly dividend payouts, and track portfolio growth.',
   },
 ];
 

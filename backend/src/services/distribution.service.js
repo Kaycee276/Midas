@@ -102,7 +102,7 @@ class DistributionService {
           balance_after: studentNewBalance,
           status: WALLET_TRANSACTION_STATUS.COMPLETED,
           investment_id: investment.id,
-          description: `Dividend from ${report.merchant?.business_name || 'merchant'}`,
+          description: `Annual dividend from ${report.merchant?.business_name || 'merchant'}`,
         });
 
         // Record individual payout
@@ -146,7 +146,7 @@ class DistributionService {
         balance_before: merchantBalanceBefore,
         balance_after: merchantNewBalance,
         status: WALLET_TRANSACTION_STATUS.COMPLETED,
-        description: `Profit distribution - investor shares + platform commission`,
+        description: `Annual profit distribution - investor shares + platform commission`,
       });
 
       // 7. Credit platform wallet
@@ -160,7 +160,7 @@ class DistributionService {
         balance_before: balanceBefore,
         balance_after: newBalance,
         reference_id: distribution.id,
-        description: `5% commission from ${report.merchant?.business_name || 'merchant'}`,
+        description: `5% annual commission from ${report.merchant?.business_name || 'merchant'}`,
       });
 
       // 8. Update distribution status
@@ -172,7 +172,7 @@ class DistributionService {
       await revenueModel.updateStatus(revenueReportId, REVENUE_REPORT_STATUS.DISTRIBUTED);
 
       logger.info(
-        `Distribution completed for report ${revenueReportId}: merchant=${merchantShare}, investors=${investorPool}, platform=${platformShare}`
+        `Annual distribution completed for report ${revenueReportId}: merchant=${merchantShare}, investors=${investorPool}, platform=${platformShare}`
       );
 
       emitDashboardUpdate();

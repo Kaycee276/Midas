@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, BarChart3 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { submitRevenueReport } from '../../api/revenue';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import toast from 'react-hot-toast';
 
 const RevenueReport = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    period_start: '',
-    period_end: '',
+    period_start: `${new Date().getFullYear() - 1}-01-01`,
+    period_end: `${new Date().getFullYear() - 1}-12-31`,
     gross_revenue: '',
     expenses: '',
     notes: '',
@@ -18,7 +19,8 @@ const RevenueReport = () => {
 
   const grossRevenue = Number(form.gross_revenue) || 0;
   const expenses = Number(form.expenses) || 0;
-  const netProfit = grossRevenue - expenses;
+  const netProfit = Math.max(0, grossRevenue - expenses);
+  const investorPool = Math.round(netProfit * 0.3);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -26,7 +28,7 @@ const RevenueReport = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (netProfit < 0) {
+    if (expenses > grossRevenue) {
       toast.error('Expenses cannot exceed gross revenue');
       return;
     }
@@ -58,61 +60,59 @@ const RevenueReport = () => {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-(--text)">Submit Annual Revenue Report</h1>
+    <div className="mx-auto max-w-xl px-4 py-8 sm:px-6">
+      <Link
+        to="/merchant/revenue"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-(--text-secondary) hover:text-(--text)"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to Revenue History
+      </Link>
+
+      <h1 className="mt-4 text-2xl font-semibold tracking-tight text-(--text)">
+        Submit Fiscal Year Report
+      </h1>
       <p className="mt-1 text-sm text-(--text-secondary)">
-        Report your business revenue and expenses for the annual financial period. Approved profits
-        are distributed to investors as yearly dividends.
+        Enter your audited annual financials to calculate the 30% student dividend pool.
       </p>
 
-      {/* Yearly Distribution Callout */}
-      <div className="mt-4 rounded-xl border border-(--border) bg-(--bg-secondary) p-4 text-xs text-(--text-secondary)">
-        <p className="font-semibold text-(--text)">Annual Payout Distribution Model</p>
-        <p className="mt-1">
-          Dividends to investors are calculated and disbursed once a year from approved annual net
-          profit: <strong>65%</strong> retained by merchant, <strong>30%</strong> distributed to
-          active investors based on shareholding, and <strong>5%</strong> platform commission.
-        </p>
-      </div>
-
-      <Card className="mt-6">
+      <Card className="mt-6 p-6">
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Presets */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-medium text-(--text-secondary)">
-                Quick Period Presets:
-              </span>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setYearPreset(new Date().getFullYear() - 1)}
-                  className="rounded border border-(--border) px-2 py-0.5 text-xs text-(--text-secondary) hover:border-(--accent-primary) hover:text-(--text)"
-                >
-                  {new Date().getFullYear() - 1} Full Year
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setYearPreset(new Date().getFullYear())}
-                  className="rounded border border-(--border) px-2 py-0.5 text-xs text-(--text-secondary) hover:border-(--accent-primary) hover:text-(--text)"
-                >
-                  {new Date().getFullYear()} Full Year
-                </button>
+              <span className="text-xs font-medium text-(--text-secondary)">Fiscal Period</span>
+              <div className="flex gap-1.5">
+                {[new Date().getFullYear() - 1, new Date().getFullYear()].map((yr) => (
+                  <button
+                    key={yr}
+                    type="button"
+                    onClick={() => setYearPreset(yr)}
+                    className="rounded-lg border border-(--border) bg-(--bg-tertiary) px-2.5 py-1 text-xs text-(--text-secondary) hover:border-(--accent-primary) hover:text-(--text)"
+                  >
+                    FY {yr}
+                  </button>
+                ))}
               </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+
+            <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-(--text)">Period Start</label>
+                <label className="mb-1 block text-xs font-medium text-(--text-secondary)">
+                  Period Start
+                </label>
                 <input
                   type="date"
                   name="period_start"
                   value={form.period_start}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
+                  className="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-(--text)">Period End</label>
+                <label className="mb-1 block text-xs font-medium text-(--text-secondary)">
+                  Period End
+                </label>
                 <input
                   type="date"
                   name="period_end"
@@ -120,15 +120,15 @@ const RevenueReport = () => {
                   onChange={handleChange}
                   required
                   min={form.period_start}
-                  className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
+                  className="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-(--text)">
-              Gross Revenue ({'\u20A6'})
+            <label className="mb-1 block text-xs font-medium text-(--text-secondary)">
+              Gross Revenue (₦)
             </label>
             <input
               type="number"
@@ -137,15 +137,15 @@ const RevenueReport = () => {
               onChange={handleChange}
               required
               min="0"
-              step="0.01"
-              placeholder="0.00"
-              className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
+              step="any"
+              placeholder="e.g. 12500000"
+              className="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-3 py-2 font-mono text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-(--text)">
-              Expenses ({'\u20A6'})
+            <label className="mb-1 block text-xs font-medium text-(--text-secondary)">
+              Operational Expenses (₦)
             </label>
             <input
               type="number"
@@ -154,46 +154,59 @@ const RevenueReport = () => {
               onChange={handleChange}
               required
               min="0"
-              step="0.01"
-              placeholder="0.00"
-              className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
+              step="any"
+              placeholder="e.g. 8200000"
+              className="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-3 py-2 font-mono text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
             />
           </div>
 
-          {/* Net Profit Display */}
-          <div className="rounded-lg border border-(--border) bg-(--bg-tertiary) p-4">
-            <p className="text-sm text-(--text-secondary)">Net Profit</p>
-            <p
-              className={`text-2xl font-bold ${netProfit >= 0 ? 'text-(--success)' : 'text-(--error)'}`}
-            >
-              {'\u20A6'}
-              {netProfit.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </p>
-          </div>
+          {/* Real-time Net Profit & Dividend calculation */}
+          {grossRevenue > 0 && (
+            <div className="rounded-xl border border-(--border) bg-(--bg-tertiary) p-4 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-(--text-secondary)">Net Profit:</span>
+                <span className="font-mono font-semibold text-(--text)">
+                  ₦{netProfit.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between border-t border-(--border) pt-2">
+                <span className="text-(--text-secondary)">Investor Dividend Pool (30%):</span>
+                <span className="font-mono font-bold text-(--success)">
+                  ₦{investorPool.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between text-[11px] text-(--text-tertiary)">
+                <span>
+                  Merchant Retained (65%): ₦{Math.round(netProfit * 0.65).toLocaleString()}
+                </span>
+                <span>Platform (5%): ₦{Math.round(netProfit * 0.05).toLocaleString()}</span>
+              </div>
+            </div>
+          )}
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-(--text)">Notes (optional)</label>
+            <label className="mb-1 block text-xs font-medium text-(--text-secondary)">
+              Auditor or Operational Notes (optional)
+            </label>
             <textarea
               name="notes"
+              rows={2}
               value={form.notes}
               onChange={handleChange}
-              rows={3}
-              placeholder="Any additional notes about this reporting period..."
-              className="w-full rounded-lg border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) focus:border-(--accent-primary) focus:outline-none"
+              placeholder="Audited fiscal figures, major capital equipment purchases, etc."
+              className="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) placeholder-(--text-tertiary) focus:border-(--accent-primary) focus:outline-none"
             />
           </div>
 
-          <div className="flex gap-3">
-            <Button type="submit" disabled={loading || netProfit < 0}>
-              {loading ? 'Submitting...' : 'Submit Report'}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => navigate('/merchant/revenue')}>
-              Cancel
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={!form.gross_revenue || grossRevenue < expenses}
+            className="w-full gap-2"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Submit Report for Audit
+          </Button>
         </form>
       </Card>
     </div>

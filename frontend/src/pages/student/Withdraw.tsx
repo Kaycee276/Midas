@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle, ArrowUpRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getWalletInfo, withdrawFunds } from '../../api/wallet';
 import Card from '../../components/ui/Card';
@@ -12,14 +12,17 @@ const Withdraw = () => {
   const navigate = useNavigate();
   const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState('');
+  const bankName = 'Kuda Bank';
+  const accountNumber = '2001928374';
+  const accountName = 'Student Bank Account';
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchWallet = async () => {
       try {
-        const { data } = await getWalletInfo();
+        const { data } = await getWalletInfo({ bypassCache: true });
         setBalance(data.data.balance);
       } catch {
         toast.error('Failed to load wallet');
@@ -27,18 +30,23 @@ const Withdraw = () => {
         setLoading(false);
       }
     };
-    fetch();
+    fetchWallet();
   }, []);
+
+  const handlePercentage = (pct: number) => {
+    const val = Math.floor(balance * pct);
+    setAmount(val > 0 ? String(val) : '');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const value = parseFloat(amount);
     if (!value || value < 100) {
-      toast.error('Minimum withdrawal is \u20A6100');
+      toast.error('Minimum withdrawal is ₦100');
       return;
     }
     if (value > balance) {
-      toast.error('Insufficient balance');
+      toast.error('Insufficient wallet balance');
       return;
     }
 
@@ -46,7 +54,7 @@ const Withdraw = () => {
     try {
       await withdrawFunds(value);
       setSuccess(true);
-      toast.success('Withdrawal successful!');
+      toast.success('Withdrawal processed successfully');
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -57,20 +65,32 @@ const Withdraw = () => {
     }
   };
 
-  if (loading) return <Spinner size="lg" className="py-20" />;
+  if (loading) return <Spinner size="lg" className="py-24" />;
 
   if (success) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-12">
-        <Card className="text-center">
-          <CheckCircle className="mx-auto h-16 w-16 text-(--success)" />
-          <h2 className="mt-4 text-xl font-bold text-(--text)">Withdrawal Successful!</h2>
-          <p className="mt-2 text-(--text-secondary)">
-            {'\u20A6'}
-            {parseFloat(amount).toLocaleString()} has been withdrawn from your wallet.
+      <div className="mx-auto max-w-md px-4 py-16">
+        <Card className="p-8 text-center">
+          <CheckCircle className="mx-auto h-12 w-12 text-(--success)" />
+          <h2 className="mt-4 text-xl font-semibold text-(--text)">Withdrawal Initiated</h2>
+          <p className="mt-2 text-sm text-(--text-secondary)">
+            <strong className="font-mono text-(--text)">
+              ₦{parseFloat(amount).toLocaleString()}
+            </strong>{' '}
+            is being transferred to your Nigerian bank account ({bankName} ••••
+            {accountNumber.slice(-4)}).
           </p>
-          <div className="mt-6">
-            <Button onClick={() => navigate('/student/wallet')}>Go to Wallet</Button>
+          <div className="mt-6 flex justify-center gap-3">
+            <Button onClick={() => navigate('/student/wallet')}>Back to Wallet</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSuccess(false);
+                setAmount('');
+              }}
+            >
+              Withdraw Again
+            </Button>
           </div>
         </Card>
       </div>
@@ -78,52 +98,84 @@ const Withdraw = () => {
   }
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-8">
+    <div className="mx-auto max-w-lg px-4 py-8 sm:px-6">
       <Link
         to="/student/wallet"
-        className="mb-6 inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text)"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-(--text-secondary) hover:text-(--text)"
       >
-        <ArrowLeft className="h-4 w-4" /> Back to Wallet
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to Wallet
       </Link>
 
-      <h1 className="text-2xl font-bold text-(--text)">Withdraw Funds</h1>
+      <h1 className="mt-4 text-2xl font-semibold tracking-tight text-(--text)">Withdraw to Bank</h1>
+      <p className="mt-1 text-sm text-(--text-secondary)">
+        Cash out dividend returns or uninvested wallet funds to your personal account.
+      </p>
 
-      <Card className="mt-4 flex items-center justify-between">
-        <span className="text-sm text-(--text-secondary)">Available Balance</span>
-        <span className="font-semibold text-(--text)">
-          {'\u20A6'}
-          {balance.toLocaleString()}
-        </span>
-      </Card>
+      {/* Available Balance Pill */}
+      <div className="mt-6 rounded-xl border border-(--border) bg-(--bg-secondary) p-4">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-(--text-secondary)">Available to Withdraw</span>
+          <span className="font-mono text-base font-bold text-(--text)">
+            ₦{balance.toLocaleString()}
+          </span>
+        </div>
+      </div>
 
-      <Card className="mt-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+        <div>
           <Input
-            label="Withdrawal Amount (\u20A6)"
+            label="Withdrawal Amount (₦)"
             type="number"
             min={100}
-            step="0.01"
-            placeholder="Enter amount"
+            max={balance}
+            step="any"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            placeholder="e.g. 10000"
             required
           />
 
-          {parseFloat(amount) > balance && (
-            <p className="text-sm text-(--error)">Insufficient balance</p>
-          )}
+          {/* Quick preset chips */}
+          <div className="mt-2 flex gap-2">
+            {[0.25, 0.5, 0.75, 1.0].map((pct) => (
+              <button
+                key={pct}
+                type="button"
+                onClick={() => handlePercentage(pct)}
+                className="flex-1 rounded-lg border border-(--border) bg-(--bg-secondary) py-1 text-xs font-medium text-(--text-secondary) transition-colors hover:border-(--accent-primary) hover:text-(--text)"
+              >
+                {pct === 1.0 ? 'Max' : `${pct * 100}%`}
+              </button>
+            ))}
+          </div>
+        </div>
 
-          <Button
-            type="submit"
-            loading={submitting}
-            disabled={!amount || parseFloat(amount) > balance}
-            className="w-full"
-          >
-            Withdraw {'\u20A6'}
-            {parseFloat(amount || '0').toLocaleString()}
-          </Button>
-        </form>
-      </Card>
+        {/* Payout Destination */}
+        <div className="rounded-xl border border-(--border) bg-(--bg-secondary) p-4 space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-(--text-secondary)">
+            Recipient Bank Account
+          </p>
+          <div className="text-sm">
+            <p className="font-medium text-(--text)">{accountName}</p>
+            <p className="font-mono text-xs text-(--text-secondary)">
+              {bankName} &middot; {accountNumber}
+            </p>
+          </div>
+          <p className="text-[11px] text-(--text-tertiary)">
+            Standard bank transfer fee of ₦25 applies. Usually arrives in minutes.
+          </p>
+        </div>
+
+        <Button
+          type="submit"
+          loading={submitting}
+          disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > balance}
+          className="w-full gap-2"
+        >
+          <ArrowUpRight className="h-4 w-4" />
+          Transfer ₦{parseFloat(amount || '0').toLocaleString()}
+        </Button>
+      </form>
     </div>
   );
 };

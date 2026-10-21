@@ -9,6 +9,7 @@ const investmentRoutes = require('./investment.routes');
 const walletRoutes = require('./wallet.routes');
 const merchantWalletRoutes = require('./merchant-wallet.routes');
 const revenueRoutes = require('./revenue.routes');
+const paymentRoutes = require('./payment.routes');
 
 // Health check (also available at /api/health)
 router.get('/health', (_req, res) => {
@@ -31,5 +32,6 @@ router.use('/admin', adminRoutes);
 router.use('/wallet', walletRoutes);
 router.use('/merchant-wallet', merchantWalletRoutes);
 router.use('/revenue', revenueRoutes);
+router.use('/payments', paymentRoutes);
 
 module.exports = router;

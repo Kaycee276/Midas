@@ -11,6 +11,7 @@ router.use(verifyToken, requireStudent);
 router.get('/', walletController.getWalletInfo);
 
 router.post('/fund', validate(fundWalletSchema), walletController.fundWallet);
+router.post('/fund/checkout', validate(fundWalletSchema), walletController.fundWalletCheckout);
 
 router.post('/withdraw', validate(withdrawSchema), walletController.withdrawFunds);
 

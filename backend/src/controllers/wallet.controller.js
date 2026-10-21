@@ -1,4 +1,5 @@
 const walletService = require('../services/wallet.service');
+const bachsService = require('../services/bachs.service');
 const { successResponse } = require('../utils/responseFormatter');
 
 class WalletController {
@@ -15,6 +16,20 @@ class WalletController {
     try {
       const transaction = await walletService.fundWallet(req.user.id, req.validatedData.amount);
       successResponse(res, { transaction }, 'Wallet funded successfully', 201);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async fundWalletCheckout(req, res, next) {
+    try {
+      const origin = req.get('origin') || req.get('referer');
+      const session = await bachsService.createWalletFundingCheckout({
+        studentId: req.user.id,
+        amount: req.validatedData.amount,
+        origin,
+      });
+      successResponse(res, session, 'Bachs checkout session created successfully', 201);
     } catch (error) {
       next(error);
     }

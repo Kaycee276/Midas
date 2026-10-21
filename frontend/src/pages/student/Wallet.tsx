@@ -1,6 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { Wallet as WalletIcon, ArrowUpRight, ArrowDownLeft, Plus, RefreshCw } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import {
+  Wallet as WalletIcon,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Plus,
+  RefreshCw,
+  CheckCircle2,
+} from 'lucide-react';
+import toast from 'react-hot-toast';
 import { getWalletInfo } from '../../api/wallet';
 import type { WalletInfo, WalletTransaction } from '../../types';
 import Card from '../../components/ui/Card';
@@ -27,9 +35,11 @@ const isCredit = (type: string) =>
   ['deposit', 'investment_refund', 'dividend_credit'].includes(type);
 
 const Wallet = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [info, setInfo] = useState<WalletInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [paymentSuccessNotice, setPaymentSuccessNotice] = useState(false);
 
   const fetchWallet = useCallback(async (bypassCache = false) => {
     try {
@@ -42,6 +52,15 @@ const Wallet = () => {
       setRefreshing(false);
     }
   }, []);
+
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status === 'success') {
+      setPaymentSuccessNotice(true);
+      toast.success('Bachs deposit confirmed • Wallet credited!');
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     fetchWallet(true);
@@ -92,6 +111,24 @@ const Wallet = () => {
           </Link>
         </div>
       </div>
+
+      {/* Success notification from Bachs redirect */}
+      {paymentSuccessNotice && (
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="h-5 w-5 shrink-0" />
+            <span className="text-sm font-medium">
+              Bachs Checkout Completed • Your campus wallet balance has been updated!
+            </span>
+          </div>
+          <button
+            onClick={() => setPaymentSuccessNotice(false)}
+            className="text-xs font-semibold hover:underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Available Balance Card */}
       <Card className="mt-6 p-6">

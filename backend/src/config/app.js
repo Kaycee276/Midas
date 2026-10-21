@@ -63,6 +63,14 @@ app.use(
   express.static(require('path').resolve(__dirname, '../../uploads/kyc-documents'))
 );
 
+// Disable caching for dynamic API endpoints to avoid stale 304s
+app.use('/api', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
 // API routes
 app.use('/api', routes);
 

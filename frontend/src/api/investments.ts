@@ -11,18 +11,22 @@ import type {
 export const createInvestment = (data: { merchant_id: string; amount: number; notes?: string }) =>
   client.post<ApiResponse<{ investment: Investment }>>('/investments', data);
 
-export const getPortfolio = () =>
+export const getPortfolio = (options?: { bypassCache?: boolean }) =>
   client.get<ApiResponse<{ summary: PortfolioSummary; investments: Investment[] }>>(
-    '/investments/portfolio'
+    '/investments/portfolio',
+    options
   );
 
-export const getInvestmentDetail = (id: string) =>
-  client.get<ApiResponse<{ investment: Investment }>>(`/investments/${id}`);
+export const getInvestmentDetail = (id: string, options?: { bypassCache?: boolean }) =>
+  client.get<ApiResponse<{ investment: Investment }>>(`/investments/${id}`, options);
 
-export const getInvestmentHistory = (params?: { page?: number; limit?: number }) =>
+export const getInvestmentHistory = (
+  params?: { page?: number; limit?: number },
+  options?: { bypassCache?: boolean }
+) =>
   client.get<ApiResponse<{ transactions: Transaction[]; pagination: Pagination }>>(
     '/investments/history',
-    { params }
+    { params, ...options }
   );
 
 export const withdrawInvestment = (id: string) =>
@@ -30,7 +34,8 @@ export const withdrawInvestment = (id: string) =>
 
 export const getMerchantInvestments = (
   merchantId: string,
-  params?: { page?: number; limit?: number }
+  params?: { page?: number; limit?: number },
+  options?: { bypassCache?: boolean }
 ) =>
   client.get<
     ApiResponse<{
@@ -38,4 +43,4 @@ export const getMerchantInvestments = (
       investments: Investment[];
       pagination: Pagination;
     }>
-  >(`/investments/merchants/${merchantId}`, { params });
+  >(`/investments/merchants/${merchantId}`, { params, ...options });

@@ -6,8 +6,8 @@ import type {
   Pagination,
 } from '../types';
 
-export const getMerchantWalletInfo = () =>
-  client.get<ApiResponse<MerchantWalletInfo>>('/merchant-wallet');
+export const getMerchantWalletInfo = (options?: { bypassCache?: boolean }) =>
+  client.get<ApiResponse<MerchantWalletInfo>>('/merchant-wallet', options);
 
 export const merchantWithdraw = (amount: number) =>
   client.post<ApiResponse<{ transaction: MerchantWalletTransaction }>>(

@@ -3,6 +3,12 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios';
+
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    bypassCache?: boolean;
+  }
+}
 import {
   getCacheKey,
   getFromCache,

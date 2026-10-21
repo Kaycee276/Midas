@@ -17,6 +17,7 @@ export interface Merchant {
   last_login?: string;
   terms_accepted: boolean;
   terms_accepted_at?: string;
+  wallet_balance?: number;
 }
 
 export interface Student {

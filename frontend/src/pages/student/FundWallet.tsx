@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -8,9 +8,16 @@ import {
   Building2,
   Coins,
   Sparkles,
+  RefreshCw,
+  ExternalLink,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { initiateBachsCheckout, simulateSandboxPayment } from '../../api/wallet';
+import { loadBachs, type Bachs } from '@bachs/js';
+import {
+  initiateBachsCheckout,
+  checkPaymentStatus,
+  simulateSandboxPayment,
+} from '../../api/wallet';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
@@ -29,9 +36,58 @@ const FundWallet = () => {
   const navigate = useNavigate();
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [activeCheckout, setActiveCheckout] = useState<CheckoutState | null>(null);
   const [simulatingPayment, setSimulatingPayment] = useState(false);
   const [success, setSuccess] = useState(false);
+  const bachsRef = useRef<Bachs | null>(null);
+
+  // Pre-load Bachs overlay SDK
+  useEffect(() => {
+    let mounted = true;
+    loadBachs({ baseUrl: 'https://sandbox-checkout.bachs.io' })
+      .then((bachs) => {
+        if (mounted) {
+          bachs.Initialize({
+            onEvent: (event) => {
+              if (event.type === 'checkout.completed') {
+                setSuccess(true);
+                toast.success('Bachs payment confirmed • Wallet credited!');
+              }
+            },
+          });
+          bachsRef.current = bachs;
+        }
+      })
+      .catch(() => {
+        // Fallback gracefully if external script fails
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const verifyStatus = async (ref: string) => {
+    setVerifying(true);
+    try {
+      const res = await checkPaymentStatus(ref);
+      if (res.data.data.status === 'completed') {
+        setSuccess(true);
+        toast.success('Payment verified! Your wallet has been credited.');
+        return true;
+      }
+      toast('Payment is still pending. If you just paid, please allow a few seconds.', {
+        icon: '⏳',
+      });
+      return false;
+    } catch {
+      toast.error('Could not verify status. Please try again.');
+      return false;
+    } finally {
+      setVerifying(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,20 +102,50 @@ const FundWallet = () => {
       const res = await initiateBachsCheckout(value);
       const data = res.data.data;
 
+      // Real Bachs checkout session
       if (!data.is_simulated && data.checkout_url.startsWith('http')) {
-        // Live Bachs Checkout Redirect
-        toast.loading('Redirecting to Bachs Hosted Checkout...', { duration: 2000 });
-        window.location.href = data.checkout_url;
+        setActiveCheckout({
+          reference: data.reference,
+          checkout_id: data.checkout_id,
+          checkout_url: data.checkout_url,
+          amount: value,
+          is_simulated: false,
+        });
+
+        // Try opening in modern Overlay Checkout modal so user never leaves localhost
+        if (bachsRef.current) {
+          try {
+            await bachsRef.current.Checkout.open({
+              checkoutUrl: data.checkout_url,
+              onEvent: (event) => {
+                if (event.type === 'checkout.completed') {
+                  setSuccess(true);
+                  toast.success('Bachs payment confirmed • Wallet credited!');
+                } else if (event.type === 'checkout.closed') {
+                  // When modal closes, double-check backend status
+                  verifyStatus(data.reference);
+                }
+              },
+            });
+            return;
+          } catch {
+            // Fall through to manual open
+          }
+        }
+
+        // If overlay cannot mount or user prefers direct window, open popup/tab
+        window.open(data.checkout_url, '_blank', 'noopener,noreferrer');
+        toast.success('Bachs checkout opened in a new tab');
         return;
       }
 
-      // Sandbox Mode / Interactive Simulation
+      // Offline / Simulated sandbox drawer for demo
       setActiveCheckout({
         reference: data.reference,
         checkout_id: data.checkout_id,
         checkout_url: data.checkout_url,
         amount: value,
-        is_simulated: data.is_simulated,
+        is_simulated: true,
       });
       toast.success('Bachs Sandbox session initialized');
     } catch (err: unknown) {
@@ -123,7 +209,7 @@ const FundWallet = () => {
     );
   }
 
-  // Active Sandbox Checkout View
+  // Active Checkout / Status Waiting View
   if (activeCheckout) {
     return (
       <div className="mx-auto max-w-lg px-4 py-8 sm:px-6">
@@ -138,7 +224,7 @@ const FundWallet = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-400 border border-emerald-500/20">
-                <Sparkles className="h-3 w-3" /> Bachs Sandbox Playground
+                <Sparkles className="h-3 w-3" /> Bachs Sandbox Checkout
               </span>
             </div>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight text-(--text)">
@@ -154,6 +240,53 @@ const FundWallet = () => {
         </div>
 
         <Card className="mt-6 divide-y divide-(--border) p-0 overflow-hidden">
+          {/* External / Overlay Action Bar */}
+          {!activeCheckout.is_simulated && (
+            <div className="p-5 bg-(--bg-secondary)/60 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-(--text)">Checkout Session Active</h3>
+                  <p className="text-xs text-(--text-secondary)">
+                    Ref: <code className="font-mono">{activeCheckout.reference}</code>
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    if (bachsRef.current) {
+                      bachsRef.current.Checkout.open({
+                        checkoutUrl: activeCheckout.checkout_url,
+                        onEvent: (e) => {
+                          if (e.type === 'checkout.completed') {
+                            setSuccess(true);
+                          }
+                        },
+                      });
+                    } else {
+                      window.open(activeCheckout.checkout_url, '_blank');
+                    }
+                  }}
+                  className="gap-1.5"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Reopen Checkout
+                </Button>
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  onClick={() => verifyStatus(activeCheckout.reference)}
+                  loading={verifying}
+                  className="w-full gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${verifying ? 'animate-spin' : ''}`} />I have paid
+                  • Check Payment Status
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Rail 1: Test Debit Card */}
           <div className="p-5">
             <div className="flex items-center gap-2.5">
@@ -191,23 +324,25 @@ const FundWallet = () => {
             </p>
           </div>
 
-          {/* Action button */}
-          <div className="bg-(--bg-secondary) p-5">
-            <div className="flex flex-col gap-2.5">
-              <Button
-                onClick={handleSimulatePayment}
-                loading={simulatingPayment}
-                className="w-full gap-2"
-              >
-                <CheckCircle className="h-4 w-4" />
-                Simulate Successful Payment (₦{activeCheckout.amount.toLocaleString()})
-              </Button>
-              <p className="text-center text-[11px] text-(--text-tertiary)">
-                Triggers verified <code className="font-mono">checkout.completed</code> webhook
-                handler in backend.
-              </p>
+          {/* Simulation fallback for offline demo */}
+          {activeCheckout.is_simulated && (
+            <div className="bg-(--bg-secondary) p-5">
+              <div className="flex flex-col gap-2.5">
+                <Button
+                  onClick={handleSimulatePayment}
+                  loading={simulatingPayment}
+                  className="w-full gap-2"
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Simulate Successful Payment (₦{activeCheckout.amount.toLocaleString()})
+                </Button>
+                <p className="text-center text-[11px] text-(--text-tertiary)">
+                  Triggers verified <code className="font-mono">checkout.completed</code> webhook
+                  handler in backend.
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </Card>
 
         {/* Verification guarantee */}

@@ -289,10 +289,11 @@ class BachsService {
   }
 
   /**
-   * Check status of a deposit/checkout by reference or checkout_id
+   * Check status of a deposit/checkout by reference or checkout_id.
+   * If pending and Bachs client is active, actively queries Bachs API and auto-reconciles.
    */
   async getCheckoutStatus(referenceOrCheckoutId) {
-    const transaction = await prisma.walletTransaction.findFirst({
+    let transaction = await prisma.walletTransaction.findFirst({
       where: {
         OR: [
           { payment_reference: referenceOrCheckoutId },
@@ -304,23 +305,112 @@ class BachsService {
           },
         ],
       },
-      select: {
-        id: true,
-        payment_reference: true,
-        amount: true,
-        status: true,
-        balance_after: true,
-        created_at: true,
-        updated_at: true,
-        metadata: true,
-      },
     });
 
     if (!transaction) {
       throw new NotFoundError('Transaction not found');
     }
 
-    return transaction;
+    // Active Reconciliation: If pending on our server, ask Bachs API
+    if (transaction.status === WALLET_TRANSACTION_STATUS.PENDING && bachsClient) {
+      const checkoutId = transaction.metadata?.checkout_id;
+      if (checkoutId && !checkoutId.startsWith('chk_mock_')) {
+        try {
+          const checkout = await bachsClient.checkoutSessions.get(String(checkoutId));
+          if (checkout.status === 'completed' && checkout.payment_status === 'succeeded') {
+            logger.info('Auto-reconciling completed checkout session with Bachs API', {
+              checkoutId,
+              reference: transaction.payment_reference,
+            });
+
+            await this.handleWebhookEvent({
+              id: `recon_${Date.now()}`,
+              type: 'checkout.completed',
+              created_at: new Date().toISOString(),
+              data: {
+                reference: transaction.payment_reference,
+                checkout_id: checkoutId,
+                amount: checkout.amount,
+                currency: checkout.currency,
+                status: 'completed',
+              },
+            });
+
+            // Re-fetch updated transaction
+            transaction = await prisma.walletTransaction.findUnique({
+              where: { id: transaction.id },
+            });
+          }
+        } catch (err) {
+          logger.warn('Failed to verify checkout status with Bachs API during check', {
+            error: err.message,
+          });
+        }
+      }
+    }
+
+    return {
+      id: transaction.id,
+      payment_reference: transaction.payment_reference,
+      amount: transaction.amount,
+      status: transaction.status,
+      balance_after: transaction.balance_after,
+      created_at: transaction.created_at,
+      updated_at: transaction.updated_at,
+      metadata: transaction.metadata,
+    };
+  }
+
+  /**
+   * Auto-reconcile all pending Bachs deposits for a student
+   */
+  async reconcilePendingStudentDeposits(studentId) {
+    if (!bachsClient) return;
+
+    try {
+      const pendingDeposits = await prisma.walletTransaction.findMany({
+        where: {
+          student_id: studentId,
+          type: WALLET_TRANSACTION_TYPE.DEPOSIT,
+          status: WALLET_TRANSACTION_STATUS.PENDING,
+        },
+        take: 5,
+      });
+
+      for (const txn of pendingDeposits) {
+        const checkoutId = txn.metadata?.checkout_id;
+        if (checkoutId && !checkoutId.startsWith('chk_mock_')) {
+          try {
+            const checkout = await bachsClient.checkoutSessions.get(String(checkoutId));
+            if (checkout.status === 'completed' && checkout.payment_status === 'succeeded') {
+              logger.info('Auto-reconciled student pending deposit', {
+                checkoutId,
+                reference: txn.payment_reference,
+              });
+
+              await this.handleWebhookEvent({
+                id: `sync_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+                type: 'checkout.completed',
+                created_at: new Date().toISOString(),
+                data: {
+                  reference: txn.payment_reference,
+                  checkout_id: checkoutId,
+                  amount: checkout.amount,
+                  currency: checkout.currency,
+                  status: 'completed',
+                },
+              });
+            }
+          } catch {
+            // ignore single checkout error and continue
+          }
+        }
+      }
+    } catch (err) {
+      logger.warn('Error during student pending deposits reconciliation', {
+        error: err.message,
+      });
+    }
   }
 }
 

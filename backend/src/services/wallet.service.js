@@ -1,11 +1,15 @@
 const crypto = require('crypto');
 const walletModel = require('../models/wallet.model');
 const studentModel = require('../models/student.model');
+const bachsService = require('./bachs.service');
 const { NotFoundError, ValidationError } = require('../utils/errors');
 const { WALLET_TRANSACTION_TYPE, WALLET_TRANSACTION_STATUS } = require('../types/enums');
 
 class WalletService {
   async getWalletInfo(studentId) {
+    // Auto-reconcile any pending Bachs deposits if they succeeded on Bachs
+    await bachsService.reconcilePendingStudentDeposits(studentId);
+
     const student = await studentModel.findById(studentId);
     if (!student) throw new NotFoundError('Student not found');
 

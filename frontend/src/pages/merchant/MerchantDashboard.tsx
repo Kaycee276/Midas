@@ -98,7 +98,7 @@ const MerchantDashboard = () => {
     {
       icon: TrendingUp,
       label: 'Total Capital Raised',
-      value: `\u20A6${(investmentSummary?.total_capital_raised || 0).toLocaleString()}`,
+      value: `\u20A6${Number(investmentSummary?.total_capital_raised ?? investmentSummary?.total_raised ?? 0).toLocaleString()}`,
       color: 'text-(--success)',
     },
     {

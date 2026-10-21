@@ -63,7 +63,7 @@ const MerchantDetail = () => {
           <div>
             <h1 className="text-2xl font-bold text-(--text)">{merchant.business_name}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-3">
-              <Badge>{merchant.business_type.replace(/_/g, ' ')}</Badge>
+              <Badge>{(merchant.business_type || 'merchant').replace(/_/g, ' ')}</Badge>
               <span className="flex items-center gap-1 text-sm text-(--text-tertiary)">
                 <MapPin className="h-3 w-3" />{' '}
                 {proximityLabels[merchant.proximity_to_campus] || merchant.proximity_to_campus}
@@ -106,7 +106,9 @@ const MerchantDetail = () => {
               <div>
                 <p className="text-2xl font-bold text-(--text)">
                   {'\u20A6'}
-                  {summary.total_capital_raised.toLocaleString()}
+                  {Number(
+                    summary.total_capital_raised ?? summary.total_raised ?? 0
+                  ).toLocaleString()}
                 </p>
                 <p className="text-sm text-(--text-secondary)">Capital Raised</p>
               </div>

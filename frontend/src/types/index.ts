@@ -117,10 +117,12 @@ export interface PortfolioSummary {
 }
 
 export interface MerchantInvestmentSummary {
+  merchant_id?: string;
   total_investors: number;
-  total_investments: number;
-  total_capital_raised: number;
-  total_shares_issued: number;
+  total_investments?: number;
+  total_capital_raised?: number;
+  total_raised?: number;
+  total_shares_issued?: number;
   active_investments: number;
 }
 

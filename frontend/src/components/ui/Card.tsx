@@ -7,7 +7,9 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 const Card = ({ children, padding = true, className = '', ...props }: CardProps) => (
   <div
-    className={`rounded-xl border border-(--border) bg-(--bg-secondary) ${padding ? 'p-6' : ''} ${className}`}
+    className={`rounded-xl border border-(--border) bg-(--bg-secondary) transition-colors ${
+      padding ? 'p-6' : ''
+    } ${className}`}
     {...props}
   >
     {children}

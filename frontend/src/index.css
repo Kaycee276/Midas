@@ -1,35 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import 'tailwindcss';
 
 @theme {
-  /* Dark */
-  --bg-dark: #121212;
-  --bg-dark-secondary: #18181b;
-  --bg-dark-tertiary: #27272a;
-  --text-dark: #f3f4f6;
-  --text-dark-secondary: #9ca3af;
-  --text-dark-tertiary: #6b7280;
-  --border-dark: #212121;
+  /* Cursor Light - Warm Cream & Warm Ink */
+  --bg-light: #f7f7f4;
+  --bg-light-secondary: #ffffff;
+  --bg-light-tertiary: #fafaf7;
+  --text-light: #26251e;
+  --text-light-secondary: #5a5852;
+  --text-light-tertiary: #807d72;
+  --border-light: #e6e5e0;
 
-  /* Light */
-  --bg-light: #f9fafb;
-  --bg-light-secondary: #dfe8e6;
-  --bg-light-tertiary: #f3f4f6;
-  --text-light: #111827;
-  --text-light-secondary: #6b7280;
-  --text-light-tertiary: #9ca3af;
-  --border-light: #e5e7eb;
+  /* Cursor Dark - Deep Warm Charcoal & Cream Ink */
+  --bg-dark: #121210;
+  --bg-dark-secondary: #1a1916;
+  --bg-dark-tertiary: #23221d;
+  --text-dark: #f7f7f4;
+  --text-dark-secondary: #a3a093;
+  --text-dark-tertiary: #737066;
+  --border-dark: #2a2822;
 
-  /* Accent */
-  --accent-primary: #dc2626;
-  --accent-light: #ef4444;
-  --accent-dark: #b91c1c;
+  /* Cursor Orange Brand Voltage */
+  --accent-primary: #f54e00;
+  --accent-light: #ff6a26;
+  --accent-dark: #d04200;
 
-  /* Common */
-  --success: #22c55e; /* Green */
-  --error: #ef4444; /* Red */
-  --warning: #f59e0b; /* Yellow */
-  --info: #3b82f6; /* Blue */
+  /* Cursor Semantics */
+  --success: #1f8a65;
+  --error: #cf2d56;
+  --warning: #c08532;
+  --info: #3b82f6;
+
+  /* Cursor In-Product Agent Timeline Pastels */
+  --timeline-thinking: #dfa88f;
+  --timeline-grep: #9fc9a2;
+  --timeline-read: #9fbbe0;
+  --timeline-edit: #c0a8dd;
+  --timeline-done: #c08532;
 }
 
 :root {
@@ -53,13 +60,21 @@
 }
 
 body {
-  font-family: 'Stack Sans Notch', sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   background-color: var(--bg);
-  font-optical-sizing: auto;
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
 html {
@@ -69,27 +84,27 @@ html {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-dark);
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent-light);
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-dark);
+  background: var(--text-tertiary);
 }
 
-/* Selection color */
+/* Selection color - Cursor Orange */
 ::selection {
   background-color: var(--accent-primary);
-  color: white;
+  color: #ffffff;
 }
 
 /* Focus styles */
@@ -106,12 +121,18 @@ button:disabled {
   cursor: not-allowed;
 }
 
+code,
+pre,
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
 @media screen and (max-width: 768px) {
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
   p {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
   }
   button {
     font-size: 0.875rem;

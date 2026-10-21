@@ -17,3 +17,8 @@ logs/
 .DS_Store
 .idea/
 .vscode/
+
+# Local design system skills & configs (do not push to git)
+DESIGN.md
+.cursor/
+

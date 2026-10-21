@@ -4,7 +4,8 @@ import { MapPin, Phone, ArrowLeft, TrendingUp, Users, DollarSign } from 'lucide-
 import toast from 'react-hot-toast';
 import { getMerchant } from '../../api/public';
 import { getMerchantInvestments } from '../../api/investments';
-import type { Merchant, MerchantInvestmentSummary } from '../../types';
+import { getCacheKey, getFromCache } from '../../api/cache';
+import type { ApiResponse, Merchant, MerchantInvestmentSummary } from '../../types';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
@@ -22,13 +23,30 @@ const proximityLabels: Record<string, string> = {
 const MerchantDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const [merchant, setMerchant] = useState<Merchant | null>(null);
-  const [summary, setSummary] = useState<MerchantInvestmentSummary | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  // Instant hydration from cache for 0ms initial render
+  const [merchant, setMerchant] = useState<Merchant | null>(() => {
+    if (!id) return null;
+    const cached = getFromCache<ApiResponse<{ merchant: Merchant }>>(
+      getCacheKey(`/public/merchants/${id}`)
+    );
+    return cached?.data?.merchant || null;
+  });
+  const [summary, setSummary] = useState<MerchantInvestmentSummary | null>(() => {
+    if (!id) return null;
+    const cached = getFromCache<ApiResponse<{ summary: MerchantInvestmentSummary }>>(
+      getCacheKey(`/investments/merchants/${id}`)
+    );
+    return cached?.data?.summary || null;
+  });
+  const [loading, setLoading] = useState(() => !merchant);
 
   useEffect(() => {
     if (!id) return;
     const fetch = async () => {
+      if (!merchant) {
+        setLoading(true);
+      }
       try {
         const [mRes, iRes] = await Promise.all([
           getMerchant(id),
@@ -37,7 +55,9 @@ const MerchantDetail = () => {
         setMerchant(mRes.data.data.merchant);
         if (iRes) setSummary(iRes.data.data.summary);
       } catch {
-        toast.error('Merchant not found');
+        if (!merchant) {
+          toast.error('Merchant not found');
+        }
       } finally {
         setLoading(false);
       }

@@ -84,87 +84,48 @@ class InvestmentModel {
   }
 
   async getPortfolioSummary(studentId) {
-    try {
-      const result = await prisma.$queryRaw`
-        SELECT * FROM student_portfolio_summary WHERE student_id = ${studentId}::uuid LIMIT 1
-      `;
-      if (result[0]) {
-        const item = result[0];
-        return {
-          ...item,
-          total_invested: Number(item.total_invested) || 0,
-          current_value: Number(item.current_value) || 0,
-          current_portfolio_value: Number(item.current_portfolio_value ?? item.current_value) || 0,
-          returns_earned: Number(item.returns_earned) || 0,
-          total_returns: Number(item.total_returns ?? item.returns_earned) || 0,
-          active_investments: Number(item.active_investments ?? item.total_investments) || 0,
-        };
-      }
-      return null;
-    } catch {
-      // Fallback calculation in case view is not yet created in the DB
-      const investments = await prisma.investment.findMany({
-        where: { student_id: studentId, status: 'active' },
-      });
-      const total_invested = investments.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
-      const current_value = investments.reduce(
-        (sum, inv) => sum + (Number(inv.current_value) || 0),
-        0
-      );
-      const returns_earned = investments.reduce(
-        (sum, inv) => sum + (Number(inv.return_amount) || 0),
-        0
-      );
-      return {
-        student_id: studentId,
-        total_investments: investments.length,
-        total_invested,
-        current_value,
-        current_portfolio_value: current_value,
-        returns_earned,
-        total_returns: returns_earned,
-        active_investments: investments.length,
-      };
-    }
+    const investments = await prisma.investment.findMany({
+      where: { student_id: studentId, status: 'active' },
+      select: { amount: true, current_value: true, return_amount: true },
+    });
+    const total_invested = investments.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
+    const current_value = investments.reduce(
+      (sum, inv) => sum + (Number(inv.current_value) || 0),
+      0
+    );
+    const returns_earned = investments.reduce(
+      (sum, inv) => sum + (Number(inv.return_amount) || 0),
+      0
+    );
+    return {
+      student_id: studentId,
+      total_investments: investments.length,
+      total_invested,
+      current_value,
+      current_portfolio_value: current_value,
+      returns_earned,
+      total_returns: returns_earned,
+      active_investments: investments.length,
+    };
   }
 
   async getMerchantInvestmentSummary(merchantId) {
-    try {
-      const result = await prisma.$queryRaw`
-        SELECT * FROM merchant_investment_summary WHERE merchant_id = ${merchantId}::uuid LIMIT 1
-      `;
-      if (result[0]) {
-        const item = result[0];
-        const raised = Number(item.total_capital_raised ?? item.total_raised) || 0;
-        return {
-          ...item,
-          total_raised: raised,
-          total_capital_raised: raised,
-          total_investors: Number(item.total_investors) || 0,
-          total_investments: Number(item.total_investments) || 0,
-          total_shares_issued: Number(item.total_shares_issued) || 0,
-          active_investments: Number(item.active_investments) || 0,
-        };
-      }
-      return null;
-    } catch {
-      // Fallback calculation in case view is not yet created in the DB
-      const investments = await prisma.investment.findMany({
-        where: { merchant_id: merchantId, status: 'active' },
-      });
-      const total_raised = investments.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
-      const total_shares = investments.reduce((sum, inv) => sum + (Number(inv.shares) || 0), 0);
-      const uniqueInvestors = new Set(investments.map((i) => i.student_id)).size;
-      return {
-        merchant_id: merchantId,
-        total_raised,
-        total_capital_raised: total_raised,
-        total_investors: uniqueInvestors,
-        total_investments: investments.length,
-        total_shares_issued: total_shares,
-        active_investments: investments.length,
-      };
-    }
+    const investments = await prisma.investment.findMany({
+      where: { merchant_id: merchantId, status: 'active' },
+      select: { amount: true, shares: true, student_id: true },
+    });
+    const total_raised = investments.reduce((sum, inv) => sum + (Number(inv.amount) || 0), 0);
+    const total_shares = investments.reduce((sum, inv) => sum + (Number(inv.shares) || 0), 0);
+    const uniqueInvestors = new Set(investments.map((i) => i.student_id)).size;
+    return {
+      merchant_id: merchantId,
+      total_raised,
+      total_capital_raised: total_raised,
+      total_investors: uniqueInvestors,
+      total_investments: investments.length,
+      total_shares_issued: total_shares,
+      active_investments: investments.length,
+    };
   }
 
   async update(id, updates) {

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { UserRole, Merchant, Student, Admin, AuthUser } from '../types';
+import { clearCache } from '../api/cache';
 
 interface AuthState {
   user: AuthUser | null;
@@ -51,6 +52,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('role');
+    clearCache();
     set({ token: null, user: null, isAuthenticated: false });
   },
 

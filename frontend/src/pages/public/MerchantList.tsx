@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, MapPin, Store } from 'lucide-react';
 import { listMerchants } from '../../api/public';
-import type { Merchant, Pagination } from '../../types';
+import { getCacheKey, getFromCache } from '../../api/cache';
+import type { ApiResponse, Merchant, Pagination } from '../../types';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
@@ -37,16 +38,30 @@ const proximityOptions = [
 const formatProximity = (p: string) => proximityOptions.find((o) => o.value === p)?.label || p;
 
 const MerchantList = () => {
-  const [merchants, setMerchants] = useState<Merchant[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [proximity, setProximity] = useState('');
-  const [page, setPage] = useState(1);
 
-  const fetchMerchants = async () => {
-    setLoading(true);
+  // Hydrate from cache immediately for 0ms instantaneous render on "Back to Merchants"
+  const [merchants, setMerchants] = useState<Merchant[]>(() => {
+    const key = getCacheKey('/public/merchants', { page: 1, limit: 12 });
+    const cached =
+      getFromCache<ApiResponse<{ merchants: Merchant[]; pagination: Pagination }>>(key);
+    return cached?.data?.merchants || [];
+  });
+  const [pagination, setPagination] = useState<Pagination | null>(() => {
+    const key = getCacheKey('/public/merchants', { page: 1, limit: 12 });
+    const cached =
+      getFromCache<ApiResponse<{ merchants: Merchant[]; pagination: Pagination }>>(key);
+    return cached?.data?.pagination || null;
+  });
+  const [loading, setLoading] = useState(() => merchants.length === 0);
+
+  const fetchMerchants = async (showLoadingSpinner = false) => {
+    if (showLoadingSpinner || merchants.length === 0) {
+      setLoading(true);
+    }
     try {
       const { data } = await listMerchants({
         page,
@@ -65,12 +80,13 @@ const MerchantList = () => {
   };
 
   useEffect(() => {
-    fetchMerchants();
+    // Only show full-screen spinner if we don't already have merchants displayed
+    fetchMerchants(merchants.length === 0);
   }, [page, businessType, proximity]);
 
   const handleSearch = () => {
     setPage(1);
-    fetchMerchants();
+    fetchMerchants(true);
   };
 
   return (

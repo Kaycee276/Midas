@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { getRevenueHistory, getRevenueSummary } from '../../api/revenue';
-import type { RevenueReport, RevenueSummary, Pagination } from '../../types';
+import { getCacheKey, getFromCache } from '../../api/cache';
+import type { ApiResponse, RevenueReport, RevenueSummary, Pagination } from '../../types';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -16,15 +17,30 @@ const statusVariant: Record<string, 'warning' | 'success' | 'error' | 'info'> = 
 };
 
 const RevenueHistory = () => {
-  const [reports, setReports] = useState<RevenueReport[]>([]);
-  const [summary, setSummary] = useState<RevenueSummary | null>(null);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [reports, setReports] = useState<RevenueReport[]>(() => {
+    const cached = getFromCache<ApiResponse<{ reports: RevenueReport[]; pagination: Pagination }>>(
+      getCacheKey('/revenue/history', { page: 1, limit: 10 })
+    );
+    return cached?.data?.reports || [];
+  });
+  const [summary, setSummary] = useState<RevenueSummary | null>(() => {
+    const cached = getFromCache<ApiResponse<RevenueSummary>>(getCacheKey('/revenue/summary'));
+    return cached?.data || null;
+  });
+  const [pagination, setPagination] = useState<Pagination | null>(() => {
+    const cached = getFromCache<ApiResponse<{ reports: RevenueReport[]; pagination: Pagination }>>(
+      getCacheKey('/revenue/history', { page: 1, limit: 10 })
+    );
+    return cached?.data?.pagination || null;
+  });
+  const [loading, setLoading] = useState(() => reports.length === 0);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      if (reports.length === 0) {
+        setLoading(true);
+      }
       try {
         const [historyRes, summaryRes] = await Promise.allSettled([
           getRevenueHistory({ page, limit: 10 }),

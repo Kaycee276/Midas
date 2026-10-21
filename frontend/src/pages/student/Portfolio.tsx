@@ -1,19 +1,36 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getPortfolio, getInvestmentHistory } from '../../api/investments';
-import type { Investment, Transaction } from '../../types';
+import { getCacheKey, getFromCache } from '../../api/cache';
+import type { ApiResponse, Investment, Transaction } from '../../types';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
 
 const Portfolio = () => {
-  const [investments, setInvestments] = useState<Investment[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Instant hydration from cache for 0ms initial render
+  const [investments, setInvestments] = useState<Investment[]>(() => {
+    const cached = getFromCache<ApiResponse<{ investments: Investment[] }>>(
+      getCacheKey('/investments/portfolio')
+    );
+    return cached?.data?.investments || [];
+  });
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const cached = getFromCache<ApiResponse<{ transactions: Transaction[] }>>(
+      getCacheKey('/investments/history', { limit: 20 })
+    );
+    return cached?.data?.transactions || [];
+  });
+  const [loading, setLoading] = useState(
+    () => investments.length === 0 && transactions.length === 0
+  );
   const [tab, setTab] = useState<'investments' | 'history'>('investments');
 
   useEffect(() => {
     const fetch = async () => {
+      if (investments.length === 0 && transactions.length === 0) {
+        setLoading(true);
+      }
       try {
         const [pRes, hRes] = await Promise.all([
           getPortfolio(),

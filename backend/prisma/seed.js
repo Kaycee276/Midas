@@ -169,7 +169,7 @@ async function main() {
     console.log(`✅ Established Merchant seeded: ${merchant.business_name} (${merchant.email})`);
   }
 
-  // 3. Seed Seed Investors (to establish initial capital circulation)
+  // 3. Seed Students with Funded Wallets & Diverse Programs
   const student1PasswordHash = await bcrypt.hash('StudentPioneer2026!', 12);
   const student1 = await prisma.student.upsert({
     where: { email: 'femi.pioneer@campus.edu' },
@@ -177,6 +177,7 @@ async function main() {
       password_hash: student1PasswordHash,
       full_name: 'Femi Balogun',
       student_id: 'CSC/2023/1042',
+      phone: '+234 803 555 1001',
       university: 'Federal University of Technology',
       program: 'Computer Science',
       year_of_study: 3,
@@ -188,6 +189,7 @@ async function main() {
       password_hash: student1PasswordHash,
       full_name: 'Femi Balogun',
       student_id: 'CSC/2023/1042',
+      phone: '+234 803 555 1001',
       university: 'Federal University of Technology',
       program: 'Computer Science',
       year_of_study: 3,
@@ -205,6 +207,7 @@ async function main() {
       password_hash: student2PasswordHash,
       full_name: 'Amaka Nwosu',
       student_id: 'ACC/2022/0891',
+      phone: '+234 802 666 2002',
       university: 'Federal University of Technology',
       program: 'Accounting & Finance',
       year_of_study: 4,
@@ -216,6 +219,7 @@ async function main() {
       password_hash: student2PasswordHash,
       full_name: 'Amaka Nwosu',
       student_id: 'ACC/2022/0891',
+      phone: '+234 802 666 2002',
       university: 'Federal University of Technology',
       program: 'Accounting & Finance',
       year_of_study: 4,
@@ -225,7 +229,67 @@ async function main() {
       wallet_balance: 80000,
     },
   });
-  console.log('✅ Seed student accounts seeded for initial circulation.');
+
+  const student3PasswordHash = await bcrypt.hash('StudentMidas2026!', 12);
+  const student3 = await prisma.student.upsert({
+    where: { email: 'tunde.tech@campus.edu' },
+    update: {
+      password_hash: student3PasswordHash,
+      full_name: 'Tunde Bakare',
+      student_id: 'MEG/2024/0419',
+      phone: '+234 809 777 3003',
+      university: 'University of Lagos (UNILAG)',
+      program: 'Mechanical Engineering',
+      year_of_study: 2,
+      is_verified: true,
+      wallet_balance: 120000,
+    },
+    create: {
+      email: 'tunde.tech@campus.edu',
+      password_hash: student3PasswordHash,
+      full_name: 'Tunde Bakare',
+      student_id: 'MEG/2024/0419',
+      phone: '+234 809 777 3003',
+      university: 'University of Lagos (UNILAG)',
+      program: 'Mechanical Engineering',
+      year_of_study: 2,
+      is_verified: true,
+      terms_accepted: true,
+      terms_accepted_at: new Date(),
+      wallet_balance: 120000,
+    },
+  });
+
+  const student4PasswordHash = await bcrypt.hash('StudentMidas2026!', 12);
+  const student4 = await prisma.student.upsert({
+    where: { email: 'zainab.biochem@campus.edu' },
+    update: {
+      password_hash: student4PasswordHash,
+      full_name: 'Zainab Aliyu',
+      student_id: 'BCH/2023/1120',
+      phone: '+234 808 888 4004',
+      university: 'Ahmadu Bello University (ABU)',
+      program: 'Biochemistry',
+      year_of_study: 3,
+      is_verified: true,
+      wallet_balance: 45000,
+    },
+    create: {
+      email: 'zainab.biochem@campus.edu',
+      password_hash: student4PasswordHash,
+      full_name: 'Zainab Aliyu',
+      student_id: 'BCH/2023/1120',
+      phone: '+234 808 888 4004',
+      university: 'Ahmadu Bello University (ABU)',
+      program: 'Biochemistry',
+      year_of_study: 3,
+      is_verified: true,
+      terms_accepted: true,
+      terms_accepted_at: new Date(),
+      wallet_balance: 45000,
+    },
+  });
+  console.log('✅ 4 Student accounts seeded with funded wallets.');
 
   // 4. Seed Existing Investments (creating real circulating volume)
   // Clean up any previous seed investments for idempotency
@@ -364,6 +428,48 @@ async function main() {
     },
   });
 
+  // Tunde's initial deposit transaction (ready-to-invest wallet)
+  await prisma.walletTransaction.create({
+    data: {
+      student_id: student3.id,
+      type: 'deposit',
+      amount: 120000,
+      balance_before: 0,
+      balance_after: 120000,
+      status: 'completed',
+      description: 'Campus wallet bank top-up via Paystack',
+    },
+  });
+
+  // Zainab's initial deposit and investment in UniTech
+  const inv4 = await prisma.investment.create({
+    data: {
+      student_id: student4.id,
+      merchant_id: createdMerchants[1].id,
+      amount: 25000,
+      shares: 250,
+      price_per_share: 100,
+      status: 'active',
+      current_value: 29500,
+      return_amount: 4500,
+      return_percentage: 18.0,
+      notes: 'Hardware diagnostic station expansion funding.',
+    },
+  });
+
+  await prisma.walletTransaction.create({
+    data: {
+      student_id: student4.id,
+      type: 'investment_debit',
+      amount: 25000,
+      balance_before: 70000,
+      balance_after: 45000,
+      status: 'completed',
+      investment_id: inv4.id,
+      description: 'Investment in UniTech Diagnostics & Print Lab',
+    },
+  });
+
   // 5. Seed Historical Annual Revenue Reports
   for (const m of createdMerchants) {
     const report = await prisma.revenueReport.create({
@@ -415,9 +521,19 @@ async function main() {
   console.log(`  Email:       admin@midas.campus`);
   console.log(`  Password:    AdminMidas2026!`);
 
-  console.log('\n--- 🎓 SAMPLE INVESTOR STUDENTS (ALREADY BACKING) ---');
-  console.log(`  Student 1:   femi.pioneer@campus.edu (Password: StudentPioneer2026!)`);
-  console.log(`  Student 2:   amaka.invests@campus.edu (Password: StudentPioneer2026!)`);
+  console.log('\n--- 🎓 SEEDED STUDENT ACCOUNTS ---');
+  console.log(
+    `  Student 1 (Portfolio): femi.pioneer@campus.edu    | Password: StudentPioneer2026! | Wallet: ₦65,000 (UNILAG CS)`
+  );
+  console.log(
+    `  Student 2 (Portfolio): amaka.invests@campus.edu   | Password: StudentPioneer2026! | Wallet: ₦80,000 (UI Accounting)`
+  );
+  console.log(
+    `  Student 3 (Fresh/Ready): tunde.tech@campus.edu    | Password: StudentMidas2026!   | Wallet: ₦120,000 (UNILAG MechEng)`
+  );
+  console.log(
+    `  Student 4 (Portfolio): zainab.biochem@campus.edu  | Password: StudentMidas2026!   | Wallet: ₦45,000 (ABU Biochem)`
+  );
   console.log('======================================================\n');
 }
 

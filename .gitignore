@@ -22,3 +22,9 @@ logs/
 DESIGN.md
 .cursor/
 
+# Local seed credentials & logins (do not push to git)
+MERCHANT_LOGINS.md
+*logins*
+*credentials*
+
+

@@ -31,10 +31,10 @@ const stats = [
 const sampleMerchants = [
   {
     id: 'demo-1',
-    name: 'Campus Beanery & Co.',
-    type: 'Cafe & Bakery',
-    proximity: 'On Campus • Library Annex',
-    fundedPercent: 86,
+    name: 'Franco Refectory & Bites',
+    type: 'Cafe & Campus Eatery',
+    proximity: 'On Campus • Franco Complex, UNN',
+    fundedPercent: 88,
     target: '₦600,000',
     sharePrice: '₦1,000',
     estYield: '18.4% APY',
@@ -43,10 +43,10 @@ const sampleMerchants = [
   },
   {
     id: 'demo-2',
-    name: 'UniTech Diagnostics & Print',
-    type: 'Printing & Tech Hub',
-    proximity: 'Within 500m • Student Center',
-    fundedPercent: 92,
+    name: 'ZikLib Digital Press & Lab',
+    type: 'Academic Press & Tech',
+    proximity: 'On Campus • Nnamdi Azikiwe Library, UNN',
+    fundedPercent: 94,
     target: '₦1,200,000',
     sharePrice: '₦2,500',
     estYield: '21.0% APY',
@@ -55,10 +55,10 @@ const sampleMerchants = [
   },
   {
     id: 'demo-3',
-    name: 'Green Kitchen Express',
+    name: 'Hilltop Agro-Mart & Smoothies',
     type: 'Healthy Dining & Smoothies',
-    proximity: 'Within 1km • Hostel Gate B',
-    fundedPercent: 64,
+    proximity: 'Within 500m • Behind Flat / Odenigwe Gate, UNN',
+    fundedPercent: 72,
     target: '₦850,000',
     sharePrice: '₦1,500',
     estYield: '17.8% APY',
@@ -110,10 +110,10 @@ const Landing = () => {
             {/* Tag / Status Pill */}
             <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--bg-secondary) px-3 py-1 text-xs text-(--text-secondary)">
               <span className="h-1.5 w-1.5 rounded-full bg-(--accent-primary)" />
-              <span className="font-medium text-(--text)">Campus Micro-Investments</span>
+              <span className="font-medium text-(--text)">UNN Campus Micro-Investments</span>
               <span className="text-(--text-tertiary)">•</span>
               <span className="font-mono text-[11px] text-(--text-secondary)">
-                v0.1.3 Annual Distribution Protocol
+                Nsukka Main Campus Protocol
               </span>
             </div>
 

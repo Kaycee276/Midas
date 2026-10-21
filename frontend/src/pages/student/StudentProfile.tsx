@@ -118,7 +118,7 @@ const StudentProfile = () => {
             label="Institution / University"
             value={form.university}
             onChange={(e) => update('university', e.target.value)}
-            placeholder="e.g. University of Lagos (UNILAG)"
+            placeholder="e.g. University of Nigeria, Nsukka (UNN)"
           />
 
           <div className="grid gap-4 sm:grid-cols-2">

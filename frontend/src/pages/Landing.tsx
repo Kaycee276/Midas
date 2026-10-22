@@ -107,16 +107,6 @@ const Landing = () => {
       <section className="relative px-4 pt-16 pb-20 sm:px-6 lg:px-8 md:pt-24 md:pb-28 border-b border-(--border)">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto max-w-4xl text-center">
-            {/* Tag / Status Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--bg-secondary) px-3 py-1 text-xs text-(--text-secondary)">
-              <span className="h-1.5 w-1.5 rounded-full bg-(--accent-primary)" />
-              <span className="font-medium text-(--text)">UNN Campus Micro-Investments</span>
-              <span className="text-(--text-tertiary)">•</span>
-              <span className="font-mono text-[11px] text-(--text-secondary)">
-                Nsukka Main Campus Protocol
-              </span>
-            </div>
-
             {/* Display Mega Headline (Weight 400 with negative tracking per Cursor design) */}
             <h1 className="mt-8 text-4xl sm:text-6xl md:text-7xl font-normal tracking-[-0.035em] text-(--text) leading-[1.08]">
               Turn campus spending into <br className="hidden sm:inline" />

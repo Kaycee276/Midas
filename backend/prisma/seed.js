@@ -26,6 +26,25 @@ async function main() {
   });
   console.log('✅ Admin account seeded:', admin.email);
 
+  const kizuAdminPasswordHash = await bcrypt.hash('KizuAdmin@Midas2026!', 12);
+  const kizuAdmin = await prisma.admin.upsert({
+    where: { email: 'kizuaba@gmail.com' },
+    update: {
+      password_hash: kizuAdminPasswordHash,
+      full_name: 'Kizu Aba',
+      role: 'super_admin',
+      is_active: true,
+    },
+    create: {
+      email: 'kizuaba@gmail.com',
+      password_hash: kizuAdminPasswordHash,
+      full_name: 'Kizu Aba',
+      role: 'super_admin',
+      is_active: true,
+    },
+  });
+  console.log('✅ Admin account seeded:', kizuAdmin.email);
+
   // 2. Established Campus Merchants at UNN (Main Campus, Nsukka)
   const merchantsData = [
     {

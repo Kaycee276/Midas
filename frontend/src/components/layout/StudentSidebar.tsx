@@ -1,5 +1,16 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, PieChart, Wallet, Store, User, Sun, Moon, LogOut, X } from 'lucide-react';
+import {
+  LayoutDashboard,
+  PieChart,
+  TrendingUp,
+  Wallet,
+  Store,
+  User,
+  Sun,
+  Moon,
+  LogOut,
+  X,
+} from 'lucide-react';
 import { useThemeStore } from '../../stores/useThemeStore';
 import { useAuth } from '../../stores/useAuthStore';
 
@@ -11,6 +22,7 @@ interface StudentSidebarProps {
 const navItems = [
   { to: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/student/portfolio', label: 'Portfolio', icon: PieChart },
+  { to: '/student/roi', label: 'Returns & ROI', icon: TrendingUp },
   { to: '/student/wallet', label: 'Wallet', icon: Wallet },
   { to: '/merchants', label: 'Merchants', icon: Store },
   { to: '/student/profile', label: 'Profile', icon: User },

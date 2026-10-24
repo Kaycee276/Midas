@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Store, ArrowUpRight, TrendingUp, RefreshCw } from 'lucide-react';
+import { Store, ArrowUpRight, TrendingUp, RefreshCw, Percent } from 'lucide-react';
 import { getPortfolio, getInvestmentHistory } from '../../api/investments';
 import type { Investment, Transaction } from '../../types';
 import Card from '../../components/ui/Card';
@@ -64,6 +64,12 @@ const Portfolio = () => {
             <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
             {refreshing ? 'Syncing...' : 'Sync'}
           </Button>
+          <Link to="/student/roi">
+            <Button variant="outline" size="sm" className="gap-1.5 text-(--accent-primary)">
+              <Percent className="h-3.5 w-3.5" />
+              Returns & ROI
+            </Button>
+          </Link>
           <Link to="/merchants">
             <Button size="sm" className="gap-1.5">
               <TrendingUp className="h-3.5 w-3.5" />

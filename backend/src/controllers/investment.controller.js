@@ -20,6 +20,15 @@ class InvestmentController {
     }
   }
 
+  async getStudentRoi(req, res, next) {
+    try {
+      const roiData = await investmentService.getStudentRoi(req.user.id);
+      successResponse(res, roiData, 'Student ROI analytics retrieved successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getInvestmentDetails(req, res, next) {
     try {
       const { id } = req.params;

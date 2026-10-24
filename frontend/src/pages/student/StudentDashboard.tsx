@@ -138,9 +138,14 @@ const StudentDashboard = () => {
           <p className="mt-3 font-mono text-3xl font-bold tracking-tight text-(--text)">
             ₦{portfolioValuation.toLocaleString()}
           </p>
-          <p className="mt-2 text-xs font-medium text-(--success)">
-            {Number(returnPct) >= 0 ? `+${returnPct}%` : `${returnPct}%`} overall return
-          </p>
+          <div className="mt-2 flex items-center justify-between text-xs">
+            <span className="font-medium text-(--success)">
+              {Number(returnPct) >= 0 ? `+${returnPct}%` : `${returnPct}%`} overall return
+            </span>
+            <Link to="/student/roi" className="font-medium text-(--accent-primary) hover:underline">
+              ROI analytics &rarr;
+            </Link>
+          </div>
         </Card>
 
         {/* Card 3: Active Holdings */}

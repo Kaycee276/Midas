@@ -174,6 +174,52 @@ class InvestmentModel {
 
     return { data, count };
   }
+
+  async getStudentRoiData(studentId) {
+    const [investments, payouts] = await Promise.all([
+      prisma.investment.findMany({
+        where: { student_id: studentId },
+        include: {
+          merchant: {
+            select: {
+              id: true,
+              business_name: true,
+              business_type: true,
+              business_address: true,
+              proximity_to_campus: true,
+            },
+          },
+        },
+        orderBy: {
+          invested_at: 'desc',
+        },
+      }),
+      prisma.dividendPayout.findMany({
+        where: { student_id: studentId },
+        include: {
+          merchant: {
+            select: {
+              id: true,
+              business_name: true,
+              business_type: true,
+            },
+          },
+          distribution: {
+            select: {
+              id: true,
+              created_at: true,
+              status: true,
+            },
+          },
+        },
+        orderBy: {
+          created_at: 'desc',
+        },
+      }),
+    ]);
+
+    return { investments, payouts };
+  }
 }
 
 module.exports = new InvestmentModel();

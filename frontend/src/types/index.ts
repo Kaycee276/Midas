@@ -117,6 +117,55 @@ export interface PortfolioSummary {
   active_investments: number;
 }
 
+export interface RoiSummary {
+  total_invested: number;
+  current_portfolio_value: number;
+  total_dividends_earned: number;
+  net_capital_growth: number;
+  total_net_profit: number;
+  overall_roi_percentage: number;
+  active_holdings_count: number;
+  next_distribution_date: string;
+  days_to_distribution: number;
+  annual_profit_pool_share: string;
+}
+
+export interface RoiHolding {
+  id: string;
+  merchant_id: string;
+  business_name: string;
+  business_type: string;
+  proximity_to_campus: string;
+  status: string;
+  invested_amount: number;
+  shares: number;
+  price_per_share: number;
+  current_value: number;
+  dividends_earned: number;
+  net_profit: number;
+  roi_percentage: number;
+  portfolio_weight: number;
+  invested_at: string;
+}
+
+export interface DividendPayoutItem {
+  id: string;
+  merchant_id: string;
+  merchant_name: string;
+  business_type: string;
+  amount: number;
+  shares_held: number;
+  total_shares: number;
+  status: string;
+  created_at: string;
+}
+
+export interface StudentRoiData {
+  summary: RoiSummary;
+  holdings: RoiHolding[];
+  payouts: DividendPayoutItem[];
+}
+
 export interface MerchantInvestmentSummary {
   merchant_id?: string;
   total_investors: number;

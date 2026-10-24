@@ -6,6 +6,7 @@ import type {
   PortfolioSummary,
   MerchantInvestmentSummary,
   Pagination,
+  StudentRoiData,
 } from '../types';
 
 export const createInvestment = (data: { merchant_id: string; amount: number; notes?: string }) =>
@@ -16,6 +17,9 @@ export const getPortfolio = (options?: { bypassCache?: boolean }) =>
     '/investments/portfolio',
     options
   );
+
+export const getStudentRoi = (options?: { bypassCache?: boolean }) =>
+  client.get<ApiResponse<StudentRoiData>>('/investments/roi', options);
 
 export const getInvestmentDetail = (id: string, options?: { bypassCache?: boolean }) =>
   client.get<ApiResponse<{ investment: Investment }>>(`/investments/${id}`, options);

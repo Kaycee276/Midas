@@ -24,6 +24,7 @@ import StudentRegister from './pages/student/StudentRegister';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentProfile from './pages/student/StudentProfile';
 import Portfolio from './pages/student/Portfolio';
+import StudentRoi from './pages/student/StudentRoi';
 import InvestmentDetail from './pages/student/InvestmentDetail';
 import Wallet from './pages/student/Wallet';
 import FundWallet from './pages/student/FundWallet';
@@ -87,6 +88,14 @@ const App = () => (
           element={
             <ProtectedRoute role="student">
               <Portfolio />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/roi"
+          element={
+            <ProtectedRoute role="student">
+              <StudentRoi />
             </ProtectedRoute>
           }
         />

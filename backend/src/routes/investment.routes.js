@@ -17,6 +17,8 @@ router.post(
 
 router.get('/portfolio', verifyToken, requireStudent, investmentController.getPortfolio);
 
+router.get('/roi', verifyToken, requireStudent, investmentController.getStudentRoi);
+
 router.get('/history', verifyToken, requireStudent, investmentController.getInvestmentHistory);
 
 router.get('/:id', verifyToken, requireStudent, investmentController.getInvestmentDetails);

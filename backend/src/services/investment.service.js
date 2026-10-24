@@ -125,6 +125,100 @@ class InvestmentService {
     };
   }
 
+  async getStudentRoi(studentId) {
+    const student = await studentModel.findById(studentId);
+    if (!student) {
+      throw new NotFoundError('Student not found');
+    }
+
+    const { investments, payouts } = await investmentModel.getStudentRoiData(studentId);
+
+    const activeInvestments = investments.filter((i) => i.status === INVESTMENT_STATUS.ACTIVE);
+    const totalInvested = activeInvestments.reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
+    const currentValuation = activeInvestments.reduce(
+      (sum, i) => sum + (Number(i.current_value) || Number(i.amount) || 0),
+      0
+    );
+    const totalDividendsEarned = investments.reduce(
+      (sum, i) => sum + (Number(i.return_amount) || 0),
+      0
+    );
+    const netCapitalGrowth = currentValuation - totalInvested;
+    const totalNetProfit = netCapitalGrowth + totalDividendsEarned;
+    const overallRoiPercentage =
+      totalInvested > 0 ? Math.round((totalNetProfit / totalInvested) * 100 * 100) / 100 : 0;
+
+    const holdings = investments.map((inv) => {
+      const investedAmount = Number(inv.amount) || 0;
+      const currentVal = Number(inv.current_value) || investedAmount;
+      const dividendsEarned = Number(inv.return_amount) || 0;
+      const capitalGain = currentVal - investedAmount;
+      const netProfit = capitalGain + dividendsEarned;
+      const roiPct =
+        investedAmount > 0 ? Math.round((netProfit / investedAmount) * 100 * 100) / 100 : 0;
+      const portfolioWeight =
+        totalInvested > 0 && inv.status === INVESTMENT_STATUS.ACTIVE
+          ? Math.round((investedAmount / totalInvested) * 100 * 10) / 10
+          : 0;
+
+      return {
+        id: inv.id,
+        merchant_id: inv.merchant_id,
+        business_name: inv.merchant?.business_name || 'Campus Business',
+        business_type: inv.merchant?.business_type || 'General',
+        proximity_to_campus: inv.merchant?.proximity_to_campus || 'on_campus',
+        status: inv.status,
+        invested_amount: investedAmount,
+        shares: Number(inv.shares) || 0,
+        price_per_share: Number(inv.price_per_share) || this.DEFAULT_PRICE_PER_SHARE,
+        current_value: currentVal,
+        dividends_earned: dividendsEarned,
+        net_profit: netProfit,
+        roi_percentage: roiPct,
+        portfolio_weight: portfolioWeight,
+        invested_at: inv.invested_at,
+      };
+    });
+
+    const now = new Date();
+    const nextDistributionYear =
+      now.getMonth() === 0 && now.getDate() === 1 ? now.getFullYear() : now.getFullYear() + 1;
+    const nextDistributionDate = new Date(Date.UTC(nextDistributionYear, 0, 1, 0, 0, 0));
+    const daysToDistribution = Math.max(
+      0,
+      Math.ceil((nextDistributionDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    );
+
+    const formattedPayouts = payouts.map((p) => ({
+      id: p.id,
+      merchant_id: p.merchant_id,
+      merchant_name: p.merchant?.business_name || 'Campus Merchant',
+      business_type: p.merchant?.business_type || 'General',
+      amount: Number(p.amount) || 0,
+      shares_held: Number(p.shares_held) || 0,
+      total_shares: Number(p.total_shares) || 0,
+      status: p.status,
+      created_at: p.created_at,
+    }));
+
+    return {
+      summary: {
+        total_invested: totalInvested,
+        current_portfolio_value: currentValuation,
+        total_dividends_earned: totalDividendsEarned,
+        net_capital_growth: netCapitalGrowth,
+        total_net_profit: totalNetProfit,
+        overall_roi_percentage: overallRoiPercentage,
+        active_holdings_count: activeInvestments.length,
+        next_distribution_date: nextDistributionDate.toISOString(),
+        days_to_distribution: daysToDistribution,
+        annual_profit_pool_share: '30%',
+      },
+      holdings,
+      payouts: formattedPayouts,
+    };
+  }
+
   async getInvestmentDetails(investmentId, studentId) {
     const investment = await investmentModel.findById(investmentId);
 

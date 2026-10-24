@@ -28,6 +28,7 @@ import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
 import Button from '../../components/ui/Button';
+import { RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { socket } from '../../lib/socket';
 
@@ -63,6 +64,7 @@ const AdminDashboard = () => {
   const [pendingReports, setPendingReports] = useState<RevenueReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -70,9 +72,9 @@ const AdminDashboard = () => {
     if (showLoading) setStatsLoading(true);
     try {
       const [statsRes, analyticsRes, revenueRes] = await Promise.allSettled([
-        getDashboardStats(),
-        getAnalytics(),
-        getPendingRevenue({ limit: 5 }),
+        getDashboardStats({ bypassCache: true }),
+        getAnalytics({ bypassCache: true }),
+        getPendingRevenue({ limit: 5 }, { bypassCache: true }),
       ]);
       if (statsRes.status === 'fulfilled') setStats(statsRes.value.data.data);
       if (analyticsRes.status === 'fulfilled') setAnalytics(analyticsRes.value.data.data);
@@ -82,38 +84,50 @@ const AdminDashboard = () => {
     }
   }, []);
 
+  const fetchKyc = useCallback(async (currentPage: number, bypassCache = true) => {
+    setLoading(true);
+    try {
+      const { data } = await getPendingKYC({ page: currentPage, limit: 20 }, { bypassCache });
+      setSubmissions(data.data.kyc_submissions);
+      setPagination(data.data.pagination);
+    } catch {
+      // empty
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchDashboardData(true);
   }, [fetchDashboardData]);
 
   useEffect(() => {
+    fetchKyc(page, true);
+  }, [fetchKyc, page]);
+
+  useEffect(() => {
     socket.connect();
 
     socket.on('dashboard:updated', () => {
-      fetchDashboardData();
+      fetchDashboardData(false);
+      fetchKyc(page, true);
     });
 
     return () => {
       socket.off('dashboard:updated');
       socket.disconnect();
     };
-  }, [fetchDashboardData]);
+  }, [fetchDashboardData, fetchKyc, page]);
 
-  useEffect(() => {
-    const fetchKyc = async () => {
-      setLoading(true);
-      try {
-        const { data } = await getPendingKYC({ page, limit: 20 });
-        setSubmissions(data.data.kyc_submissions);
-        setPagination(data.data.pagination);
-      } catch {
-        // empty
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchKyc();
-  }, [page]);
+  const handleRefreshAll = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([fetchDashboardData(false), fetchKyc(page, true)]);
+      toast.success('Dashboard synced with latest data');
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const handleApproveRevenue = async (id: string) => {
     setActionLoading(id);
@@ -168,9 +182,33 @@ const AdminDashboard = () => {
   return (
     <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-(--text)">Dashboard</h1>
-        <p className="text-sm text-(--text-tertiary)">{today}</p>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-bold text-(--text)">Dashboard</h1>
+            {stats && stats.kyc.pending > 0 && (
+              <a href="#pending-kyc">
+                <Badge variant="warning" className="cursor-pointer text-xs hover:opacity-80">
+                  {stats.kyc.pending} Pending Review
+                </Badge>
+              </a>
+            )}
+          </div>
+          <p className="text-sm text-(--text-tertiary)">{today}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefreshAll}
+            disabled={refreshing}
+            className="gap-1.5"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+            {refreshing ? 'Syncing...' : 'Sync Data'}
+          </Button>
+        </div>
       </div>
 
       {statsLoading ? (

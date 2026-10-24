@@ -37,7 +37,7 @@ const KYCReview = () => {
     if (!id) return;
     const fetch = async () => {
       try {
-        const { data } = await getKYCDetail(id);
+        const { data } = await getKYCDetail(id, { bypassCache: true });
         setKyc(data.data.kyc);
       } catch {
         toast.error('KYC not found');
@@ -158,7 +158,17 @@ const KYCReview = () => {
         <h3 className="mb-4 text-sm font-semibold uppercase text-(--text-tertiary)">Documents</h3>
         <div className="space-y-3">
           {documentFields.map(({ key, label }) => {
-            const url = kyc[key as keyof KYC] as string | undefined;
+            const rawUrl =
+              (kyc as { documents?: Record<string, string> }).documents?.[key] ||
+              (kyc[key as keyof KYC] as string | undefined);
+            const baseUrl =
+              import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:3000';
+            const url = rawUrl
+              ? rawUrl.startsWith('http://') || rawUrl.startsWith('https://')
+                ? rawUrl
+                : `${baseUrl}/api/documents/${rawUrl}`
+              : undefined;
+
             return (
               <div
                 key={key}

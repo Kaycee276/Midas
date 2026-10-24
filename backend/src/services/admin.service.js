@@ -75,7 +75,9 @@ class AdminService {
 
     for (const field of documentFields) {
       if (kyc[field]) {
-        signedUrls[field] = await storageService.getSignedUrl(kyc[field], 7200); // 2 hour expiry
+        const url = await storageService.getSignedUrl(kyc[field], 7200); // 2 hour expiry
+        signedUrls[field] = url;
+        kyc[field] = url;
       }
     }
 

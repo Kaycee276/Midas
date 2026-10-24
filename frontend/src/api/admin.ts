@@ -15,17 +15,20 @@ import type {
 export const adminLogin = (data: LoginData) =>
   client.post<ApiResponse<{ admin: Admin; token: string }>>('/admin/login', data);
 
-export const getDashboardStats = () =>
-  client.get<ApiResponse<DashboardStats>>('/admin/dashboard/stats');
+export const getDashboardStats = (options?: { bypassCache?: boolean }) =>
+  client.get<ApiResponse<DashboardStats>>('/admin/dashboard/stats', options);
 
-export const getPendingKYC = (params?: { page?: number; limit?: number }) =>
+export const getPendingKYC = (
+  params?: { page?: number; limit?: number },
+  options?: { bypassCache?: boolean }
+) =>
   client.get<ApiResponse<{ kyc_submissions: KYC[]; pagination: Pagination }>>(
     '/admin/kyc/pending',
-    { params }
+    { params, ...options }
   );
 
-export const getKYCDetail = (id: string) =>
-  client.get<ApiResponse<{ kyc: KYC }>>(`/admin/kyc/${id}`);
+export const getKYCDetail = (id: string, options?: { bypassCache?: boolean }) =>
+  client.get<ApiResponse<{ kyc: KYC }>>(`/admin/kyc/${id}`, options);
 
 export const approveKYC = (id: string, admin_notes?: string) =>
   client.post<ApiResponse<{ kyc: KYC }>>(`/admin/kyc/${id}/approve`, { admin_notes });
@@ -40,10 +43,13 @@ export const rejectKYC = (
 ) => client.post<ApiResponse<{ kyc: KYC }>>(`/admin/kyc/${id}/reject`, data);
 
 // Revenue management
-export const getPendingRevenue = (params?: { page?: number; limit?: number }) =>
+export const getPendingRevenue = (
+  params?: { page?: number; limit?: number },
+  options?: { bypassCache?: boolean }
+) =>
   client.get<ApiResponse<{ reports: RevenueReport[]; pagination: Pagination }>>(
     '/admin/revenue/pending',
-    { params }
+    { params, ...options }
   );
 
 export const approveRevenue = (id: string, admin_notes?: string) =>
@@ -62,8 +68,9 @@ export const distributeRevenue = (id: string) =>
   );
 
 // Platform wallet
-export const getPlatformWallet = () =>
-  client.get<ApiResponse<PlatformWalletInfo>>('/admin/platform-wallet');
+export const getPlatformWallet = (options?: { bypassCache?: boolean }) =>
+  client.get<ApiResponse<PlatformWalletInfo>>('/admin/platform-wallet', options);
 
 // Analytics
-export const getAnalytics = () => client.get<ApiResponse<AdminAnalytics>>('/admin/analytics');
+export const getAnalytics = (options?: { bypassCache?: boolean }) =>
+  client.get<ApiResponse<AdminAnalytics>>('/admin/analytics', options);

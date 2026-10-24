@@ -37,7 +37,10 @@ class StorageService {
 
   async getSignedUrl(filePath, _expiresIn = 3600) {
     if (!filePath) return null;
-    const baseUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const baseUrl =
+      process.env.BACKEND_URL ||
+      process.env.RENDER_EXTERNAL_URL ||
+      `http://localhost:${process.env.PORT || 3000}`;
     return `${baseUrl}/api/documents/${filePath}`;
   }
 

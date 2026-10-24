@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getWalletInfo } from '../../api/wallet';
+import { socket } from '../../lib/socket';
 import type { WalletInfo, WalletTransaction } from '../../types';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
@@ -64,6 +65,17 @@ const Wallet = () => {
 
   useEffect(() => {
     fetchWallet(true);
+  }, [fetchWallet]);
+
+  // Real-time WebSocket listener for payment confirmations
+  useEffect(() => {
+    const handlePaymentSucceeded = () => {
+      fetchWallet(true);
+    };
+    socket.on('payment:succeeded', handlePaymentSucceeded);
+    return () => {
+      socket.off('payment:succeeded', handlePaymentSucceeded);
+    };
   }, [fetchWallet]);
 
   const handleRefresh = () => {

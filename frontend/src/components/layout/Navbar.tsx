@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Sun, Moon, Menu, X, LogOut, User, ArrowUpRight } from 'lucide-react';
 import { useThemeStore } from '../../stores/useThemeStore';
 import { useAuth } from '../../stores/useAuthStore';
+import { NotificationBell } from './NotificationBell';
 import type { Merchant, Student, Admin } from '../../types';
 
 const Navbar = () => {
@@ -89,6 +90,7 @@ const Navbar = () => {
               </Link>
             </div>
           )}
+          {isAuthenticated && <NotificationBell />}
           <button
             onClick={toggleTheme}
             className="rounded-lg border border-(--border) p-2 text-(--text-secondary) hover:bg-(--bg-secondary) hover:text-(--text) transition-colors"
@@ -100,6 +102,7 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <div className="flex items-center gap-2 md:hidden">
+          {isAuthenticated && <NotificationBell />}
           <button
             onClick={toggleTheme}
             className="rounded-lg border border-(--border) p-2 text-(--text-secondary) hover:bg-(--bg-secondary)"

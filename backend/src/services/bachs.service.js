@@ -6,6 +6,7 @@ const walletModel = require('../models/wallet.model');
 const { NotFoundError, ValidationError } = require('../utils/errors');
 const { WALLET_TRANSACTION_TYPE, WALLET_TRANSACTION_STATUS } = require('../types/enums');
 const logger = require('../utils/logger');
+const { emitPaymentNotification } = require('../config/socket');
 
 class BachsService {
   /**
@@ -278,6 +279,12 @@ class BachsService {
       amount: transaction.amount,
       balance_after: updated.balance_after,
       eventId,
+    });
+
+    emitPaymentNotification(transaction.student_id, {
+      amount: transaction.amount,
+      balance: updated.balance_after,
+      transactionId: updated.id,
     });
 
     return {

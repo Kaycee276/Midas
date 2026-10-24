@@ -8,7 +8,7 @@ const platformWalletModel = require('../models/platform-wallet.model');
 const storageService = require('./storage.service');
 const { AuthenticationError, NotFoundError, ValidationError } = require('../utils/errors');
 const { KYC_STATUS, ACCOUNT_STATUS, REVENUE_REPORT_STATUS } = require('../types/enums');
-const { emitDashboardUpdate } = require('../config/socket');
+const { emitDashboardUpdate, emitKycStatusNotification } = require('../config/socket');
 
 class AdminService {
   async login(email, password) {
@@ -111,6 +111,9 @@ class AdminService {
     // Create history entry
     await kycModel.createHistoryEntry(kyc.merchant_id, updatedKyc);
 
+    emitKycStatusNotification(kyc.merchant_id, {
+      status: KYC_STATUS.APPROVED,
+    });
     emitDashboardUpdate();
 
     return updatedKyc;
@@ -141,6 +144,9 @@ class AdminService {
     // Create history entry
     await kycModel.createHistoryEntry(kyc.merchant_id, updatedKyc);
 
+    emitKycStatusNotification(kyc.merchant_id, {
+      status: KYC_STATUS.REJECTED,
+    });
     emitDashboardUpdate();
 
     return updatedKyc;
@@ -166,6 +172,11 @@ class AdminService {
 
     // Create history entry
     await kycModel.createHistoryEntry(kyc.merchant_id, updatedKyc);
+
+    emitKycStatusNotification(kyc.merchant_id, {
+      status: KYC_STATUS.RESUBMISSION_REQUIRED,
+    });
+    emitDashboardUpdate();
 
     return updatedKyc;
   }

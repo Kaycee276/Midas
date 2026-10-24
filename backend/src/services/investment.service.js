@@ -11,6 +11,7 @@ const {
   MERCHANT_WALLET_TRANSACTION_TYPE,
   WALLET_TRANSACTION_STATUS,
 } = require('../types/enums');
+const { emitInvestmentNotification } = require('../config/socket');
 
 class InvestmentService {
   // Default price per share (can be dynamic in future)
@@ -96,6 +97,13 @@ class InvestmentService {
 
     // Fetch full investment details
     const fullInvestment = await investmentModel.findById(investment.id);
+
+    emitInvestmentNotification(merchant.id, studentId, {
+      amount: investmentData.amount,
+      shares,
+      investorName: student.full_name,
+      businessName: merchant.business_name,
+    });
 
     return fullInvestment;
   }

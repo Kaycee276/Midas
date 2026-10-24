@@ -4,6 +4,7 @@ const studentModel = require('../models/student.model');
 const bachsService = require('./bachs.service');
 const { NotFoundError, ValidationError } = require('../utils/errors');
 const { WALLET_TRANSACTION_TYPE, WALLET_TRANSACTION_STATUS } = require('../types/enums');
+const { emitPaymentNotification } = require('../config/socket');
 
 class WalletService {
   async getWalletInfo(studentId) {
@@ -43,6 +44,12 @@ class WalletService {
       payment_reference: reference,
       status: WALLET_TRANSACTION_STATUS.COMPLETED,
       description: `Wallet deposit of \u20A6${amount.toLocaleString()}`,
+    });
+
+    emitPaymentNotification(studentId, {
+      amount,
+      balance: newBalance,
+      transactionId: transaction.id || reference,
     });
 
     return transaction;

@@ -16,7 +16,7 @@ const {
   PLATFORM_TRANSACTION_TYPE,
 } = require('../types/enums');
 const logger = require('../utils/logger');
-const { emitDashboardUpdate } = require('../config/socket');
+const { emitDashboardUpdate, emitDividendNotification } = require('../config/socket');
 
 class DistributionService {
   async distributeProfit(revenueReportId, _adminId) {
@@ -126,6 +126,11 @@ class DistributionService {
         await investmentModel.update(investment.id, {
           return_amount: newReturn,
           return_percentage: returnPercentage,
+        });
+
+        emitDividendNotification(investment.student_id, {
+          amount: payoutAmount,
+          merchantName: report.merchant?.business_name || 'campus merchant',
         });
       }
 

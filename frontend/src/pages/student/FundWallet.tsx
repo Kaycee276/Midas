@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { loadBachs, type Bachs } from '@bachs/js';
+import { socket } from '../../lib/socket';
 import {
   initiateBachsCheckout,
   checkPaymentStatus,
@@ -65,6 +66,18 @@ const FundWallet = () => {
 
     return () => {
       mounted = false;
+    };
+  }, []);
+
+  // Real-time WebSocket listener for payment confirmation
+  useEffect(() => {
+    const handlePayment = () => {
+      setSuccess(true);
+      toast.success('Bachs payment confirmed • Wallet credited!');
+    };
+    socket.on('payment:succeeded', handlePayment);
+    return () => {
+      socket.off('payment:succeeded', handlePayment);
     };
   }, []);
 

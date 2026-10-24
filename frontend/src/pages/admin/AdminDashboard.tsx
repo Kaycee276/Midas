@@ -28,6 +28,8 @@ import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
 import Button from '../../components/ui/Button';
+import Modal from '../../components/ui/Modal';
+import Textarea from '../../components/ui/Textarea';
 import { RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { socket } from '../../lib/socket';
@@ -67,6 +69,9 @@ const AdminDashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectReportId, setRejectReportId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   const fetchDashboardData = useCallback(async (showLoading = false) => {
     if (showLoading) setStatsLoading(true);
@@ -142,14 +147,20 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleRejectRevenue = async (id: string) => {
-    const reason = prompt('Rejection reason:');
-    if (!reason) return;
-    setActionLoading(id);
+  const openRejectRevenueModal = (id: string) => {
+    setRejectReportId(id);
+    setRejectReason('');
+    setRejectModalOpen(true);
+  };
+
+  const handleConfirmRejectRevenue = async () => {
+    if (!rejectReportId || !rejectReason.trim()) return;
+    setActionLoading(rejectReportId);
     try {
-      await rejectRevenue(id, { rejection_reason: reason });
-      setPendingReports((prev) => prev.filter((r) => r.id !== id));
+      await rejectRevenue(rejectReportId, { rejection_reason: rejectReason.trim() });
+      setPendingReports((prev) => prev.filter((r) => r.id !== rejectReportId));
       toast.success('Revenue report rejected');
+      setRejectModalOpen(false);
     } catch {
       toast.error('Failed to reject report');
     } finally {
@@ -185,7 +196,9 @@ const AdminDashboard = () => {
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-(--text)">Dashboard</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-(--text)">
+              Admin Platform Overview
+            </h1>
             {stats && stats.kyc.pending > 0 && (
               <a href="#pending-kyc">
                 <Badge variant="warning" className="cursor-pointer text-xs hover:opacity-80">
@@ -735,7 +748,7 @@ const AdminDashboard = () => {
                                   size="sm"
                                   variant="outline"
                                   disabled={actionLoading === report.id}
-                                  onClick={() => handleRejectRevenue(report.id)}
+                                  onClick={() => openRejectRevenueModal(report.id)}
                                 >
                                   Reject
                                 </Button>
@@ -832,6 +845,41 @@ const AdminDashboard = () => {
           </Card>
         )}
       </div>
+
+      {/* Reject Revenue Report Modal */}
+      <Modal
+        isOpen={rejectModalOpen}
+        onClose={() => setRejectModalOpen(false)}
+        title="Reject Revenue Report"
+      >
+        <div className="space-y-4">
+          <p className="text-xs text-(--text-secondary) leading-relaxed">
+            Please state the specific discrepancy or audit failure reason for the merchant to
+            revise.
+          </p>
+          <Textarea
+            label="Audit Notes & Rejection Reason"
+            placeholder="e.g. Reported gross revenue does not match verified bank settlement statement..."
+            rows={3}
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            required
+          />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" type="button" onClick={() => setRejectModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              disabled={!rejectReason.trim() || actionLoading === rejectReportId}
+              loading={actionLoading === rejectReportId}
+              onClick={handleConfirmRejectRevenue}
+            >
+              Confirm Rejection
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

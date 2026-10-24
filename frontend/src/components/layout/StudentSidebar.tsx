@@ -92,7 +92,7 @@ const StudentSidebar = ({ open, onClose }: StudentSidebarProps) => {
           </button>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 transition-colors"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-(--error) hover:bg-(--error)/10 transition-colors"
           >
             <LogOut className="h-4 w-4" />
             Log Out

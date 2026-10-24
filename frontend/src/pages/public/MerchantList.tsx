@@ -92,9 +92,11 @@ const MerchantList = () => {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-(--text)">Browse Merchants</h1>
-        <p className="mt-2 text-(--text-secondary)">
-          Discover verified campus businesses to invest in
+        <h1 className="text-2xl font-semibold tracking-tight text-(--text)">
+          Browse Campus Merchants
+        </h1>
+        <p className="mt-1 text-sm text-(--text-secondary)">
+          Discover verified campus businesses open for student micro-equity investment.
         </p>
       </div>
 

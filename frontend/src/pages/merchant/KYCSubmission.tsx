@@ -101,7 +101,7 @@ const KYCSubmission = () => {
       <div className="mx-auto max-w-2xl px-4 py-8">
         <Card className="text-center">
           <CheckCircle className="mx-auto h-16 w-16 text-(--success)" />
-          <h1 className="mt-4 text-2xl font-bold text-(--text)">KYC Verified</h1>
+          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-(--text)">KYC Verified</h1>
           <p className="mt-2 text-(--text-secondary)">
             Your identity and business documents have been verified. No further action is needed.
           </p>
@@ -124,7 +124,9 @@ const KYCSubmission = () => {
       <div className="mx-auto max-w-2xl px-4 py-8">
         <Card className="text-center">
           <Clock className="mx-auto h-16 w-16 text-(--warning)" />
-          <h1 className="mt-4 text-2xl font-bold text-(--text)">KYC Under Review</h1>
+          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-(--text)">
+            KYC Under Review
+          </h1>
           <p className="mt-2 text-(--text-secondary)">
             Your documents have been submitted and are being reviewed. We'll notify you once the
             review is complete.
@@ -147,7 +149,7 @@ const KYCSubmission = () => {
       <div className="mb-6 flex items-center gap-3">
         <Shield className="h-8 w-8 text-(--accent-primary)" />
         <div>
-          <h1 className="text-2xl font-bold text-(--text)">KYC Verification</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-(--text)">KYC Verification</h1>
           <p className="text-sm text-(--text-secondary)">Submit your documents for verification</p>
         </div>
       </div>

@@ -199,6 +199,14 @@ const App = () => (
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/merchant/revenue/report"
+          element={
+            <ProtectedRoute role="merchant">
+              <RevenueReport />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       {/* Admin protected — self-contained layout */}

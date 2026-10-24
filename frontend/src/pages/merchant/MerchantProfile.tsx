@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import toast from 'react-hot-toast';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Store } from 'lucide-react';
 import { useAuth } from '../../stores/useAuthStore';
 import { updateMerchantProfile } from '../../api/auth';
 import type { Merchant } from '../../types';
 import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
+import Textarea from '../../components/ui/Textarea';
 import Select from '../../components/ui/Select';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -88,6 +89,33 @@ const MerchantProfile = () => {
         </Badge>
       </div>
 
+      {/* Storefront Overview Card */}
+      <Card className="mt-6 p-6">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-(--accent-primary)/10 text-xl font-bold text-(--accent-primary) ring-1 ring-(--accent-primary)/20">
+            <Store className="h-8 w-8" />
+          </div>
+          <div className="flex-1 text-center sm:text-left">
+            <h2 className="text-lg font-semibold text-(--text)">{merchant.business_name}</h2>
+            <div className="mt-1 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-(--text-secondary) sm:justify-start">
+              <span className="capitalize font-medium">
+                {(merchant.business_type || 'merchant').replace(/_/g, ' ')}
+              </span>
+              <span>&middot;</span>
+              <span>{merchant.email}</span>
+              {merchant.kyc_status && (
+                <Badge
+                  variant={merchant.kyc_status === 'approved' ? 'success' : 'default'}
+                  className="text-[10px]"
+                >
+                  KYC {merchant.kyc_status}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </Card>
+
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         <Card className="p-6 space-y-4">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-(--text-secondary)">
@@ -116,18 +144,13 @@ const MerchantProfile = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-(--text-secondary) mb-1.5">
-              Business Description
-            </label>
-            <textarea
-              className="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) placeholder-(--text-tertiary) focus:border-(--accent-primary) focus:outline-none"
-              rows={3}
-              value={form.business_description}
-              onChange={(e) => update('business_description', e.target.value)}
-              required
-            />
-          </div>
+          <Textarea
+            label="Business Description"
+            rows={3}
+            value={form.business_description}
+            onChange={(e) => update('business_description', e.target.value)}
+            required
+          />
 
           <Input
             label="Operating Address"

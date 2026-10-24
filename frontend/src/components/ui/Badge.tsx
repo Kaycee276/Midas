@@ -22,11 +22,11 @@ const variants = {
   warning: 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20',
   info: 'bg-[#9fbbe0]/20 text-[#26251e] dark:text-[#f7f7f4] border border-[#9fbbe0]/40',
   default: 'bg-(--bg-tertiary) text-(--text-secondary) border border-(--border)',
-  // Cursor in-product agent timeline pastels
-  thinking: 'bg-[#dfa88f]/30 text-[#26251e] border border-[#dfa88f]/50',
-  grep: 'bg-[#9fc9a2]/30 text-[#26251e] border border-[#9fc9a2]/50',
-  read: 'bg-[#9fbbe0]/30 text-[#26251e] border border-[#9fbbe0]/50',
-  edit: 'bg-[#c0a8dd]/30 text-[#26251e] border border-[#c0a8dd]/50',
+  // Cursor in-product agent timeline pastels (theme-aware text for high contrast in dark mode)
+  thinking: 'bg-[#dfa88f]/30 text-[#26251e] dark:text-[#f7f7f4] border border-[#dfa88f]/50',
+  grep: 'bg-[#9fc9a2]/30 text-[#26251e] dark:text-[#f7f7f4] border border-[#9fc9a2]/50',
+  read: 'bg-[#9fbbe0]/30 text-[#26251e] dark:text-[#f7f7f4] border border-[#9fbbe0]/50',
+  edit: 'bg-[#c0a8dd]/30 text-[#26251e] dark:text-[#f7f7f4] border border-[#c0a8dd]/50',
   done: 'bg-[#c08532] text-white border border-[#c08532]',
 };
 

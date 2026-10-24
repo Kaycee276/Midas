@@ -16,7 +16,8 @@ const variants = {
   outline:
     'bg-transparent hover:bg-(--bg-tertiary) text-(--text) border border-(--border) active:scale-[0.99]',
   ghost: 'bg-transparent hover:bg-(--bg-tertiary) text-(--text-secondary) hover:text-(--text)',
-  danger: 'bg-(--error) hover:bg-red-700 text-white font-medium border border-(--error)',
+  danger:
+    'bg-(--error) hover:opacity-90 active:scale-[0.99] text-white font-medium border border-(--error)',
 };
 
 const sizes = {

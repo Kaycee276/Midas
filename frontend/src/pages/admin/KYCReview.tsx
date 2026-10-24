@@ -99,8 +99,10 @@ const KYCReview = () => {
 
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-(--text)">KYC Review</h1>
-          <p className="mt-1 text-(--text-secondary)">{kyc.merchant?.business_name}</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-(--text)">
+            KYC Compliance Review
+          </h1>
+          <p className="mt-1 text-sm text-(--text-secondary)">{kyc.merchant?.business_name}</p>
         </div>
         <Badge variant="warning">{kyc.status}</Badge>
       </div>

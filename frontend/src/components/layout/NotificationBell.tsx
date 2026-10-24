@@ -65,15 +65,15 @@ export const NotificationBell: React.FC = () => {
   const getIcon = (type: AppNotification['type']) => {
     switch (type) {
       case 'payment':
-        return <DollarSign className="h-4 w-4 text-emerald-500" />;
+        return <DollarSign className="h-4 w-4 text-(--success)" />;
       case 'investment':
-        return <TrendingUp className="h-4 w-4 text-amber-500" />;
+        return <TrendingUp className="h-4 w-4 text-(--warning)" />;
       case 'dividend':
-        return <Percent className="h-4 w-4 text-purple-500" />;
+        return <Percent className="h-4 w-4 text-(--accent-primary)" />;
       case 'kyc':
-        return <ShieldCheck className="h-4 w-4 text-blue-500" />;
+        return <ShieldCheck className="h-4 w-4 text-(--info)" />;
       default:
-        return <Info className="h-4 w-4 text-neutral-400" />;
+        return <Info className="h-4 w-4 text-(--text-secondary)" />;
     }
   };
 
@@ -92,6 +92,8 @@ export const NotificationBell: React.FC = () => {
         onClick={() => setIsOpen((prev) => !prev)}
         className="relative rounded-lg border border-(--border) p-2 text-(--text-secondary) hover:bg-(--bg-secondary) hover:text-(--text) transition-colors"
         aria-label="Notifications"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         title="Real-time notifications"
       >
         <Bell className="h-4 w-4" />

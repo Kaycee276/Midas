@@ -7,6 +7,7 @@ import { createInvestment } from '../../api/investments';
 import { getWalletInfo } from '../../api/wallet';
 import type { Merchant } from '../../types';
 import Input from '../../components/ui/Input';
+import Textarea from '../../components/ui/Textarea';
 import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 
@@ -162,19 +163,14 @@ const Invest = () => {
           </div>
         )}
 
-        <div className="space-y-1.5">
-          <label htmlFor="notes" className="block text-xs font-medium text-(--text-secondary)">
-            Personal Notes (optional)
-          </label>
-          <textarea
-            id="notes"
-            className="w-full rounded-xl border border-(--border) bg-(--bg-secondary) px-3 py-2 text-sm text-(--text) placeholder-(--text-tertiary) transition-colors focus:border-(--accent-primary) focus:outline-none"
-            rows={2}
-            placeholder="e.g. Cafe expansion micro-equity"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
-        </div>
+        <Textarea
+          label="Personal Notes (optional)"
+          id="notes"
+          rows={2}
+          placeholder="e.g. Cafe expansion micro-equity"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
 
         {numAmount > balance && (
           <p className="text-xs text-(--error)">

@@ -126,7 +126,7 @@ const Wallet = () => {
 
       {/* Success notification from Bachs redirect */}
       {paymentSuccessNotice && (
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-400">
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-(--success)/20 bg-(--success)/10 p-4 text-(--success)">
           <div className="flex items-center gap-2.5">
             <CheckCircle2 className="h-5 w-5 shrink-0" />
             <span className="text-sm font-medium">

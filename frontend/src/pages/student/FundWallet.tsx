@@ -236,7 +236,7 @@ const FundWallet = () => {
         <div className="mt-4 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-400 border border-emerald-500/20">
+              <span className="inline-flex items-center gap-1 rounded-full bg-(--success)/10 px-2 py-0.5 text-[11px] font-semibold text-(--success) border border-(--success)/20">
                 <Sparkles className="h-3 w-3" /> Bachs Sandbox Checkout
               </span>
             </div>
@@ -377,7 +377,7 @@ const FundWallet = () => {
       </Link>
 
       <div className="mt-4">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400 border border-emerald-500/20">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-(--success)/10 px-2.5 py-1 text-xs font-medium text-(--success) border border-(--success)/20">
           <Shield className="h-3.5 w-3.5" /> Powered by Bachs Sandbox
         </div>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-(--text)">

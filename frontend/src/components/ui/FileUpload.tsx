@@ -64,7 +64,13 @@ const FileUpload = ({
           <Upload className="h-8 w-8 text-(--text-tertiary)" />
           <span className="text-sm text-(--text-secondary)">Click to upload</span>
           <span className="text-xs text-(--text-tertiary)">JPG, PNG or PDF (max 5MB)</span>
-          <input type="file" accept={accept} onChange={handleChange} className="hidden" />
+          <input
+            type="file"
+            accept={accept}
+            onChange={handleChange}
+            className="hidden"
+            aria-label={label || 'Upload document'}
+          />
         </label>
       )}
       {error && <p className="text-sm text-(--error)">{error}</p>}

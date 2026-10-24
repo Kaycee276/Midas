@@ -14,7 +14,7 @@ const Footer = () => (
             distributions backed by verified local economies.
           </p>
           <div className="mt-6 flex items-center gap-2 font-mono text-xs text-(--text-tertiary)">
-            <span className="h-2 w-2 rounded-full bg-[#1f8a65]" />
+            <span className="h-2 w-2 rounded-full bg-(--success)" />
             <span>Network status: Operational (v0.1.3)</span>
           </div>
         </div>
@@ -77,9 +77,15 @@ const Footer = () => (
       <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-(--border) pt-6 text-xs text-(--text-tertiary) sm:flex-row">
         <p>&copy; {new Date().getFullYear()} Midas Network. Built for campus economies.</p>
         <div className="flex gap-6">
-          <span className="hover:text-(--text) cursor-pointer">Security & Audits</span>
-          <span className="hover:text-(--text) cursor-pointer">KYC Standards</span>
-          <span className="hover:text-(--text) cursor-pointer">Terms of Service</span>
+          <Link to="/" className="hover:text-(--text) transition-colors">
+            Security & Audits
+          </Link>
+          <Link to="/merchant/register" className="hover:text-(--text) transition-colors">
+            KYC Standards
+          </Link>
+          <Link to="/" className="hover:text-(--text) transition-colors">
+            Terms of Service
+          </Link>
         </div>
       </div>
     </div>
